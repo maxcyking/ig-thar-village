@@ -7,10 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Upload, X, FileText, Image as ImageIcon, Loader2, Calendar } from "lucide-react";
+import { Upload, X, FileText, Loader2 } from "lucide-react";
 import { createAward, updateAward, type Award } from "@/lib/database";
-import { uploadImage, deleteImage } from "@/lib/storage";
+import { uploadImage } from "@/lib/storage";
 
 const categories = [
   { value: "sustainability", label: "Sustainability" },
@@ -37,21 +36,13 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
     category: award?.category || "",
     featured: award?.featured || false,
     visible: award?.visible !== undefined ? award.visible : true,
-    certificateNumber: award?.certificateNumber || "",
-    testimonial: award?.testimonial || "",
-    testimonialAuthor: award?.testimonialAuthor || "",
-    testimonialPosition: award?.testimonialPosition || "",
-    awardDate: award?.awardDate ? award.awardDate.toISOString().split('T')[0] : "",
   });
   
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [selectedCertificateFile, setSelectedCertificateFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(award?.imageUrl || "");
   const [certificatePreview, setCertificatePreview] = useState<string>(award?.certificateUrl || "");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const certificateInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (field: string, value: any) => {
@@ -61,66 +52,48 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
     }
   };
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'certificate') => {
+  const handleCertificateSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    const validImageTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    const validDocTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    // Validate file type (allow images for certificate photos)
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
     
-    if (type === 'image' && !validImageTypes.includes(file.type)) {
-      setErrors(prev => ({ ...prev, [type]: "Please select an image file (JPEG, PNG, or WebP)" }));
-      return;
-    }
-    
-    if (type === 'certificate' && !validDocTypes.includes(file.type)) {
-      setErrors(prev => ({ ...prev, [type]: "Please select a PDF or image file" }));
+    if (!validTypes.includes(file.type)) {
+      setErrors(prev => ({ ...prev, certificate: "Please select an image file (JPEG, PNG, WebP) or PDF" }));
       return;
     }
 
     // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
-      setErrors(prev => ({ ...prev, [type]: "File size should be less than 10MB" }));
+      setErrors(prev => ({ ...prev, certificate: "File size should be less than 10MB" }));
       return;
     }
 
-    if (type === 'image') {
-      setSelectedImageFile(file);
+    setSelectedCertificateFile(file);
+    
+    // Create preview for images only
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setCertificatePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     } else {
-      setSelectedCertificateFile(file);
+      setCertificatePreview(""); // Clear preview for PDFs
     }
     
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      if (type === 'image') {
-        setImagePreview(result);
-      } else {
-        setCertificatePreview(result);
-      }
-    };
-    reader.readAsDataURL(file);
-    
-    if (errors[type]) {
-      setErrors(prev => ({ ...prev, [type]: "" }));
+    // Clear any existing errors
+    if (errors.certificate) {
+      setErrors(prev => ({ ...prev, certificate: "" }));
     }
   };
 
-  const removeFile = (type: 'image' | 'certificate') => {
-    if (type === 'image') {
-      setSelectedImageFile(null);
-      setImagePreview(award?.imageUrl || "");
-      if (imageInputRef.current) {
-        imageInputRef.current.value = "";
-      }
-    } else {
-      setSelectedCertificateFile(null);
-      setCertificatePreview(award?.certificateUrl || "");
-      if (certificateInputRef.current) {
-        certificateInputRef.current.value = "";
-      }
+  const removeCertificate = () => {
+    setSelectedCertificateFile(null);
+    setCertificatePreview(award?.certificateUrl || "");
+    if (certificateInputRef.current) {
+      certificateInputRef.current.value = "";
     }
   };
 
@@ -161,42 +134,17 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
     setLoading(true);
 
     try {
-      let imageUrl = award?.imageUrl || "";
       let certificateUrl = award?.certificateUrl || "";
-
-      // Upload new image if selected
-      if (selectedImageFile) {
-        // Delete old image if editing
-        if (award?.imageUrl) {
-          try {
-            await deleteImage(award.imageUrl);
-          } catch (error) {
-            console.warn("Could not delete old image:", error);
-          }
-        }
-
-        // Upload new image
-        const fileName = `${Date.now()}_${selectedImageFile.name}`;
-        imageUrl = await uploadImage(selectedImageFile, `awards/images/${fileName}`);
-      }
 
       // Upload new certificate if selected
       if (selectedCertificateFile) {
-        // Delete old certificate if editing
-        if (award?.certificateUrl) {
-          try {
-            await deleteImage(award.certificateUrl);
-          } catch (error) {
-            console.warn("Could not delete old certificate:", error);
-          }
-        }
-
         // Upload new certificate
         const fileName = `${Date.now()}_${selectedCertificateFile.name}`;
-        certificateUrl = await uploadImage(selectedCertificateFile, `awards/certificates/${fileName}`);
+        certificateUrl = await uploadImage(selectedCertificateFile, `awards/images/${fileName}`);
       }
 
-      const awardData = {
+      // Build award data without undefined values
+      const awardData: any = {
         title: formData.title.trim(),
         description: formData.description.trim(),
         organization: formData.organization.trim(),
@@ -204,14 +152,12 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
         category: formData.category as any,
         featured: formData.featured,
         visible: formData.visible,
-        imageUrl,
-        certificateUrl,
-        certificateNumber: formData.certificateNumber.trim() || undefined,
-        testimonial: formData.testimonial.trim() || undefined,
-        testimonialAuthor: formData.testimonialAuthor.trim() || undefined,
-        testimonialPosition: formData.testimonialPosition.trim() || undefined,
-        awardDate: formData.awardDate ? new Date(formData.awardDate) : undefined,
       };
+
+      // Only add URLs if they exist
+      if (certificateUrl) {
+        awardData.certificateUrl = certificateUrl;
+      }
 
       if (award) {
         // Update existing award
@@ -264,7 +210,7 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
       </div>
 
       {/* Year and Category */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="year">Year *</Label>
           <Input
@@ -281,12 +227,9 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
 
         <div className="space-y-2">
           <Label htmlFor="category">Category *</Label>
-          <Select
-            value={formData.category}
-            onValueChange={(value) => handleInputChange("category", value)}
-          >
+          <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
             <SelectTrigger className={errors.category ? "border-destructive" : ""}>
-              <SelectValue placeholder="Select a category" />
+              <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
               {categories.map((category) => (
@@ -300,16 +243,6 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
             <p className="text-sm text-destructive">{errors.category}</p>
           )}
         </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="awardDate">Award Date</Label>
-          <Input
-            id="awardDate"
-            type="date"
-            value={formData.awardDate}
-            onChange={(e) => handleInputChange("awardDate", e.target.value)}
-          />
-        </div>
       </div>
 
       {/* Description */}
@@ -320,7 +253,7 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
           value={formData.description}
           onChange={(e) => handleInputChange("description", e.target.value)}
           placeholder="Describe the award and its significance..."
-          rows={3}
+          rows={4}
           className={errors.description ? "border-destructive" : ""}
         />
         {errors.description && (
@@ -328,103 +261,28 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
         )}
       </div>
 
-      {/* Certificate Number */}
-      <div className="space-y-2">
-        <Label htmlFor="certificateNumber">Certificate Number</Label>
-        <Input
-          id="certificateNumber"
-          value={formData.certificateNumber}
-          onChange={(e) => handleInputChange("certificateNumber", e.target.value)}
-          placeholder="Certificate or reference number..."
-        />
-      </div>
-
-      {/* Image Upload */}
-      <div className="space-y-2">
-        <Label>Award Image</Label>
-        <div className="space-y-4">
-          {!imagePreview ? (
-            <div
-              className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-muted-foreground/50 transition-colors"
-              onClick={() => imageInputRef.current?.click()}
-            >
-              <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-sm text-muted-foreground mb-2">
-                Click to upload award image
-              </p>
-              <p className="text-xs text-muted-foreground">
-                PNG, JPG, WebP up to 10MB
-              </p>
-            </div>
-          ) : (
-            <div className="relative">
-              <div className="aspect-video rounded-lg overflow-hidden bg-muted">
-                <img
-                  src={imagePreview}
-                  alt="Award preview"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                className="absolute top-2 right-2"
-                onClick={() => removeFile('image')}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-              {!award && (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  className="absolute bottom-2 right-2"
-                  onClick={() => imageInputRef.current?.click()}
-                >
-                  Change Image
-                </Button>
-              )}
-            </div>
-          )}
-          
-          <input
-            ref={imageInputRef}
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileSelect(e, 'image')}
-            className="hidden"
-            aria-label="Upload award image"
-            title="Upload award image"
-          />
-          
-          {errors.image && (
-            <p className="text-sm text-destructive">{errors.image}</p>
-          )}
-        </div>
-      </div>
-
       {/* Certificate Upload */}
       <div className="space-y-2">
-        <Label>Certificate File</Label>
+        <Label>Certificate Image</Label>
         <div className="space-y-4">
-          {!certificatePreview ? (
+          {!certificatePreview && !selectedCertificateFile ? (
             <div
               className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-muted-foreground/50 transition-colors"
               onClick={() => certificateInputRef.current?.click()}
             >
-              <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-sm text-muted-foreground mb-2">
-                Click to upload certificate
+              <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <p className="text-lg font-medium mb-2">Upload Certificate</p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Drag and drop your certificate image or click to browse
               </p>
               <p className="text-xs text-muted-foreground">
-                PDF, PNG, JPG up to 10MB
+                Supports JPG, PNG, WebP, and PDF files up to 10MB
               </p>
             </div>
           ) : (
             <div className="relative">
               <div className="aspect-video rounded-lg overflow-hidden bg-muted border">
-                {selectedCertificateFile?.type === 'application/pdf' || certificatePreview.includes('pdf') ? (
+                {selectedCertificateFile?.type === 'application/pdf' || (certificatePreview && certificatePreview.includes('pdf')) ? (
                   <div className="w-full h-full flex items-center justify-center">
                     <div className="text-center">
                       <FileText className="mx-auto h-16 w-16 text-red-600 mb-2" />
@@ -447,18 +305,9 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
                 variant="destructive"
                 size="sm"
                 className="absolute top-2 right-2"
-                onClick={() => removeFile('certificate')}
+                onClick={removeCertificate}
               >
                 <X className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                className="absolute bottom-2 right-2"
-                onClick={() => certificateInputRef.current?.click()}
-              >
-                Change File
               </Button>
             </div>
           )}
@@ -466,8 +315,8 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
           <input
             ref={certificateInputRef}
             type="file"
-            accept=".pdf,image/*"
-            onChange={(e) => handleFileSelect(e, 'certificate')}
+            accept="image/*,.pdf"
+            onChange={handleCertificateSelect}
             className="hidden"
             aria-label="Upload certificate file"
             title="Upload certificate file"
@@ -479,67 +328,37 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
         </div>
       </div>
 
-      {/* Testimonial Section */}
-      <div className="space-y-4">
-        <Label>Testimonial (Optional)</Label>
-        <div className="space-y-4">
-          <Textarea
-            value={formData.testimonial}
-            onChange={(e) => handleInputChange("testimonial", e.target.value)}
-            placeholder="Quote or testimonial about the award..."
-            rows={3}
-          />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              value={formData.testimonialAuthor}
-              onChange={(e) => handleInputChange("testimonialAuthor", e.target.value)}
-              placeholder="Testimonial author name..."
-            />
-            <Input
-              value={formData.testimonialPosition}
-              onChange={(e) => handleInputChange("testimonialPosition", e.target.value)}
-              placeholder="Author position/title..."
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Options */}
-      <div className="space-y-4">
+      {/* Settings */}
+      <div className="flex gap-6 flex-wrap">
         <div className="flex items-center space-x-2">
           <Checkbox
             id="featured"
             checked={formData.featured}
-            onCheckedChange={(checked) => handleInputChange("featured", checked)}
+            onCheckedChange={(checked: boolean) => handleInputChange("featured", checked)}
           />
-          <Label htmlFor="featured" className="text-sm font-medium">
-            Featured Award
-          </Label>
+          <Label htmlFor="featured">Featured Award</Label>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Checkbox
             id="visible"
             checked={formData.visible}
-            onCheckedChange={(checked) => handleInputChange("visible", checked)}
+            onCheckedChange={(checked: boolean) => handleInputChange("visible", checked)}
           />
-          <Label htmlFor="visible" className="text-sm font-medium">
-            Visible on website
-          </Label>
+          <Label htmlFor="visible">Visible to Public</Label>
         </div>
       </div>
 
-      {/* Error message */}
+      {/* Submit Error */}
       {errors.submit && (
-        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
+        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
           <p className="text-sm text-destructive">{errors.submit}</p>
         </div>
       )}
 
-      {/* Submit Button */}
-      <div className="flex justify-end space-x-3">
-        <Button type="submit" disabled={loading}>
+      {/* Form Actions */}
+      <div className="flex space-x-4 pt-4">
+        <Button type="submit" disabled={loading} className="flex-1">
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {award ? "Update Award" : "Add Award"}
         </Button>
