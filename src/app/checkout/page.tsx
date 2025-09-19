@@ -185,8 +185,8 @@ export default function CheckoutPage() {
       const estimatedDelivery = new Date();
       estimatedDelivery.setDate(estimatedDelivery.getDate() + 7);
 
-      // Create order
-      const orderData = {
+      // Create order data (only include fields with actual values)
+      const orderData: any = {
         items: orderItems,
         subtotal,
         shipping,
@@ -195,12 +195,19 @@ export default function CheckoutPage() {
         status: 'pending' as const,
         paymentStatus: formData.paymentMethod === 'cash_on_delivery' ? 'pending' as const : 'completed' as const,
         paymentMethod: formData.paymentMethod,
-        transactionId: formData.transactionId || undefined,
         shippingAddress,
-        notes: formData.notes || undefined,
         estimatedDelivery,
         trackingUrl: `${window.location.origin}/track`,
       };
+
+      // Only add optional fields if they have values
+      if (formData.transactionId && formData.transactionId.trim()) {
+        orderData.transactionId = formData.transactionId.trim();
+      }
+      
+      if (formData.notes && formData.notes.trim()) {
+        orderData.notes = formData.notes.trim();
+      }
 
       const newOrderId = await createOrder(orderData);
       setOrderId(newOrderId);

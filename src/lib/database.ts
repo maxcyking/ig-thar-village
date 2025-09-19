@@ -740,14 +740,23 @@ export const createOrder = async (orderData: Omit<Order, 'id' | 'orderNumber' | 
   try {
     const orderNumber = generateOrderNumber();
     
-    const docRef = await addDoc(collection(db, "orders"), {
+    const cleanOrderData: any = {
       ...orderData,
       orderNumber,
       estimatedDelivery: orderData.estimatedDelivery ? Timestamp.fromDate(orderData.estimatedDelivery) : null,
       deliveredAt: orderData.deliveredAt ? Timestamp.fromDate(orderData.deliveredAt) : null,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+    };
+
+    // Remove undefined fields to prevent Firebase errors
+    Object.keys(cleanOrderData).forEach(key => {
+      if (cleanOrderData[key] === undefined) {
+        delete cleanOrderData[key];
+      }
     });
+    
+    const docRef = await addDoc(collection(db, "orders"), cleanOrderData);
     
     return docRef.id;
   } catch (error) {
@@ -827,7 +836,7 @@ export const updateOrder = async (id: string, orderData: Partial<Order>): Promis
       updateData.deliveredAt = Timestamp.fromDate(orderData.deliveredAt);
     }
 
-    // Remove undefined fields
+    // Remove undefined fields to prevent Firebase errors
     Object.keys(updateData).forEach(key => {
       if (updateData[key] === undefined) {
         delete updateData[key];
