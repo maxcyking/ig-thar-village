@@ -112,10 +112,10 @@ export default function GalleryPage() {
 
           {/* Gallery Grid */}
           {!loading && filteredImages.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredImages.map((image) => (
-                <Card key={image.id} className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
-                  <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 relative overflow-hidden">
+              <Card key={image.id} className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
+                <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 relative overflow-hidden">
                     {image.imageUrl ? (
                       <img
                         src={image.imageUrl}
@@ -123,32 +123,32 @@ export default function GalleryPage() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center p-4">
-                          <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span className="text-2xl text-primary">📸</span>
-                          </div>
-                          <p className="text-sm text-primary/70 font-medium">
-                            {image.title}
-                          </p>
-                        </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center p-4">
+                      <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <span className="text-2xl text-primary">📸</span>
                       </div>
-                    )}
-                    
-                    {/* Overlay on hover */}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
-                      <div className="p-4 text-white w-full">
-                        <Badge className="mb-2 bg-white/20 text-white border-white/30 capitalize">
-                          {image.category.replace("-", " ")}
-                        </Badge>
-                        <h3 className="font-semibold mb-1">{image.title}</h3>
-                        <p className="text-sm text-white/90">{image.description}</p>
-                      </div>
+                      <p className="text-sm text-primary/70 font-medium">
+                        {image.title}
+                      </p>
                     </div>
                   </div>
-                </Card>
-              ))}
-            </div>
+                    )}
+                    
+                  {/* Overlay on hover */}
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
+                    <div className="p-4 text-white w-full">
+                        <Badge className="mb-2 bg-white/20 text-white border-white/30 capitalize">
+                          {image.category.replace("-", " ")}
+                      </Badge>
+                      <h3 className="font-semibold mb-1">{image.title}</h3>
+                      <p className="text-sm text-white/90">{image.description}</p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
           )}
 
           {/* No Images Found */}

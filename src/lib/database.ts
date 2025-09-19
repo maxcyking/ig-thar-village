@@ -198,6 +198,27 @@ export const getProducts = async (featured?: boolean, category?: string): Promis
   }
 };
 
+// Get all products (for admin panel)
+export const getAllProducts = async (): Promise<Product[]> => {
+  try {
+    const q = query(
+      collection(db, "products"),
+      orderBy("createdAt", "desc")
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+    })) as Product[];
+  } catch (error) {
+    console.error("Error fetching all products:", error);
+    return [];
+  }
+};
+
 export const getProduct = async (id: string): Promise<Product | null> => {
   try {
     const docRef = doc(db, "products", id);

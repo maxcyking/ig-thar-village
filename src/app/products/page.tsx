@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Product, getProducts } from "@/lib/database";
+import { Product, getProducts, getAllProducts } from "@/lib/database";
 import { 
   Search, 
   Filter, 
@@ -19,11 +19,13 @@ import Image from "next/image";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showOnlyOrganic, setShowOnlyOrganic] = useState(false);
   const [showOnlyFeatured, setShowOnlyFeatured] = useState(false);
+  const [showOutOfStock, setShowOutOfStock] = useState(false);
 
   const categories = [
     { value: "all", label: "All" },
@@ -38,8 +40,12 @@ export default function ProductsPage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const allProducts = await getProducts();
-        setProducts(allProducts);
+        const [inStockProducts, allProductsData] = await Promise.all([
+          getProducts(),
+          getAllProducts()
+        ]);
+        setProducts(inStockProducts);
+        setAllProducts(allProductsData);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -50,7 +56,10 @@ export default function ProductsPage() {
     fetchProducts();
   }, []);
 
-  const filteredProducts = products.filter(product => {
+  const displayProducts = showOutOfStock ? allProducts : products;
+  const outOfStockCount = allProducts.length - products.length;
+  
+  const filteredProducts = displayProducts.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
@@ -109,6 +118,42 @@ export default function ProductsPage() {
         </div>
       </section>
 
+      {/* Statistics Section */}
+      {!loading && allProducts.length > 0 && (
+        <section className="py-6 bg-white border-b">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-wrap justify-center gap-6 text-sm">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">{allProducts.length}</div>
+                <div className="text-gray-600">Total Products</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">{products.length}</div>
+                <div className="text-gray-600">In Stock</div>
+              </div>
+              {outOfStockCount > 0 && (
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-red-600">{outOfStockCount}</div>
+                  <div className="text-gray-600">Out of Stock</div>
+                </div>
+              )}
+              <div className="text-center">
+                <div className="text-2xl font-bold text-orange-600">
+                  {allProducts.filter(p => p.organic).length}
+                </div>
+                <div className="text-gray-600">Organic</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">
+                  {allProducts.filter(p => p.featured).length}
+                </div>
+                <div className="text-gray-600">Featured</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Filters Section */}
       <section className="py-8 bg-white border-b">
         <div className="container mx-auto px-4">
@@ -142,7 +187,7 @@ export default function ProductsPage() {
             </div>
 
             {/* Additional Filters */}
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
@@ -161,6 +206,20 @@ export default function ProductsPage() {
                 />
                 Featured Only
               </label>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={showOutOfStock}
+                  onChange={(e) => setShowOutOfStock(e.target.checked)}
+                  className="rounded"
+                />
+                Show Out of Stock
+                {outOfStockCount > 0 && (
+                  <Badge variant="secondary" className="text-xs">
+                    +{outOfStockCount}
+                  </Badge>
+                )}
+              </label>
             </div>
           </div>
         </div>
@@ -172,8 +231,31 @@ export default function ProductsPage() {
           {filteredProducts.length === 0 ? (
             <div className="text-center py-12">
               <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">No products found</h3>
-              <p className="text-gray-500">Try adjusting your search or filter criteria</p>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                {allProducts.length === 0 
+                  ? "No products available"
+                  : products.length === 0 && !showOutOfStock
+                  ? "All products are currently out of stock"
+                  : "No products found"
+                }
+              </h3>
+              <p className="text-gray-500 mb-4">
+                {allProducts.length === 0 
+                  ? "We're working on adding amazing organic products from the desert."
+                  : products.length === 0 && !showOutOfStock
+                  ? "Check back soon or enable 'Show Out of Stock' to see all products."
+                  : "Try adjusting your search or filter criteria."
+                }
+              </p>
+              {products.length === 0 && outOfStockCount > 0 && !showOutOfStock && (
+                <Button
+                  variant="outline"
+                  onClick={() => setShowOutOfStock(true)}
+                  className="mt-2"
+                >
+                  Show {outOfStockCount} Out of Stock Products
+                </Button>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

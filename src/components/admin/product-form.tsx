@@ -32,12 +32,13 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     category: "",
     price: "",
     unit: "kg",
-    stock: "",
+    stock: "1", // Default to 1 so inStock will be true
     description: "",
     weight: "",
     nutritionalInfo: "",
     organic: false,
     featured: false,
+    inStock: true, // Add direct inStock control
     image: null as File | null
   });
 
@@ -50,12 +51,13 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
         category: product.category || "",
         price: product.price?.toString() || "",
         unit: product.unit || "kg",
-        stock: "0", // We don't track stock in the new structure
+        stock: product.inStock ? "1" : "0", // Set based on inStock status
         description: product.description || "",
         weight: product.weight || "",
         nutritionalInfo: product.nutritionalInfo || "",
         organic: product.organic || false,
         featured: product.featured || false,
+        inStock: product.inStock || false,
         image: null
       });
     }
@@ -243,7 +245,20 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
       </div>
 
       {/* Settings */}
-      <div className="flex gap-6">
+      <div className="flex gap-6 flex-wrap">
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="inStock"
+            checked={formData.inStock}
+            onCheckedChange={(checked: boolean) => {
+              handleInputChange("inStock", checked);
+              // Also update stock to reflect inStock status
+              handleInputChange("stock", checked ? "1" : "0");
+            }}
+          />
+          <Label htmlFor="inStock">In Stock</Label>
+        </div>
+
         <div className="flex items-center space-x-2">
           <Checkbox
             id="organic"

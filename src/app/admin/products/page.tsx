@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Product, getProducts, createProduct, updateProduct, deleteProduct } from "@/lib/database";
+import { Product, getAllProducts, createProduct, updateProduct, deleteProduct } from "@/lib/database";
 import { uploadMultipleImages } from "@/lib/storage";
 import { 
   Plus, 
@@ -56,7 +56,7 @@ export default function AdminProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const allProducts = await getProducts();
+      const allProducts = await getAllProducts();
       setProducts(allProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -109,7 +109,7 @@ export default function AdminProductsPage() {
       const productToSave = {
         ...cleanProductData,
         images: imageUrls,
-        inStock: stock > 0,
+        inStock: cleanProductData.inStock !== undefined ? cleanProductData.inStock : (stock > 0),
         shortDescription: productData.description.substring(0, 100)
       };
 
