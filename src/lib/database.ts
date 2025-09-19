@@ -162,6 +162,72 @@ export interface Order {
   updatedAt: Date;
 }
 
+// Booking Types
+export interface BookingGuest {
+  adults: number;
+  women: number;
+  children: number;
+  infants: number;
+}
+
+export interface PropertyBooking {
+  id: string;
+  bookingNumber: string;
+  propertyId: string;
+  propertyName: string;
+  propertyImage: string;
+  userId?: string;
+  guestInfo: {
+    fullName: string;
+    phone: string;
+    email: string;
+  };
+  checkIn: Date;
+  checkOut: Date;
+  guests: BookingGuest;
+  totalNights: number;
+  pricePerNight: number;
+  subtotal: number;
+  tax: number;
+  total: number;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
+  paymentMethod: 'qr_code' | 'card' | 'upi' | 'cash_on_arrival';
+  transactionId?: string;
+  specialRequests?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ServiceBooking {
+  id: string;
+  bookingNumber: string;
+  serviceId: string;
+  serviceName: string;
+  serviceImage: string;
+  userId?: string;
+  guestInfo: {
+    fullName: string;
+    phone: string;
+    email: string;
+  };
+  bookingDate: Date;
+  timeSlot: string;
+  guests: BookingGuest;
+  totalGuests: number;
+  pricePerPerson: number;
+  subtotal: number;
+  tax: number;
+  total: number;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
+  paymentMethod: 'qr_code' | 'card' | 'upi' | 'cash_on_arrival';
+  transactionId?: string;
+  specialRequests?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Properties Functions
 export const getProperties = async (featured?: boolean): Promise<Property[]> => {
   try {
@@ -898,5 +964,116 @@ export const getAllOrders = async (): Promise<Order[]> => {
   } catch (error) {
     console.error("Error fetching all orders:", error);
     return [];
+  }
+};
+
+// Booking Functions
+export const generateBookingNumber = (): string => {
+  const timestamp = Date.now().toString();
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `BK${timestamp.slice(-6)}${random}`;
+};
+
+// Property Booking Functions
+export const createPropertyBooking = async (bookingData: Omit<PropertyBooking, 'id' | 'bookingNumber' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+  try {
+    const bookingNumber = generateBookingNumber();
+    
+    const cleanBookingData: any = {
+      ...bookingData,
+      bookingNumber,
+      checkIn: Timestamp.fromDate(bookingData.checkIn),
+      checkOut: Timestamp.fromDate(bookingData.checkOut),
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    };
+
+    // Remove undefined fields
+    Object.keys(cleanBookingData).forEach(key => {
+      if (cleanBookingData[key] === undefined) {
+        delete cleanBookingData[key];
+      }
+    });
+    
+    const docRef = await addDoc(collection(db, "propertyBookings"), cleanBookingData);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating property booking:", error);
+    throw error;
+  }
+};
+
+export const getPropertyBooking = async (id: string): Promise<PropertyBooking | null> => {
+  try {
+    const docRef = doc(db, "propertyBookings", id);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        checkIn: data.checkIn?.toDate() || new Date(),
+        checkOut: data.checkOut?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as PropertyBooking;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error getting property booking:", error);
+    throw error;
+  }
+};
+
+// Service Booking Functions
+export const createServiceBooking = async (bookingData: Omit<ServiceBooking, 'id' | 'bookingNumber' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+  try {
+    const bookingNumber = generateBookingNumber();
+    
+    const cleanBookingData: any = {
+      ...bookingData,
+      bookingNumber,
+      bookingDate: Timestamp.fromDate(bookingData.bookingDate),
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    };
+
+    // Remove undefined fields
+    Object.keys(cleanBookingData).forEach(key => {
+      if (cleanBookingData[key] === undefined) {
+        delete cleanBookingData[key];
+      }
+    });
+    
+    const docRef = await addDoc(collection(db, "serviceBookings"), cleanBookingData);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating service booking:", error);
+    throw error;
+  }
+};
+
+export const getServiceBooking = async (id: string): Promise<ServiceBooking | null> => {
+  try {
+    const docRef = doc(db, "serviceBookings", id);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        bookingDate: data.bookingDate?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as ServiceBooking;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error getting service booking:", error);
+    throw error;
   }
 };

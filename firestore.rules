@@ -104,23 +104,59 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     
-    // Orders collection - guest can create, users can read their own, admins can read/update all
-    match /orders/{orderId} {
-      // Anyone can create orders (guest checkout allowed)
-      allow create: if true;
-      
-      // Users can read their own orders (if authenticated and userId matches)
-      allow read: if request.auth != null && 
-        request.auth.uid == resource.data.userId;
-      
-      // Allow reading orders by order number for tracking (public tracking)
-      allow read: if true;
-      
-      // Only admins can read and update all orders
-      allow read, update: if request.auth != null && 
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
+  // Orders collection - guest can create, users can read their own, admins can read/update all
+  match /orders/{orderId} {
+    // Anyone can create orders (guest checkout allowed)
+    allow create: if true;
+    
+    // Users can read their own orders (if authenticated and userId matches)
+    allow read: if request.auth != null && 
+      request.auth.uid == resource.data.userId;
+    
+    // Allow reading orders by order number for tracking (public tracking)
+    allow read: if true;
+    
+    // Only admins can read and update all orders
+    allow read, update: if request.auth != null && 
+      exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+  }
+
+  // Property Bookings collection - guest can create, users can read their own, admins can read/update all
+  match /propertyBookings/{bookingId} {
+    // Anyone can create property bookings (guest booking allowed)
+    allow create: if true;
+    
+    // Users can read their own bookings (if authenticated and userId matches)
+    allow read: if request.auth != null && 
+      request.auth.uid == resource.data.userId;
+    
+    // Allow reading bookings by booking number for tracking (public tracking)
+    allow read: if true;
+    
+    // Only admins can read and update all property bookings
+    allow read, update: if request.auth != null && 
+      exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+  }
+
+  // Service Bookings collection - guest can create, users can read their own, admins can read/update all
+  match /serviceBookings/{bookingId} {
+    // Anyone can create service bookings (guest booking allowed)
+    allow create: if true;
+    
+    // Users can read their own bookings (if authenticated and userId matches)
+    allow read: if request.auth != null && 
+      request.auth.uid == resource.data.userId;
+    
+    // Allow reading bookings by booking number for tracking (public tracking)
+    allow read: if true;
+    
+    // Only admins can read and update all service bookings
+    allow read, update: if request.auth != null && 
+      exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+  }
     
     // Settings collection - admin only
     match /settings/{settingId} {

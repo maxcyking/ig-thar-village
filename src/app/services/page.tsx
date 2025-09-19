@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +34,7 @@ const categoryIcons: { [key: string]: any } = {
 };
 
 export default function ServicesPage() {
+  const router = useRouter();
   const [services, setServices] = useState<Service[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
@@ -84,7 +87,7 @@ export default function ServicesPage() {
   });
 
   const handleViewDetails = (propertyId: string) => {
-    console.log("View details for property:", propertyId);
+    router.push(`/properties/${propertyId}`);
   };
 
   const handleToggleFavorite = (propertyId: string) => {
@@ -193,37 +196,45 @@ export default function ServicesPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {featuredProducts.map((product) => (
-              <div key={product.id} className="bg-white border border-gray-200 overflow-hidden">
-                <div className="relative h-56">
-                  {product.image ? (
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                      <TreePine className="h-12 w-12 text-green-600" />
+              <Link key={product.id} href={`/products/${product.id}`} className="group">
+                <div className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  <div className="relative h-56">
+                    {product.images && product.images.length > 0 ? (
+                      <Image
+                        src={product.images[0]}
+                        alt={product.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                        <TreePine className="h-12 w-12 text-green-600" />
+                      </div>
+                    )}
+                    {product.organic && (
+                      <Badge className="absolute top-4 left-4 bg-green-600 text-white">
+                        Organic
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="p-6">
+                    <h3 className="card-title text-gray-900 mb-3 group-hover:text-green-600 transition-colors">{product.name}</h3>
+                    <p className="body-text text-gray-600 mb-4">{product.shortDescription || product.description}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="price-text text-green-600">₹{product.price}/{product.unit}</span>
+                      <Button 
+                        className="cta-button bg-green-600 hover:bg-green-700 text-white"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          router.push(`/products/${product.id}`);
+                        }}
+                      >
+                        View Details
+                      </Button>
                     </div>
-                  )}
-                  {product.organic && (
-                    <Badge className="absolute top-4 left-4 bg-green-600 text-white">
-                      Organic
-                    </Badge>
-                  )}
-                </div>
-                <div className="p-6">
-                  <h3 className="card-title text-gray-900 mb-3">{product.name}</h3>
-                  <p className="body-text text-gray-600 mb-4">{product.description}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="price-text text-green-600">₹{product.price}/{product.unit}</span>
-                    <Button className="cta-button bg-green-600 hover:bg-green-700 text-white">
-                      Order Now
-                    </Button>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -299,40 +310,48 @@ export default function ServicesPage() {
             {featuredServices.map((service) => {
               const CategoryIcon = categoryIcons[service.category] || Mountain;
               return (
-                <div key={service.id} className="bg-white border border-gray-200 overflow-hidden">
-                  <div className="relative h-56">
-                    {service.images && service.images.length > 0 ? (
-                      <Image
-                        src={service.images[0]}
-                        alt={service.name}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                        <CategoryIcon className="h-12 w-12 text-blue-600" />
-                      </div>
-                    )}
-                    <Badge className="absolute top-4 left-4 bg-blue-600 text-white">
-                      Featured
-                    </Badge>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="card-title text-gray-900 mb-3">{service.name}</h3>
-                    <p className="body-text text-gray-600 mb-4">{service.description}</p>
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="price-text text-blue-600">₹{service.price}/person</span>
-                      <div className="flex items-center gap-1 text-gray-500">
-                        <Clock className="h-4 w-4" />
-                        <span className="text-sm">{service.duration}</span>
-                      </div>
+                <Link key={service.id} href={`/services/${service.id}`} className="group">
+                  <div className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                    <div className="relative h-56">
+                      {service.images && service.images.length > 0 ? (
+                        <Image
+                          src={service.images[0]}
+                          alt={service.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                          <CategoryIcon className="h-12 w-12 text-blue-600" />
+                        </div>
+                      )}
+                      <Badge className="absolute top-4 left-4 bg-blue-600 text-white">
+                        Featured
+                      </Badge>
                     </div>
-                    <Button className="cta-button w-full bg-blue-600 hover:bg-blue-700 text-white">
-                      <Calendar className="h-4 w-4 mr-2" />
-                      Book Experience
-                    </Button>
+                    <div className="p-6">
+                      <h3 className="card-title text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{service.name}</h3>
+                      <p className="body-text text-gray-600 mb-4">{service.description}</p>
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="price-text text-blue-600">₹{service.price}/person</span>
+                        <div className="flex items-center gap-1 text-gray-500">
+                          <Clock className="h-4 w-4" />
+                          <span className="text-sm">{service.duration}</span>
+                        </div>
+                      </div>
+                      <Button 
+                        className="cta-button w-full bg-blue-600 hover:bg-blue-700 text-white"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          router.push(`/services/${service.id}`);
+                        }}
+                      >
+                        <Calendar className="h-4 w-4 mr-2" />
+                        View Details
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
@@ -402,90 +421,98 @@ export default function ServicesPage() {
                 const CategoryIcon = categoryIcons[service.category] || Mountain;
                 
                 return (
-                  <div key={service.id} className="bg-white border border-gray-200 overflow-hidden">
-                    <div className="relative h-56">
-                      {service.images && service.images.length > 0 ? (
-                        <Image
-                          src={service.images[0]}
-                          alt={service.name}
-                          fill
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                          <CategoryIcon className="h-12 w-12 text-blue-600" />
-                        </div>
-                      )}
-                      <div className="absolute top-4 left-4 flex gap-2">
-                        {service.featured && (
-                          <Badge className="bg-orange-600 text-white">
-                            Featured
-                          </Badge>
+                  <Link key={service.id} href={`/services/${service.id}`} className="group">
+                    <div className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                      <div className="relative h-56">
+                        {service.images && service.images.length > 0 ? (
+                          <Image
+                            src={service.images[0]}
+                            alt={service.name}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                            <CategoryIcon className="h-12 w-12 text-blue-600" />
+                          </div>
                         )}
-                        <Badge className="bg-blue-600 text-white capitalize">
-                          {service.category}
-                        </Badge>
-                      </div>
-                      <div className="absolute top-4 right-4">
-                        <Badge 
-                          className={service.available ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}
-                        >
-                          {service.available ? 'Available' : 'Unavailable'}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1">
-                          <h3 className="card-title text-gray-900 mb-3">{service.name}</h3>
-                          <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                            <div className="flex items-center gap-1">
-                              <Clock className="h-4 w-4" />
-                              {service.duration}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Users className="h-4 w-4" />
-                              Up to {service.maxParticipants}
-                            </div>
-                          </div>
+                        <div className="absolute top-4 left-4 flex gap-2">
+                          {service.featured && (
+                            <Badge className="bg-orange-600 text-white">
+                              Featured
+                            </Badge>
+                          )}
+                          <Badge className="bg-blue-600 text-white capitalize">
+                            {service.category}
+                          </Badge>
                         </div>
-                        <div className="text-right">
-                          <div className="price-text text-blue-600">₹{service.price.toLocaleString()}</div>
-                          <div className="text-sm text-gray-500">per person</div>
+                        <div className="absolute top-4 right-4">
+                          <Badge 
+                            className={service.available ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}
+                          >
+                            {service.available ? 'Available' : 'Unavailable'}
+                          </Badge>
                         </div>
                       </div>
 
-                      <p className="body-text text-gray-600 mb-4">
-                        {service.description}
-                      </p>
-
-                      {service.included && service.included.length > 0 && (
-                        <div className="mb-6">
-                          <h4 className="text-sm font-semibold text-gray-900 mb-3">What's Included:</h4>
-                          <div className="space-y-1">
-                            {service.included.slice(0, 3).map((item, index) => (
-                              <div key={index} className="flex items-center gap-2 text-sm text-gray-600">
-                                <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                                {item}
+                      <div className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <h3 className="card-title text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">{service.name}</h3>
+                            <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-4 w-4" />
+                                {service.duration}
                               </div>
-                            ))}
-                            {service.included.length > 3 && (
-                              <span className="text-sm text-gray-500">+{service.included.length - 3} more inclusions</span>
-                            )}
+                              <div className="flex items-center gap-1">
+                                <Users className="h-4 w-4" />
+                                Up to {service.maxParticipants}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="price-text text-blue-600">₹{service.price.toLocaleString()}</div>
+                            <div className="text-sm text-gray-500">per person</div>
                           </div>
                         </div>
-                      )}
 
-                      <Button 
-                        className="cta-button w-full bg-blue-600 hover:bg-blue-700 text-white"
-                        disabled={!service.available}
-                      >
-                        <Calendar className="h-4 w-4 mr-2" />
-                        {service.available ? 'Book Now' : 'Unavailable'}
-                      </Button>
+                        <p className="body-text text-gray-600 mb-4">
+                          {service.description}
+                        </p>
+
+                        {service.included && service.included.length > 0 && (
+                          <div className="mb-6">
+                            <h4 className="text-sm font-semibold text-gray-900 mb-3">What's Included:</h4>
+                            <div className="space-y-1">
+                              {service.included.slice(0, 3).map((item, index) => (
+                                <div key={index} className="flex items-center gap-2 text-sm text-gray-600">
+                                  <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                                  {item}
+                                </div>
+                              ))}
+                              {service.included.length > 3 && (
+                                <span className="text-sm text-gray-500">+{service.included.length - 3} more inclusions</span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        <Button 
+                          className="cta-button w-full bg-blue-600 hover:bg-blue-700 text-white"
+                          disabled={!service.available}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (service.available) {
+                              router.push(`/services/${service.id}`);
+                            }
+                          }}
+                        >
+                          <Calendar className="h-4 w-4 mr-2" />
+                          {service.available ? 'View Details' : 'Unavailable'}
+                        </Button>
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
