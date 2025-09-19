@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { CartProvider } from "@/contexts/cart-context";
+import { WishlistProvider } from "@/contexts/wishlist-context";
 
 // Primary heading font - Luxury & Heritage
 const playfairDisplay = Playfair_Display({
@@ -50,11 +51,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${playfairDisplay.variable} ${cinzel.variable} ${poppins.variable} ${montserrat.variable} font-poppins antialiased`}>
         <CartProvider>
-          <Navbar />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
+          <WishlistProvider>
+            <Navbar />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

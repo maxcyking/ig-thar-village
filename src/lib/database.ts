@@ -117,6 +117,51 @@ export interface Award {
   updatedAt: Date;
 }
 
+// Order Types
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  productImage: string;
+  price: number;
+  quantity: number;
+  total: number;
+}
+
+export interface ShippingAddress {
+  fullName: string;
+  phone: string;
+  email: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  pincode: string;
+  landmark?: string;
+}
+
+export interface Order {
+  id: string;
+  orderNumber: string;
+  userId?: string; // Optional for guest orders
+  items: OrderItem[];
+  subtotal: number;
+  shipping: number;
+  tax: number;
+  total: number;
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
+  paymentMethod: 'qr_code' | 'card' | 'upi' | 'cash_on_delivery';
+  transactionId?: string;
+  shippingAddress: ShippingAddress;
+  notes?: string;
+  trackingNumber?: string;
+  trackingUrl?: string;
+  estimatedDelivery?: Date;
+  deliveredAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Properties Functions
 export const getProperties = async (featured?: boolean): Promise<Property[]> => {
   try {
@@ -683,3 +728,166 @@ export const getProductById = getProduct;
 export const getServiceById = getService;
 export const getGalleryImageById = getGalleryImage;
 export const getAwardById = getAward;
+
+// Order Functions
+export const generateOrderNumber = (): string => {
+  const timestamp = Date.now().toString();
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `IG${timestamp.slice(-6)}${random}`;
+};
+
+export const createOrder = async (orderData: Omit<Order, 'id' | 'orderNumber' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+  try {
+    const orderNumber = generateOrderNumber();
+    
+    const docRef = await addDoc(collection(db, "orders"), {
+      ...orderData,
+      orderNumber,
+      estimatedDelivery: orderData.estimatedDelivery ? Timestamp.fromDate(orderData.estimatedDelivery) : null,
+      deliveredAt: orderData.deliveredAt ? Timestamp.fromDate(orderData.deliveredAt) : null,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
+    
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating order:", error);
+    throw error;
+  }
+};
+
+export const getOrder = async (id: string): Promise<Order | null> => {
+  try {
+    const docRef = doc(db, "orders", id);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        estimatedDelivery: data.estimatedDelivery?.toDate() || null,
+        deliveredAt: data.deliveredAt?.toDate() || null,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as Order;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error getting order:", error);
+    throw error;
+  }
+};
+
+export const getOrderByNumber = async (orderNumber: string): Promise<Order | null> => {
+  try {
+    const q = query(
+      collection(db, "orders"),
+      where("orderNumber", "==", orderNumber),
+      limit(1)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      const doc = querySnapshot.docs[0];
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        estimatedDelivery: data.estimatedDelivery?.toDate() || null,
+        deliveredAt: data.deliveredAt?.toDate() || null,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as Order;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error getting order by number:", error);
+    throw error;
+  }
+};
+
+export const updateOrder = async (id: string, orderData: Partial<Order>): Promise<void> => {
+  try {
+    const docRef = doc(db, "orders", id);
+    
+    const updateData: any = {
+      ...orderData,
+      updatedAt: Timestamp.now(),
+    };
+
+    // Convert dates to Timestamps
+    if (orderData.estimatedDelivery) {
+      updateData.estimatedDelivery = Timestamp.fromDate(orderData.estimatedDelivery);
+    }
+    if (orderData.deliveredAt) {
+      updateData.deliveredAt = Timestamp.fromDate(orderData.deliveredAt);
+    }
+
+    // Remove undefined fields
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
+
+    await updateDoc(docRef, updateData);
+  } catch (error) {
+    console.error("Error updating order:", error);
+    throw error;
+  }
+};
+
+export const getUserOrders = async (userId: string): Promise<Order[]> => {
+  try {
+    const q = query(
+      collection(db, "orders"),
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
+    
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        estimatedDelivery: data.estimatedDelivery?.toDate() || null,
+        deliveredAt: data.deliveredAt?.toDate() || null,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      };
+    }) as Order[];
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    return [];
+  }
+};
+
+export const getAllOrders = async (): Promise<Order[]> => {
+  try {
+    const q = query(
+      collection(db, "orders"),
+      orderBy("createdAt", "desc")
+    );
+    
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        estimatedDelivery: data.estimatedDelivery?.toDate() || null,
+        deliveredAt: data.deliveredAt?.toDate() || null,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      };
+    }) as Order[];
+  } catch (error) {
+    console.error("Error fetching all orders:", error);
+    return [];
+  }
+};

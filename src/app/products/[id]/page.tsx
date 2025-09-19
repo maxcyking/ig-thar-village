@@ -22,21 +22,26 @@ import {
   ArrowLeft,
   Award,
   Clock,
-  MapPin
+  MapPin,
+  Zap
 } from "lucide-react";
 import { getProduct, type Product } from "@/lib/database";
 import { useCart } from "@/contexts/cart-context";
+import { useWishlist } from "@/contexts/wishlist-context";
+import { SocialShare } from "@/components/ui/social-share";
 
 export default function ProductDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const { addItem } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isBuying, setIsBuying] = useState(false);
 
   useEffect(() => {
     if (params.id) {
@@ -67,6 +72,27 @@ export default function ProductDetailsPage() {
       console.error("Error adding to cart:", error);
     } finally {
       setIsAddingToCart(false);
+    }
+  };
+
+  const handleWishlistToggle = () => {
+    if (!product) return;
+    toggleWishlist(product);
+  };
+
+  const handleBuyNow = async () => {
+    if (!product) return;
+    
+    setIsBuying(true);
+    try {
+      // Add to cart first
+      addItem(product, quantity);
+      // Redirect to checkout with buy now flag
+      router.push(`/checkout?buyNow=true&productId=${product.id}&quantity=${quantity}`);
+    } catch (error) {
+      console.error("Error during buy now:", error);
+    } finally {
+      setIsBuying(false);
     }
   };
 
@@ -312,28 +338,70 @@ export default function ProductDetailsPage() {
                     </div>
                   </div>
 
-                  <div className="flex gap-3">
-                    <Button 
-                      onClick={handleAddToCart}
-                      disabled={isAddingToCart}
-                      className="flex-1 bg-green-600 hover:bg-green-700"
-                      size="lg"
-                    >
-                      {isAddingToCart ? (
-                        "Adding..."
-                      ) : (
-                        <>
-                          <ShoppingCart className="h-5 w-5 mr-2" />
-                          Add to Cart
-                        </>
-                      )}
-                    </Button>
-                    <Button variant="outline" size="lg">
-                      <Heart className="h-5 w-5" />
-                    </Button>
-                    <Button variant="outline" size="lg">
-                      <Share2 className="h-5 w-5" />
-                    </Button>
+                  <div className="space-y-3">
+                    {/* Primary Actions */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button 
+                        onClick={handleAddToCart}
+                        disabled={isAddingToCart}
+                        variant="outline"
+                        className="border-green-600 text-green-600 hover:bg-green-50"
+                        size="lg"
+                      >
+                        {isAddingToCart ? (
+                          "Adding..."
+                        ) : (
+                          <>
+                            <ShoppingCart className="h-5 w-5 mr-2" />
+                            Add to Cart
+                          </>
+                        )}
+                      </Button>
+                      
+                      <Button 
+                        onClick={handleBuyNow}
+                        disabled={isBuying}
+                        className="bg-green-600 hover:bg-green-700"
+                        size="lg"
+                      >
+                        {isBuying ? (
+                          "Processing..."
+                        ) : (
+                          <>
+                            <Zap className="h-5 w-5 mr-2" />
+                            Buy Now
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Secondary Actions */}
+                    <div className="flex gap-3">
+                      <Button 
+                        variant="outline" 
+                        size="lg"
+                        onClick={handleWishlistToggle}
+                        className={`flex-1 ${
+                          isInWishlist(product.id) 
+                            ? 'border-red-500 text-red-500 bg-red-50' 
+                            : 'border-gray-300 text-gray-600 hover:border-red-500 hover:text-red-500'
+                        }`}
+                      >
+                        <Heart 
+                          className={`h-5 w-5 mr-2 ${
+                            isInWishlist(product.id) ? 'fill-current' : ''
+                          }`} 
+                        />
+                        {isInWishlist(product.id) ? 'In Wishlist' : 'Add to Wishlist'}
+                      </Button>
+                      
+                      <SocialShare
+                        url={typeof window !== 'undefined' ? window.location.href : ''}
+                        title={product.name}
+                        description={product.shortDescription}
+                        image={product.images?.[0] || ''}
+                      />
+                    </div>
                   </div>
                 </div>
               )}

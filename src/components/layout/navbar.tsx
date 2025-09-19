@@ -5,7 +5,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
-import { Menu, Mountain, Phone } from "lucide-react";
+import { Menu, Mountain, Phone, ShoppingCart, Heart, User } from "lucide-react";
+import { useCart } from "@/contexts/cart-context";
+import { useWishlist } from "@/contexts/wishlist-context";
+import { Badge } from "@/components/ui/badge";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -20,6 +23,8 @@ const navigation = [
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { state: cartState } = useCart();
+  const { state: wishlistState } = useWishlist();
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
@@ -50,17 +55,52 @@ export function Navbar() {
             ))}
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden md:flex items-center space-x-4">
-            <Button asChild variant="outline" size="sm" className="border-green-600 text-green-600 hover:bg-green-50 rounded-lg">
-              <Link href="/contact">
-                <Phone className="h-4 w-4 mr-2" />
-                Contact
+          {/* Action Icons and CTA Buttons */}
+          <div className="flex items-center space-x-4">
+            {/* Cart and Wishlist Icons */}
+            <div className="hidden sm:flex items-center space-x-2">
+              {/* Wishlist */}
+              <Link href="/wishlist" className="relative p-2 text-gray-700 hover:text-red-500 transition-colors">
+                <Heart className="h-6 w-6" />
+                {wishlistState.itemCount > 0 && (
+                  <Badge 
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs bg-red-500 text-white rounded-full border-2 border-white"
+                  >
+                    {wishlistState.itemCount}
+                  </Badge>
+                )}
               </Link>
-            </Button>
-            <Button asChild size="sm" className="bg-green-600 hover:bg-green-700 text-white rounded-lg">
-              <Link href="/services">Book Now</Link>
-            </Button>
+
+              {/* Cart */}
+              <Link href="/cart" className="relative p-2 text-gray-700 hover:text-green-600 transition-colors">
+                <ShoppingCart className="h-6 w-6" />
+                {cartState.itemCount > 0 && (
+                  <Badge 
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center text-xs bg-green-500 text-white rounded-full border-2 border-white"
+                  >
+                    {cartState.itemCount}
+                  </Badge>
+                )}
+              </Link>
+
+              {/* Profile */}
+              <Link href="/profile" className="p-2 text-gray-700 hover:text-green-600 transition-colors">
+                <User className="h-6 w-6" />
+              </Link>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="hidden md:flex items-center space-x-3">
+              <Button asChild variant="outline" size="sm" className="border-green-600 text-green-600 hover:bg-green-50 rounded-lg">
+                <Link href="/contact">
+                  <Phone className="h-4 w-4 mr-2" />
+                  Contact
+                </Link>
+              </Button>
+              <Button asChild size="sm" className="bg-green-600 hover:bg-green-700 text-white rounded-lg">
+                <Link href="/services">Book Now</Link>
+              </Button>
+            </div>
           </div>
 
           {/* Mobile Navigation */}
@@ -88,7 +128,19 @@ export function Navbar() {
                     {item.name}
                   </Link>
                 ))}
+                
+                {/* Mobile Cart and Wishlist */}
                 <div className="pt-6 border-t border-gray-200 space-y-3">
+                  <div className="flex space-x-4">
+                    <Link href="/wishlist" className="flex-1 flex items-center justify-center p-3 border border-red-200 text-red-600 hover:bg-red-50 rounded-lg transition-colors" onClick={() => setIsOpen(false)}>
+                      <Heart className="h-5 w-5 mr-2" />
+                      Wishlist ({wishlistState.itemCount})
+                    </Link>
+                    <Link href="/cart" className="flex-1 flex items-center justify-center p-3 border border-green-200 text-green-600 hover:bg-green-50 rounded-lg transition-colors" onClick={() => setIsOpen(false)}>
+                      <ShoppingCart className="h-5 w-5 mr-2" />
+                      Cart ({cartState.itemCount})
+                    </Link>
+                  </div>
                   <Button asChild variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-50 rounded-lg">
                     <Link href="/contact">
                       <Phone className="h-4 w-4 mr-2" />
