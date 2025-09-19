@@ -3,6 +3,7 @@ import { Playfair_Display, Cinzel, Poppins, Montserrat } from "next/font/google"
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { CartProvider } from "@/contexts/cart-context";
 
 // Primary heading font - Luxury & Heritage
 const playfairDisplay = Playfair_Display({
@@ -48,11 +49,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${playfairDisplay.variable} ${cinzel.variable} ${poppins.variable} ${montserrat.variable} font-poppins antialiased`}>
-        <Navbar />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Footer />
+        <CartProvider>
+          <Navbar />
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );

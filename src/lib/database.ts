@@ -38,15 +38,27 @@ export interface Product {
   name: string;
   description: string;
   shortDescription: string;
+  detailedDescription: string; // Rich text content
   images: string[];
   price: number;
+  originalPrice?: number; // For showing discounts
   unit: string;
   category: 'dairy' | 'grains' | 'vegetables' | 'spices' | 'handicrafts' | 'other';
   inStock: boolean;
+  stock: number; // Quantity available
   featured: boolean;
   organic: boolean;
   weight?: string;
   nutritionalInfo?: string;
+  ingredients?: string[];
+  benefits?: string[];
+  storageInstructions?: string;
+  shelfLife?: string;
+  origin?: string;
+  certifications?: string[];
+  tags?: string[];
+  rating?: number;
+  reviewCount?: number;
   createdAt: Date;
   updatedAt: Date;
 }

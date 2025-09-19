@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Product, getProducts, getAllProducts } from "@/lib/database";
+import { useCart } from "@/contexts/cart-context";
+import Link from "next/link";
 import { 
   Search, 
   Filter, 
@@ -18,6 +20,7 @@ import {
 import Image from "next/image";
 
 export default function ProductsPage() {
+  const { addItem } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,6 +29,7 @@ export default function ProductsPage() {
   const [showOnlyOrganic, setShowOnlyOrganic] = useState(false);
   const [showOnlyFeatured, setShowOnlyFeatured] = useState(false);
   const [showOutOfStock, setShowOutOfStock] = useState(false);
+  const [addingToCart, setAddingToCart] = useState<string | null>(null);
 
   const categories = [
     { value: "all", label: "All" },
@@ -68,6 +72,19 @@ export default function ProductsPage() {
     
     return matchesSearch && matchesCategory && matchesOrganic && matchesFeatured;
   });
+
+  const handleAddToCart = async (product: Product) => {
+    setAddingToCart(product.id);
+    try {
+      addItem(product, 1);
+      // You can add a toast notification here
+      console.log(`Added ${product.name} to cart`);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    } finally {
+      setAddingToCart(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -260,74 +277,121 @@ export default function ProductsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProducts.map((product) => (
-                <Card key={product.id} className="overflow-hidden hover:shadow-xl transition-shadow duration-300 rounded-lg">
-                  <div className="relative h-48">
-                    {product.images && product.images.length > 0 ? (
-                      <Image
-                        src={product.images[0]}
-                        alt={product.name}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                        <Package className="h-12 w-12 text-green-600" />
+                <Card key={product.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 rounded-lg border-0 shadow-lg">
+                  {/* Product Image - Clickable */}
+                  <Link href={`/products/${product.id}`}>
+                    <div className="relative h-48 cursor-pointer">
+                      {product.images && product.images.length > 0 ? (
+                        <Image
+                          src={product.images[0]}
+                          alt={product.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
+                          <Package className="h-12 w-12 text-green-600" />
+                        </div>
+                      )}
+                      
+                      {/* Badges */}
+                      <div className="absolute top-2 left-2 flex gap-2">
+                        {product.organic && (
+                          <Badge className="bg-green-600 text-white text-xs">
+                            <Leaf className="h-3 w-3 mr-1" />
+                            Organic
+                          </Badge>
+                        )}
+                        {product.featured && (
+                          <Badge className="bg-orange-600 text-white text-xs">
+                            <Star className="h-3 w-3 mr-1" />
+                            Featured
+                          </Badge>
+                        )}
                       </div>
-                    )}
-                    <div className="absolute top-2 left-2 flex gap-2">
-                      {product.organic && (
-                        <Badge className="bg-green-600 text-white text-xs">
-                          <Leaf className="h-3 w-3 mr-1" />
-                          Organic
+                      
+                      <div className="absolute top-2 right-2">
+                        <Badge 
+                          className={`text-xs ${product.inStock ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}
+                        >
+                          {product.inStock ? 'In Stock' : 'Out of Stock'}
                         </Badge>
-                      )}
-                      {product.featured && (
-                        <Badge className="bg-orange-600 text-white text-xs">
-                          <Star className="h-3 w-3 mr-1" />
-                          Featured
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="absolute top-2 right-2">
-                      <Badge 
-                        className={`text-xs ${product.inStock ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}
-                      >
-                        {product.inStock ? 'In Stock' : 'Out of Stock'}
-                      </Badge>
-                    </div>
-                  </div>
+                      </div>
 
-                  <CardHeader>
+                      {/* Discount Badge */}
+                      {product.originalPrice && product.originalPrice > product.price && (
+                        <div className="absolute bottom-2 left-2">
+                          <Badge className="bg-red-500 text-white text-xs">
+                            {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+
+                  <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg text-gray-900">{product.name}</CardTitle>
+                      <div className="flex-1">
+                        <Link href={`/products/${product.id}`}>
+                          <CardTitle className="text-lg text-gray-900 hover:text-green-600 transition-colors cursor-pointer line-clamp-2">
+                            {product.name}
+                          </CardTitle>
+                        </Link>
                         <Badge variant="outline" className="mt-1 text-xs capitalize">
                           {product.category}
                         </Badge>
                       </div>
-                      <div className="text-right">
-                        <div className="text-xl font-bold text-green-600">₹{product.price}</div>
+                      <div className="text-right ml-2">
+                        <div className="flex items-center gap-1">
+                          {product.originalPrice && product.originalPrice > product.price && (
+                            <span className="text-sm text-gray-400 line-through">
+                              ₹{product.originalPrice}
+                            </span>
+                          )}
+                          <div className="text-xl font-bold text-green-600">₹{product.price}</div>
+                        </div>
                         <div className="text-xs text-gray-500">per {product.unit}</div>
                       </div>
                     </div>
                   </CardHeader>
 
-                  <CardContent>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {product.description}
+                  <CardContent className="pt-0">
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                      {product.shortDescription || product.description}
                     </p>
 
-                    {product.weight && (
-                      <p className="text-xs text-gray-500 mb-2">Weight: {product.weight}</p>
-                    )}
+                    <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                      {product.weight && (
+                        <span>Size: {product.weight}</span>
+                      )}
+                      {product.stock && product.inStock && (
+                        <span>{product.stock} available</span>
+                      )}
+                    </div>
 
-                    <Button 
-                      className="w-full rounded-lg bg-green-600 hover:bg-green-700"
-                      disabled={!product.inStock}
-                    >
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      {product.inStock ? 'Add to Cart' : 'Out of Stock'}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        className="flex-1 rounded-lg bg-green-600 hover:bg-green-700"
+                        disabled={!product.inStock || addingToCart === product.id}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleAddToCart(product);
+                        }}
+                      >
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        {addingToCart === product.id ? 'Adding...' : 
+                         product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                      </Button>
+                      
+                      <Link href={`/products/${product.id}`}>
+                        <Button 
+                          variant="outline" 
+                          className="rounded-lg"
+                        >
+                          View
+                        </Button>
+                      </Link>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
