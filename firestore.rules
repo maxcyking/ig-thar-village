@@ -1,0 +1,109 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection - users can read/write their own data, admins can read all
+    match /users/{userId} {
+      // Allow users to read and write their own profile
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Allow authenticated users to read user profiles (for admin role checking)
+      allow read: if request.auth != null;
+      
+      // Allow admins to read and write all user profiles
+      allow read, write: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Products collection - public read, admin write
+    match /products/{productId} {
+      // Anyone can read products
+      allow read: if true;
+      
+      // Only admins can create, update, delete products
+      allow create, update, delete: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Blogs collection - public read, admin write
+    match /blogs/{blogId} {
+      // Anyone can read blogs
+      allow read: if true;
+      
+      // Only admins can create, update, delete blogs
+      allow create, update, delete: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Gallery collection - public read, admin write
+    match /gallery/{galleryId} {
+      // Anyone can read gallery items
+      allow read: if true;
+      
+      // Only admins can create, update, delete gallery items
+      allow create, update, delete: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Media collection - public read, admin write
+    match /media/{mediaId} {
+      // Anyone can read media items
+      allow read: if true;
+      
+      // Only admins can create, update, delete media items
+      allow create, update, delete: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Contact messages - authenticated users can create, admins can read all
+    match /contacts/{contactId} {
+      // Anyone can create contact messages
+      allow create: if true;
+      
+      // Only admins can read contact messages
+      allow read: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Properties collection - public read, admin write
+    match /properties/{propertyId} {
+      // Anyone can read properties
+      allow read: if true;
+      
+      // Only admins can create, update, delete properties
+      allow create, update, delete: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Services collection - public read, admin write
+    match /services/{serviceId} {
+      // Anyone can read services
+      allow read: if true;
+      
+      // Only admins can create, update, delete services
+      allow create, update, delete: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Settings collection - admin only
+    match /settings/{settingId} {
+      // Only admins can read and write settings
+      allow read, write: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Default deny all other documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
