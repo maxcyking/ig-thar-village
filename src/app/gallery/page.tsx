@@ -1,84 +1,55 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { getGalleryImages, type GalleryImage } from "@/lib/database";
 
-const galleryImages = [
-  {
-    id: 1,
-    title: "Traditional Mud Houses",
-    category: "Accommodation",
-    description: "Authentic desert homes built with cow dung, clay, and grass"
-  },
-  {
-    id: 2,
-    title: "Desert Safari Adventure",
-    category: "Activities",
-    description: "Exploring the vast sand dunes of Thar Desert"
-  },
-  {
-    id: 3,
-    title: "Camel Safari Experience",
-    category: "Activities",
-    description: "Riding the ship of the desert at sunset"
-  },
-  {
-    id: 4,
-    title: "Traditional Rajasthani Cuisine",
-    category: "Food",
-    description: "Dal Baati Churma and other authentic dishes"
-  },
-  {
-    id: 5,
-    title: "Ghoomar Dance Performance",
-    category: "Culture",
-    description: "Traditional folk dance of Rajasthan"
-  },
-  {
-    id: 6,
-    title: "Organic Farm Tour",
-    category: "Agriculture",
-    description: "Sustainable farming practices in the desert"
-  },
-  {
-    id: 7,
-    title: "Traditional Attire",
-    category: "Culture",
-    description: "Authentic Rajasthani clothing and accessories"
-  },
-  {
-    id: 8,
-    title: "Baba Ramdev Ji Temple",
-    category: "Spirituality",
-    description: "Sacred birthplace of the folk deity"
-  },
-  {
-    id: 9,
-    title: "Historic Batadu Well",
-    category: "Heritage",
-    description: "Ancient water conservation architecture"
-  },
-  {
-    id: 10,
-    title: "Desert Sunset Views",
-    category: "Nature",
-    description: "Breathtaking sunsets over the sand dunes"
-  },
-  {
-    id: 11,
-    title: "Traditional Farming Tools",
-    category: "Agriculture",
-    description: "Hand-operated mills and ox-drawn plows"
-  },
-  {
-    id: 12,
-    title: "Langa Folk Music",
-    category: "Culture",
-    description: "Soulful traditional music performances"
-  }
+const categories = [
+  { value: "all", label: "All" },
+  { value: "accommodation", label: "Accommodation" },
+  { value: "activities", label: "Activities" },
+  { value: "food", label: "Food" },
+  { value: "culture", label: "Culture" },
+  { value: "agriculture", label: "Agriculture" },
+  { value: "heritage", label: "Heritage" },
+  { value: "nature", label: "Nature" },
+  { value: "spirituality", label: "Spirituality" }
 ];
 
-const categories = ["All", "Accommodation", "Activities", "Food", "Culture", "Agriculture", "Heritage", "Nature", "Spirituality"];
-
 export default function GalleryPage() {
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
+  const [filteredImages, setFilteredImages] = useState<GalleryImage[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadImages = async () => {
+      try {
+        const images = await getGalleryImages();
+        setGalleryImages(images);
+        setFilteredImages(images);
+      } catch (error) {
+        console.error("Error loading gallery images:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadImages();
+  }, []);
+
+  useEffect(() => {
+    if (selectedCategory === "all") {
+      setFilteredImages(galleryImages);
+    } else {
+      setFilteredImages(galleryImages.filter(image => image.category === selectedCategory));
+    }
+  }, [selectedCategory, galleryImages]);
+
+  const handleCategoryFilter = (category: string) => {
+    setSelectedCategory(category);
+  };
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -107,49 +78,96 @@ export default function GalleryPage() {
             </p>
           </div>
 
-          {/* Category Filter - For now showing all, can be made interactive later */}
+          {/* Category Filter */}
           <div className="flex flex-wrap justify-center gap-2 mb-12">
             {categories.map((category) => (
               <Badge 
-                key={category} 
-                variant={category === "All" ? "default" : "secondary"}
+                key={category.value} 
+                variant={selectedCategory === category.value ? "default" : "secondary"}
                 className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                onClick={() => handleCategoryFilter(category.value)}
               >
-                {category}
+                {category.label}
               </Badge>
             ))}
           </div>
 
+          {/* Loading State */}
+          {loading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <Card key={i} className="rounded-lg overflow-hidden">
+                  <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 animate-pulse">
+                  </div>
+                  <CardContent className="p-4">
+                    <div className="space-y-2">
+                      <div className="h-4 bg-primary/20 rounded animate-pulse"></div>
+                      <div className="h-3 bg-primary/10 rounded animate-pulse"></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
           {/* Gallery Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {galleryImages.map((image) => (
-              <Card key={image.id} className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
-                <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 relative overflow-hidden">
-                  {/* Placeholder for actual images */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center p-4">
-                      <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <span className="text-2xl text-primary">📸</span>
+          {!loading && filteredImages.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredImages.map((image) => (
+                <Card key={image.id} className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
+                  <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 relative overflow-hidden">
+                    {image.imageUrl ? (
+                      <img
+                        src={image.imageUrl}
+                        alt={image.altText || image.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center p-4">
+                          <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span className="text-2xl text-primary">📸</span>
+                          </div>
+                          <p className="text-sm text-primary/70 font-medium">
+                            {image.title}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-primary/70 font-medium">
-                        {image.title}
-                      </p>
+                    )}
+                    
+                    {/* Overlay on hover */}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
+                      <div className="p-4 text-white w-full">
+                        <Badge className="mb-2 bg-white/20 text-white border-white/30 capitalize">
+                          {image.category.replace("-", " ")}
+                        </Badge>
+                        <h3 className="font-semibold mb-1">{image.title}</h3>
+                        <p className="text-sm text-white/90">{image.description}</p>
+                      </div>
                     </div>
                   </div>
-                  {/* Overlay on hover */}
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
-                    <div className="p-4 text-white w-full">
-                      <Badge className="mb-2 bg-white/20 text-white border-white/30">
-                        {image.category}
-                      </Badge>
-                      <h3 className="font-semibold mb-1">{image.title}</h3>
-                      <p className="text-sm text-white/90">{image.description}</p>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* No Images Found */}
+          {!loading && filteredImages.length === 0 && (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-4xl">📸</span>
+              </div>
+              <h3 className="text-2xl font-bold text-primary mb-4">
+                {selectedCategory === "all" ? "No Images Yet" : "No Images in This Category"}
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                {selectedCategory === "all" 
+                  ? "We're currently building our gallery. Check back soon for stunning images of our desert experiences!"
+                  : `No images found in the ${categories.find(c => c.value === selectedCategory)?.label} category. Try selecting a different category.`
+                }
+              </p>
+            </div>
+          )}
 
           {/* Note about images */}
           <div className="text-center mt-12">

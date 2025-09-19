@@ -103,10 +103,13 @@ export default function AdminProductsPage() {
         imageUrls = await uploadMultipleImages([productData.image], 'products');
       }
 
+      // Remove the image field and create clean product data
+      const { image, stock, ...cleanProductData } = productData;
+      
       const productToSave = {
-        ...productData,
+        ...cleanProductData,
         images: imageUrls,
-        inStock: productData.stock > 0,
+        inStock: stock > 0,
         shortDescription: productData.description.substring(0, 100)
       };
 

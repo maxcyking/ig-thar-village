@@ -1,64 +1,35 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Award, Trophy, Star, Medal, Users, Leaf } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Award, Trophy, Star, Medal, Users, Leaf, Download, ExternalLink, Quote, ArrowRight, CheckCircle } from "lucide-react";
+import { getAwards, type Award as AwardType } from "@/lib/database";
 
-const awards = [
-  {
-    id: 1,
-    title: "Best Sustainable Tourism Initiative",
-    organization: "Rajasthan Tourism Board",
-    year: "2024",
-    description: "Recognized for promoting eco-friendly tourism practices and preserving traditional desert culture.",
-    icon: Leaf,
-    category: "Sustainability"
-  },
-  {
-    id: 2,
-    title: "Excellence in Rural Tourism",
-    organization: "Ministry of Tourism, India",
-    year: "2024",
-    description: "Awarded for outstanding contribution to rural tourism development and community empowerment.",
-    icon: Trophy,
-    category: "Tourism"
-  },
-  {
-    id: 3,
-    title: "Best Farm Stay Experience",
-    organization: "Desert Tourism Association",
-    year: "2023",
-    description: "Honored for providing authentic farm stay experiences and traditional hospitality.",
-    icon: Award,
-    category: "Hospitality"
-  },
-  {
-    id: 4,
-    title: "Cultural Heritage Preservation Award",
-    organization: "Rajasthan Cultural Society",
-    year: "2023",
-    description: "Recognized for efforts in preserving and promoting traditional Rajasthani culture and practices.",
-    icon: Medal,
-    category: "Culture"
-  },
-  {
-    id: 5,
-    title: "Community Impact Recognition",
-    organization: "Local Development Council",
-    year: "2023",
-    description: "Acknowledged for positive impact on local community development and employment generation.",
-    icon: Users,
-    category: "Community"
-  },
-  {
-    id: 6,
-    title: "Organic Farming Excellence",
-    organization: "Organic Farmers Association",
-    year: "2023",
-    description: "Awarded for innovative organic farming practices in arid regions and sustainable agriculture.",
-    icon: Leaf,
-    category: "Agriculture"
-  }
-];
+const categoryIcons = {
+  sustainability: Leaf,
+  tourism: Trophy,
+  hospitality: Medal,
+  culture: Award,
+  community: Users,
+  agriculture: Leaf,
+  innovation: Star,
+  other: Medal
+};
 
+const categoryColors = {
+  sustainability: "text-green-600 bg-green-50",
+  tourism: "text-blue-600 bg-blue-50",
+  hospitality: "text-purple-600 bg-purple-50",
+  culture: "text-orange-600 bg-orange-50",
+  community: "text-pink-600 bg-pink-50",
+  agriculture: "text-emerald-600 bg-emerald-50",
+  innovation: "text-indigo-600 bg-indigo-50",
+  other: "text-gray-600 bg-gray-50"
+};
+
+// Static recognitions data
 const recognitions = [
   {
     title: "Featured in National Geographic",
@@ -83,29 +54,111 @@ const recognitions = [
 ];
 
 export default function AwardsPage() {
+  const [awards, setAwards] = useState<AwardType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  useEffect(() => {
+    const loadAwards = async () => {
+      try {
+        const awardData = await getAwards();
+        setAwards(awardData);
+      } catch (error) {
+        console.error("Error loading awards:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAwards();
+  }, []);
+
+  const filteredAwards = selectedCategory === "all" 
+    ? awards 
+    : awards.filter(award => award.category === selectedCategory);
+
+  const categories = [
+    { value: "all", label: "All Awards" },
+    ...Array.from(new Set(awards.map(award => award.category))).map(cat => ({
+      value: cat,
+      label: cat.charAt(0).toUpperCase() + cat.slice(1)
+    }))
+  ];
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="py-16 rajasthani-orange">
-        <div className="container mx-auto px-4">
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600"></div>
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            <div className="flex justify-center mb-6">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full p-4">
+                <Trophy className="h-12 w-12 text-white" />
+              </div>
+            </div>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
               Awards & Recognition
             </h1>
-            <p className="text-xl text-white/90 mb-8">
+            <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed">
               Celebrating our commitment to authentic desert experiences, sustainable tourism, and cultural preservation
             </p>
-            <div className="flex justify-center space-x-4">
-              <Badge className="bg-white/20 text-white border-white/30 text-lg px-4 py-2">
-                6+ Awards
+            <div className="flex flex-wrap justify-center gap-4 mb-8">
+              <Badge className="bg-white/20 text-white border-white/30 text-lg px-6 py-2 backdrop-blur-sm">
+                <Trophy className="h-4 w-4 mr-2" />
+                {awards.length}+ Awards
               </Badge>
-              <Badge className="bg-white/20 text-white border-white/30 text-lg px-4 py-2">
-                Since 2023
+              <Badge className="bg-white/20 text-white border-white/30 text-lg px-6 py-2 backdrop-blur-sm">
+                <Star className="h-4 w-4 mr-2" />
+                Multi-year Recognition
+              </Badge>
+              <Badge className="bg-white/20 text-white border-white/30 text-lg px-6 py-2 backdrop-blur-sm">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Verified Excellence
               </Badge>
             </div>
+            {awards.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                {Array.from(new Set(awards.map(a => a.year))).slice(0, 4).map((year) => (
+                  <div key={year} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                    <div className="text-2xl font-bold text-white">{year}</div>
+                    <div className="text-sm text-white/80">
+                      {awards.filter(a => a.year === year).length} Awards
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-1/4 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-1/4 right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
       </section>
+
+      {/* Category Filter */}
+      {categories.length > 1 && (
+        <section className="py-8 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-center">
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <Button
+                    key={category.value}
+                    variant={selectedCategory === category.value ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category.value)}
+                    className="rounded-full"
+                  >
+                    {category.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Awards Grid */}
       <section className="py-16 bg-background">
@@ -119,33 +172,131 @@ export default function AwardsPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {awards.map((award) => {
-              const IconComponent = award.icon;
-              return (
-                <Card key={award.id} className="rounded-lg border-2 hover:shadow-lg transition-all duration-300 hover:border-primary/50">
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="bg-primary/10 rounded-lg p-3">
-                        <IconComponent className="h-8 w-8 text-primary" />
-                      </div>
-                      <div className="text-right">
-                        <Badge variant="secondary">{award.category}</Badge>
-                        <p className="text-sm text-muted-foreground mt-1">{award.year}</p>
-                      </div>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <div className="aspect-video bg-gray-200 animate-pulse"></div>
+                  <CardContent className="p-6">
+                    <div className="space-y-3">
+                      <div className="h-6 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
                     </div>
-                    <CardTitle className="text-xl text-primary">{award.title}</CardTitle>
-                    <CardDescription className="text-sm font-medium text-primary/70">
-                      {award.organization}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">{award.description}</p>
                   </CardContent>
                 </Card>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          ) : filteredAwards.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredAwards.map((award) => {
+                const IconComponent = categoryIcons[award.category as keyof typeof categoryIcons] || Medal;
+                const colorClass = categoryColors[award.category as keyof typeof categoryColors] || "text-gray-600 bg-gray-50";
+                
+                return (
+                  <Card key={award.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-2">
+                    <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+                      {award.imageUrl ? (
+                        <img
+                          src={award.imageUrl}
+                          alt={award.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <div className={`rounded-full p-6 ${colorClass}`}>
+                            <IconComponent className="h-12 w-12" />
+                          </div>
+                        </div>
+                      )}
+                      
+                      {award.featured && (
+                        <div className="absolute top-4 left-4">
+                          <Badge className="bg-yellow-500 text-white border-0">
+                            <Star className="h-3 w-3 mr-1" />
+                            Featured
+                          </Badge>
+                        </div>
+                      )}
+                      
+                      <div className="absolute top-4 right-4">
+                        <Badge variant="secondary" className="bg-white/90 text-gray-800">
+                          {award.year}
+                        </Badge>
+                      </div>
+                    </div>
+                    
+                    <CardContent className="p-6">
+                      <div className="space-y-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs capitalize ${colorClass} border-0`}
+                            >
+                              {award.category.replace("-", " ")}
+                            </Badge>
+                          </div>
+                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+                            {award.title}
+                          </h3>
+                          <p className="text-sm font-medium text-primary/80 mb-3">
+                            {award.organization}
+                          </p>
+                        </div>
+                        
+                        <p className="text-gray-600 text-sm leading-relaxed">
+                          {award.description}
+                        </p>
+                        
+                        {(award.certificateUrl || award.certificateNumber) && (
+                          <div className="pt-4 border-t border-gray-100">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center text-xs text-gray-500">
+                                <Medal className="h-3 w-3 mr-1" />
+                                Certificate Available
+                              </div>
+                              {award.certificateUrl && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-8 px-3 text-xs"
+                                  onClick={() => window.open(award.certificateUrl, '_blank')}
+                                >
+                                  <Download className="h-3 w-3 mr-1" />
+                                  View
+                                </Button>
+                              )}
+                            </div>
+                            {award.certificateNumber && (
+                              <p className="text-xs text-gray-400 mt-1">
+                                Cert. #{award.certificateNumber}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="bg-gray-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                <Trophy className="h-12 w-12 text-gray-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                {selectedCategory === "all" ? "No Awards Yet" : "No Awards in This Category"}
+              </h3>
+              <p className="text-gray-600 max-w-md mx-auto">
+                {selectedCategory === "all" 
+                  ? "We're working hard to earn recognition for our authentic desert experiences and sustainable practices."
+                  : `No awards found in the ${categories.find(c => c.value === selectedCategory)?.label} category. Check out other categories.`
+                }
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -182,103 +333,201 @@ export default function AwardsPage() {
       </section>
 
       {/* Testimonials from Award Bodies */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              What They Say About Us
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Testimonials from award organizations and recognition bodies
-            </p>
-          </div>
+      {(awards.some(award => award.testimonial) || awards.length > 0) && (
+        <section className="py-16 bg-gradient-to-br from-gray-50 to-white">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                What They Say About Us
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Testimonials from award organizations and recognition bodies
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="rounded-lg border-2">
-              <CardContent className="p-8">
-                <div className="flex items-center mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-5 w-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground mb-6 italic">
-                  "IG Thar Village represents the perfect blend of authentic cultural preservation 
-                  and sustainable tourism practices. Their commitment to showcasing traditional 
-                  desert life while supporting local communities is truly commendable."
-                </p>
-                <div>
-                  <p className="font-semibold text-primary">Dr. Rajesh Sharma</p>
-                  <p className="text-sm text-muted-foreground">Director, Rajasthan Tourism Board</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-lg border-2">
-              <CardContent className="p-8">
-                <div className="flex items-center mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-5 w-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-muted-foreground mb-6 italic">
-                  "The innovative approach of Dr. Devaram Pawar and Dhapu in creating authentic 
-                  desert experiences while maintaining ecological balance sets a new standard 
-                  for rural tourism in India."
-                </p>
-                <div>
-                  <p className="font-semibold text-primary">Prof. Meera Joshi</p>
-                  <p className="text-sm text-muted-foreground">Cultural Heritage Expert</p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* Dynamic testimonials from awards */}
+              {awards
+                .filter(award => award.testimonial && award.testimonialAuthor)
+                .slice(0, 2)
+                .map((award) => (
+                  <Card key={award.id} className="bg-white shadow-lg border-0 hover:shadow-xl transition-shadow duration-300">
+                    <CardContent className="p-8">
+                      <div className="flex items-center mb-6">
+                        <Quote className="h-8 w-8 text-primary/20 mr-3" />
+                        <div className="flex items-center">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} className="h-4 w-4 text-yellow-500 fill-current" />
+                          ))}
+                        </div>
+                      </div>
+                      <blockquote className="text-gray-700 mb-6 italic text-lg leading-relaxed">
+                        "{award.testimonial}"
+                      </blockquote>
+                      <div className="flex items-center">
+                        <div className="bg-primary/10 rounded-full p-2 mr-4">
+                          <Award className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">{award.testimonialAuthor}</p>
+                          <p className="text-sm text-gray-600">{award.testimonialPosition}</p>
+                          <p className="text-xs text-primary mt-1">Related to: {award.title}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              
+              {/* Static testimonials if no dynamic ones or to fill slots */}
+              {awards.filter(award => award.testimonial && award.testimonialAuthor).length < 2 && (
+                <>
+                  <Card className="bg-white shadow-lg border-0 hover:shadow-xl transition-shadow duration-300">
+                    <CardContent className="p-8">
+                      <div className="flex items-center mb-6">
+                        <Quote className="h-8 w-8 text-primary/20 mr-3" />
+                        <div className="flex items-center">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} className="h-4 w-4 text-yellow-500 fill-current" />
+                          ))}
+                        </div>
+                      </div>
+                      <blockquote className="text-gray-700 mb-6 italic text-lg leading-relaxed">
+                        "IG Thar Village represents the perfect blend of authentic cultural preservation 
+                        and sustainable tourism practices. Their commitment to showcasing traditional 
+                        desert life while supporting local communities is truly commendable."
+                      </blockquote>
+                      <div className="flex items-center">
+                        <div className="bg-primary/10 rounded-full p-2 mr-4">
+                          <Trophy className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">Dr. Rajesh Sharma</p>
+                          <p className="text-sm text-gray-600">Director, Rajasthan Tourism Board</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  {awards.filter(award => award.testimonial && award.testimonialAuthor).length === 0 && (
+                    <Card className="bg-white shadow-lg border-0 hover:shadow-xl transition-shadow duration-300">
+                      <CardContent className="p-8">
+                        <div className="flex items-center mb-6">
+                          <Quote className="h-8 w-8 text-primary/20 mr-3" />
+                          <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star key={star} className="h-4 w-4 text-yellow-500 fill-current" />
+                            ))}
+                          </div>
+                        </div>
+                        <blockquote className="text-gray-700 mb-6 italic text-lg leading-relaxed">
+                          "The innovative approach of Dr. Devaram Pawar and Dhapu in creating authentic 
+                          desert experiences while maintaining ecological balance sets a new standard 
+                          for rural tourism in India."
+                        </blockquote>
+                        <div className="flex items-center">
+                          <div className="bg-primary/10 rounded-full p-2 mr-4">
+                            <Medal className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900">Prof. Meera Joshi</p>
+                            <p className="text-sm text-gray-600">Cultural Heritage Expert</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Future Goals */}
-      <section className="py-16 desert-gradient">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-700 to-indigo-800"></div>
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="relative container mx-auto px-4">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center bg-white/10 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+              <ArrowRight className="h-4 w-4 text-white mr-2" />
+              <span className="text-white text-sm font-medium">Looking Ahead</span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
               Our Vision Forward
             </h2>
-            <p className="text-lg text-primary/80 max-w-2xl mx-auto">
+            <p className="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
               Continuing our mission to preserve desert culture and promote sustainable tourism
+              while setting new standards for authentic experiences
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Trophy className="h-8 w-8 text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="group text-center">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 h-full">
+                <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Trophy className="h-10 w-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">National Recognition</h3>
+                <p className="text-white/80 leading-relaxed">
+                  Aiming for national-level awards for cultural preservation and sustainable tourism excellence, 
+                  setting benchmarks for authentic desert experiences.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-primary mb-2">National Recognition</h3>
-              <p className="text-primary/70">
-                Aiming for national-level awards for cultural preservation and sustainable tourism excellence.
-              </p>
             </div>
 
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-primary" />
+            <div className="group text-center">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 h-full">
+                <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Users className="h-10 w-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Community Impact</h3>
+                <p className="text-white/80 leading-relaxed">
+                  Expanding our positive impact on local communities through increased tourism, 
+                  employment generation, and preservation of traditional livelihoods.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-primary mb-2">Community Impact</h3>
-              <p className="text-primary/70">
-                Expanding our positive impact on local communities through increased tourism and employment.
-              </p>
             </div>
 
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Leaf className="h-8 w-8 text-primary" />
+            <div className="group text-center">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 h-full">
+                <div className="bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <Leaf className="h-10 w-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Sustainability Leadership</h3>
+                <p className="text-white/80 leading-relaxed">
+                  Becoming a model for sustainable desert tourism practices across India and beyond, 
+                  inspiring others to follow our eco-friendly approach.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-primary mb-2">Sustainability Leadership</h3>
-              <p className="text-primary/70">
-                Becoming a model for sustainable desert tourism practices across India and beyond.
+            </div>
+          </div>
+
+          {/* Call to Action */}
+          <div className="text-center mt-16">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-white mb-4">
+                Join Our Journey
+              </h3>
+              <p className="text-white/90 mb-6">
+                Be part of our mission to preserve desert heritage while creating meaningful, 
+                sustainable tourism experiences.
               </p>
+              <Button 
+                className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-3 rounded-full font-medium"
+                onClick={() => window.location.href = '/contact'}
+              >
+                Get In Touch
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-1/4 left-10 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-1/4 right-10 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
       </section>
     </div>
   );

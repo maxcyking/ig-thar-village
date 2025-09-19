@@ -56,8 +56,11 @@ export default function AdminPropertiesPage() {
         imageUrls = await uploadMultipleImages(propertyData.images, 'properties');
       }
 
+      // Remove any File objects and create clean property data
+      const { images: originalImages, ...cleanPropertyData } = propertyData;
+
       const propertyToSave = {
-        ...propertyData,
+        ...cleanPropertyData,
         images: imageUrls
       };
 

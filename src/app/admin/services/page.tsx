@@ -68,8 +68,11 @@ export default function AdminServicesPage() {
         imageUrls = await uploadMultipleImages(serviceData.images, 'services');
       }
 
+      // Remove any File objects and create clean service data
+      const { images: originalImages, ...cleanServiceData } = serviceData;
+
       const serviceToSave = {
-        ...serviceData,
+        ...cleanServiceData,
         images: imageUrls
       };
 

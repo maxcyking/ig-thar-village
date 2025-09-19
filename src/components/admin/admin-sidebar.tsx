@@ -13,7 +13,8 @@ import {
   Settings,
   BarChart3,
   Home,
-  MapPin
+  MapPin,
+  Award
 } from "lucide-react";
 
 const navigation = [
@@ -46,6 +47,11 @@ const navigation = [
     name: "Media",
     href: "/admin/media",
     icon: Image,
+  },
+  {
+    name: "Awards",
+    href: "/admin/awards",
+    icon: Award,
   },
   {
     name: "Bookings",
