@@ -93,6 +93,17 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     
+    // Awards collection - public read, admin write
+    match /awards/{awardId} {
+      // Anyone can read awards
+      allow read: if true;
+      
+      // Only admins can create, update, delete awards
+      allow create, update, delete: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
     // Settings collection - admin only
     match /settings/{settingId} {
       // Only admins can read and write settings

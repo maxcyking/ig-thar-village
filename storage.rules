@@ -79,6 +79,17 @@ service firebase.storage {
         firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     
+    // Awards folder - public read, admin write
+    match /awards/{allPaths=**} {
+      // Anyone can read award files (certificates, images)
+      allow read: if true;
+      
+      // Only admins can upload/delete award files
+      allow write: if request.auth != null && 
+        firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+        firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
     // Default deny all other files
     match /{allPaths=**} {
       allow read, write: if false;
