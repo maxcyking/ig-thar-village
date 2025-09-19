@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Upload, X, FileText, Loader2 } from "lucide-react";
+import { Upload, X, Loader2 } from "lucide-react";
 import { createAward, updateAward, type Award } from "@/lib/database";
 import { uploadImage } from "@/lib/storage";
 
@@ -56,11 +56,11 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type (allow images for certificate photos)
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+    // Validate file type (only images for certificate photos)
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
     
     if (!validTypes.includes(file.type)) {
-      setErrors(prev => ({ ...prev, certificate: "Please select an image file (JPEG, PNG, WebP) or PDF" }));
+      setErrors(prev => ({ ...prev, certificate: "Please select an image file (JPEG, PNG, or WebP)" }));
       return;
     }
 
@@ -72,16 +72,12 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
 
     setSelectedCertificateFile(file);
     
-    // Create preview for images only
-    if (file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setCertificatePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setCertificatePreview(""); // Clear preview for PDFs
-    }
+    // Create preview for images
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setCertificatePreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
     
     // Clear any existing errors
     if (errors.certificate) {
@@ -276,29 +272,17 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
                 Drag and drop your certificate image or click to browse
               </p>
               <p className="text-xs text-muted-foreground">
-                Supports JPG, PNG, WebP, and PDF files up to 10MB
+                Supports JPG, PNG, and WebP image files up to 10MB
               </p>
             </div>
           ) : (
             <div className="relative">
               <div className="aspect-video rounded-lg overflow-hidden bg-muted border">
-                {selectedCertificateFile?.type === 'application/pdf' || (certificatePreview && certificatePreview.includes('pdf')) ? (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-center">
-                      <FileText className="mx-auto h-16 w-16 text-red-600 mb-2" />
-                      <p className="text-sm font-medium">PDF Certificate</p>
-                      <p className="text-xs text-muted-foreground">
-                        {selectedCertificateFile?.name || 'Certificate file'}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <img
-                    src={certificatePreview}
-                    alt="Certificate preview"
-                    className="w-full h-full object-cover"
-                  />
-                )}
+                <img
+                  src={certificatePreview}
+                  alt="Certificate preview"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <Button
                 type="button"
@@ -315,11 +299,11 @@ export default function AwardForm({ award, onAwardAdded }: AwardFormProps) {
           <input
             ref={certificateInputRef}
             type="file"
-            accept="image/*,.pdf"
+            accept="image/*"
             onChange={handleCertificateSelect}
             className="hidden"
-            aria-label="Upload certificate file"
-            title="Upload certificate file"
+            aria-label="Upload certificate image"
+            title="Upload certificate image"
           />
           
           {errors.certificate && (

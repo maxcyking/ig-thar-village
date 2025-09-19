@@ -188,95 +188,92 @@ export default function AwardsPage() {
               ))}
             </div>
           ) : filteredAwards.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filteredAwards.map((award) => {
                 const IconComponent = categoryIcons[award.category as keyof typeof categoryIcons] || Medal;
                 const colorClass = categoryColors[award.category as keyof typeof categoryColors] || "text-gray-600 bg-gray-50";
                 
                 return (
-                  <Card key={award.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-2">
-                    <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-                      {award.imageUrl ? (
+                  <Card key={award.id} className="group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 shadow-lg hover:-translate-y-3 cursor-pointer h-72 rounded-xl">
+                    {/* Certificate Image Background */}
+                    <div className="absolute inset-0">
+                      {award.certificateUrl ? (
+                        <img
+                          src={award.certificateUrl}
+                          alt={award.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
+                      ) : award.imageUrl ? (
                         <img
                           src={award.imageUrl}
                           alt={award.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className={`rounded-full p-6 ${colorClass}`}>
-                            <IconComponent className="h-12 w-12" />
-                          </div>
+                        <div className={`w-full h-full flex items-center justify-center ${colorClass.split(' ').slice(-1)[0]} bg-gradient-to-br from-gray-100 to-gray-200`}>
+                          <IconComponent className="h-16 w-16 text-gray-400" />
                         </div>
                       )}
-                      
-                      {award.featured && (
-                        <div className="absolute top-4 left-4">
-                          <Badge className="bg-yellow-500 text-white border-0">
+                    </div>
+                    
+                    {/* Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-black/90 group-hover:via-black/60 transition-all duration-500" />
+                    
+                    {/* Content */}
+                    <div className="absolute inset-0 p-4 flex flex-col justify-between text-white">
+                      {/* Top badges */}
+                      <div className="flex items-start justify-between">
+                        {award.featured && (
+                          <Badge className="bg-yellow-500/90 text-white border-0 text-xs">
                             <Star className="h-3 w-3 mr-1" />
                             Featured
                           </Badge>
-                        </div>
-                      )}
-                      
-                      <div className="absolute top-4 right-4">
-                        <Badge variant="secondary" className="bg-white/90 text-gray-800">
+                        )}
+                        <Badge variant="secondary" className="bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs">
                           {award.year}
                         </Badge>
                       </div>
-                    </div>
-                    
-                    <CardContent className="p-6">
-                      <div className="space-y-4">
-                        <div>
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge 
-                              variant="outline" 
-                              className={`text-xs capitalize ${colorClass} border-0`}
-                            >
-                              {award.category.replace("-", " ")}
-                            </Badge>
-                          </div>
-                          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
-                            {award.title}
-                          </h3>
-                          <p className="text-sm font-medium text-primary/80 mb-3">
-                            {award.organization}
-                          </p>
-                        </div>
+                      
+                      {/* Bottom content */}
+                      <div className="space-y-2">
+                        <Badge 
+                          variant="outline" 
+                          className="text-xs capitalize bg-white/20 text-white border-white/30 backdrop-blur-sm w-fit"
+                        >
+                          {award.category.replace("-", " ")}
+                        </Badge>
                         
-                        <p className="text-gray-600 text-sm leading-relaxed">
-                          {award.description}
+                        <h3 className="text-lg font-bold leading-tight line-clamp-2">
+                          {award.title}
+                        </h3>
+                        
+                        <p className="text-sm text-white/90 font-medium">
+                          {award.organization}
                         </p>
                         
-                        {(award.certificateUrl || award.certificateNumber) && (
-                          <div className="pt-4 border-t border-gray-100">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center text-xs text-gray-500">
-                                <Medal className="h-3 w-3 mr-1" />
-                                Certificate Available
-                              </div>
-                              {award.certificateUrl && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="h-8 px-3 text-xs"
-                                  onClick={() => window.open(award.certificateUrl, '_blank')}
-                                >
-                                  <Download className="h-3 w-3 mr-1" />
-                                  View
-                                </Button>
-                              )}
-                            </div>
-                            {award.certificateNumber && (
-                              <p className="text-xs text-gray-400 mt-1">
-                                Cert. #{award.certificateNumber}
-                              </p>
-                            )}
-                          </div>
-                        )}
+                        {/* Hidden description that appears on hover */}
+                        <div className="transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                          <p className="text-xs text-white/80 leading-relaxed line-clamp-3 mb-3">
+                            {award.description}
+                          </p>
+                          
+                          {award.certificateUrl && (
+                            <Button 
+                              variant="secondary" 
+                              size="sm" 
+                              className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm text-xs h-8"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.open(award.certificateUrl, '_blank');
+                              }}
+                            >
+                              <Download className="h-3 w-3 mr-1" />
+                              View Certificate
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                    </CardContent>
+                    </div>
                   </Card>
                 );
               })}
