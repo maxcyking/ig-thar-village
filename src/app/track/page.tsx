@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -79,7 +79,7 @@ const orderStatusConfig = {
 
 const statusSteps = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
 
-export default function TrackOrderPage() {
+function TrackOrderContent() {
   const searchParams = useSearchParams();
   const [orderNumber, setOrderNumber] = useState(searchParams.get('order') || '');
   const [order, setOrder] = useState<Order | null>(null);
@@ -459,5 +459,28 @@ export default function TrackOrderPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading component for Suspense fallback
+function TrackOrderLoading() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading tracking...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function TrackOrderPage() {
+  return (
+    <Suspense fallback={<TrackOrderLoading />}>
+      <TrackOrderContent />
+    </Suspense>
   );
 }
