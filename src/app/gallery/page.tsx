@@ -3,32 +3,17 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getGalleryImages, type GalleryImage } from "@/lib/database";
-
-const categories = [
-  { value: "all", label: "All" },
-  { value: "accommodation", label: "Accommodation" },
-  { value: "activities", label: "Activities" },
-  { value: "food", label: "Food" },
-  { value: "culture", label: "Culture" },
-  { value: "agriculture", label: "Agriculture" },
-  { value: "heritage", label: "Heritage" },
-  { value: "nature", label: "Nature" },
-  { value: "spirituality", label: "Spirituality" }
-];
+import { getMediaItems, type MediaItem } from "@/lib/database";
 
 export default function GalleryPage() {
-  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
-  const [filteredImages, setFilteredImages] = useState<GalleryImage[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [galleryImages, setGalleryImages] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadImages = async () => {
       try {
-        const images = await getGalleryImages();
+        const images = await getMediaItems('gallery');
         setGalleryImages(images);
-        setFilteredImages(images);
       } catch (error) {
         console.error("Error loading gallery images:", error);
       } finally {
@@ -38,18 +23,6 @@ export default function GalleryPage() {
 
     loadImages();
   }, []);
-
-  useEffect(() => {
-    if (selectedCategory === "all") {
-      setFilteredImages(galleryImages);
-    } else {
-      setFilteredImages(galleryImages.filter(image => image.category === selectedCategory));
-    }
-  }, [selectedCategory, galleryImages]);
-
-  const handleCategoryFilter = (category: string) => {
-    setSelectedCategory(category);
-  };
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -78,19 +51,6 @@ export default function GalleryPage() {
             </p>
           </div>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
-            {categories.map((category) => (
-              <Badge 
-                key={category.value} 
-                variant={selectedCategory === category.value ? "default" : "secondary"}
-                className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                onClick={() => handleCategoryFilter(category.value)}
-              >
-                {category.label}
-              </Badge>
-            ))}
-          </div>
 
           {/* Loading State */}
           {loading && (
@@ -111,15 +71,15 @@ export default function GalleryPage() {
           )}
 
           {/* Gallery Grid */}
-          {!loading && filteredImages.length > 0 && (
+          {!loading && galleryImages.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredImages.map((image) => (
+              {galleryImages.map((image) => (
               <Card key={image.id} className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
                 <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 relative overflow-hidden">
                     {image.imageUrl ? (
                       <img
                         src={image.imageUrl}
-                        alt={image.altText || image.title}
+                        alt="Gallery image"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
@@ -129,22 +89,11 @@ export default function GalleryPage() {
                         <span className="text-2xl text-primary">📸</span>
                       </div>
                       <p className="text-sm text-primary/70 font-medium">
-                        {image.title}
+                        Gallery Image
                       </p>
                     </div>
                   </div>
                     )}
-                    
-                  {/* Overlay on hover */}
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
-                    <div className="p-4 text-white w-full">
-                        <Badge className="mb-2 bg-white/20 text-white border-white/30 capitalize">
-                          {image.category.replace("-", " ")}
-                      </Badge>
-                      <h3 className="font-semibold mb-1">{image.title}</h3>
-                      <p className="text-sm text-white/90">{image.description}</p>
-                    </div>
-                  </div>
                 </div>
               </Card>
             ))}
@@ -152,19 +101,16 @@ export default function GalleryPage() {
           )}
 
           {/* No Images Found */}
-          {!loading && filteredImages.length === 0 && (
+          {!loading && galleryImages.length === 0 && (
             <div className="text-center py-16">
               <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-4xl">📸</span>
               </div>
               <h3 className="text-2xl font-bold text-primary mb-4">
-                {selectedCategory === "all" ? "No Images Yet" : "No Images in This Category"}
+                No Gallery Images Yet
               </h3>
               <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                {selectedCategory === "all" 
-                  ? "We're currently building our gallery. Check back soon for stunning images of our desert experiences!"
-                  : `No images found in the ${categories.find(c => c.value === selectedCategory)?.label} category. Try selecting a different category.`
-                }
+                We're currently building our gallery. Check back soon for stunning images of our desert experiences!
               </p>
             </div>
           )}

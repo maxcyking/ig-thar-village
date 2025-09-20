@@ -1,8 +1,12 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, ExternalLink, FileText, Video, Image as ImageIcon, Newspaper } from "lucide-react";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { getMediaItems, type MediaItem } from "@/lib/database";
 
 const mediaItems = [
   {
@@ -95,6 +99,24 @@ const mediaKit = [
 ];
 
 export default function MediaPage() {
+  const [mediaImages, setMediaImages] = useState<MediaItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadMediaImages = async () => {
+      try {
+        const images = await getMediaItems('media');
+        setMediaImages(images);
+      } catch (error) {
+        console.error("Error loading media images:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMediaImages();
+  }, []);
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -165,6 +187,74 @@ export default function MediaPage() {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* Media Images Gallery */}
+      <section className="py-16 bg-muted/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+              Media Gallery
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Visual assets and images available for media use
+            </p>
+          </div>
+
+          {loading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <Card key={i} className="rounded-lg overflow-hidden">
+                  <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 animate-pulse">
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {!loading && mediaImages.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {mediaImages.map((image) => (
+                <Card key={image.id} className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
+                  <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 relative overflow-hidden">
+                    {image.imageUrl ? (
+                      <img
+                        src={image.imageUrl}
+                        alt="Media image"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center p-4">
+                          <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span className="text-2xl text-primary">📸</span>
+                          </div>
+                          <p className="text-sm text-primary/70 font-medium">
+                            Media Image
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {!loading && mediaImages.length === 0 && (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-4xl">📸</span>
+              </div>
+              <h3 className="text-2xl font-bold text-primary mb-4">
+                No Media Images Yet
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-md mx-auto">
+                Media images will be uploaded by our team and made available for press use.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

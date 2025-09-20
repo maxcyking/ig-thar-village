@@ -483,3 +483,109 @@
   0%, 100% { transform: translateX(0px) rotate(0deg); }
   50% { transform: translateX(10px) rotate(1deg); }
 }
+
+/* Enhanced Cursor Sand Trail */
+.cursor-sand-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: all 0.1s ease-out;
+}
+
+/* Improved Sand Wave Layers */
+.sand-waves svg {
+  transition: transform 0.3s ease-in-out;
+}
+
+.sand-waves:hover svg {
+  transform: translateY(-5px);
+}
+
+/* Enhanced Desert Backdrop */
+.desert-backdrop {
+  background: linear-gradient(180deg, 
+    #87CEEB 0%,
+    #F0E68C 30%,
+    #DEB887 60%,
+    #D2B48C 100%
+  );
+  position: relative;
+}
+
+.desert-backdrop::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse 800px 600px at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 600px 400px at 80% 70%, rgba(255, 165, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 400px 300px at 50% 90%, rgba(210, 180, 140, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Wind Effect Animation */
+@keyframes windBlow {
+  0%, 100% { transform: translateX(0px) skewX(0deg); }
+  50% { transform: translateX(15px) skewX(2deg); }
+}
+
+.wind-effect {
+  animation: windBlow 8s ease-in-out infinite;
+}
+
+/* Enhanced Particle System */
+.particle.enhanced {
+  background: radial-gradient(circle, 
+    rgba(251, 191, 36, 0.8) 0%,
+    rgba(245, 158, 11, 0.6) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+/* Desert Mirage Effect */
+@keyframes mirage {
+  0%, 100% { 
+    transform: scaleY(1) scaleX(1);
+    opacity: 0.3;
+  }
+  50% { 
+    transform: scaleY(0.8) scaleX(1.1);
+    opacity: 0.1;
+  }
+}
+
+.mirage-effect {
+  animation: mirage 6s ease-in-out infinite;
+  filter: blur(1px);
+}
+
+/* Glowing Desert Elements */
+.desert-glow {
+  filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.4));
+  animation: glow-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow-pulse {
+  from { filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.4)); }
+  to { filter: drop-shadow(0 0 30px rgba(251, 191, 36, 0.8)); }
+}
+
+/* Heat Wave Effect */
+@keyframes heatWave {
+  0%, 100% { 
+    transform: translateY(0px);
+    filter: blur(0px);
+  }
+  50% { 
+    transform: translateY(-2px);
+    filter: blur(0.5px);
+  }
+}
+
+.heat-wave {
+  animation: heatWave 4s ease-in-out infinite;
+}

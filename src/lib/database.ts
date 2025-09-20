@@ -81,7 +81,7 @@ export interface Service {
   updatedAt: Date;
 }
 
-// Gallery Types
+// Gallery Types (Updated for simplified media management)
 export interface GalleryImage {
   id: string;
   title: string;
@@ -92,6 +92,16 @@ export interface GalleryImage {
   visible: boolean;
   altText?: string;
   tags?: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Simplified Media Types
+export interface MediaItem {
+  id: string;
+  imageUrl: string;
+  type: 'gallery' | 'media';
+  visible: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -518,6 +528,94 @@ export const getAllGalleryImages = async (): Promise<GalleryImage[]> => {
   } catch (error) {
     console.error("Error fetching all gallery images:", error);
     return [];
+  }
+};
+
+// Media Functions (Simplified System)
+export const getMediaItems = async (type?: 'gallery' | 'media'): Promise<MediaItem[]> => {
+  try {
+    let q = query(
+      collection(db, "media"),
+      where("visible", "==", true),
+      orderBy("createdAt", "desc")
+    );
+
+    if (type) {
+      q = query(
+        collection(db, "media"),
+        where("visible", "==", true),
+        where("type", "==", type),
+        orderBy("createdAt", "desc")
+      );
+    }
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+    })) as MediaItem[];
+  } catch (error) {
+    console.error("Error fetching media items:", error);
+    return [];
+  }
+};
+
+export const getAllMediaItems = async (): Promise<MediaItem[]> => {
+  try {
+    const q = query(
+      collection(db, "media"),
+      orderBy("createdAt", "desc")
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+    })) as MediaItem[];
+  } catch (error) {
+    console.error("Error fetching all media items:", error);
+    return [];
+  }
+};
+
+export const createMediaItem = async (mediaData: Omit<MediaItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+  try {
+    const docRef = await addDoc(collection(db, "media"), {
+      ...mediaData,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating media item:", error);
+    throw error;
+  }
+};
+
+export const updateMediaItem = async (id: string, mediaData: Partial<MediaItem>): Promise<void> => {
+  try {
+    const docRef = doc(db, "media", id);
+    await updateDoc(docRef, {
+      ...mediaData,
+      updatedAt: Timestamp.now(),
+    });
+  } catch (error) {
+    console.error("Error updating media item:", error);
+    throw error;
+  }
+};
+
+export const deleteMediaItem = async (id: string): Promise<void> => {
+  try {
+    const docRef = doc(db, "media", id);
+    await deleteDoc(docRef);
+  } catch (error) {
+    console.error("Error deleting media item:", error);
+    throw error;
   }
 };
 

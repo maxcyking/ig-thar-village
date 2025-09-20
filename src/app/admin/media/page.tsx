@@ -1,118 +1,91 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Image as ImageIcon, Search, Filter, Eye, EyeOff, Edit, Trash2 } from "lucide-react";
+import { Plus, Image as ImageIcon, Filter, Eye, EyeOff, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getAllGalleryImages, deleteGalleryImage, updateGalleryImage, type GalleryImage } from "@/lib/database";
+import { getAllMediaItems, deleteMediaItem, updateMediaItem, type MediaItem } from "@/lib/database";
 import { deleteImage } from "@/lib/storage";
-import GalleryForm from "@/components/admin/gallery-form";
+import SimpleMediaForm from "@/components/admin/simple-media-form";
 
-const categories = [
-  { value: "all", label: "All Categories" },
-  { value: "accommodation", label: "Accommodation" },
-  { value: "activities", label: "Activities" },
-  { value: "food", label: "Food" },
-  { value: "culture", label: "Culture" },
-  { value: "agriculture", label: "Agriculture" },
-  { value: "heritage", label: "Heritage" },
-  { value: "nature", label: "Nature" },
-  { value: "spirituality", label: "Spirituality" },
+const mediaTypes = [
+  { value: "all", label: "All Types" },
+  { value: "gallery", label: "Gallery Images" },
+  { value: "media", label: "Media Images" },
 ];
 
 export default function AdminMediaPage() {
-  const [images, setImages] = useState<GalleryImage[]>([]);
-  const [filteredImages, setFilteredImages] = useState<GalleryImage[]>([]);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [filteredMediaItems, setFilteredMediaItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedType, setSelectedType] = useState("all");
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingImage, setEditingImage] = useState<GalleryImage | null>(null);
+  const [editingMedia, setEditingMedia] = useState<MediaItem | null>(null);
 
-  const loadImages = async () => {
+  const loadMediaItems = async () => {
     try {
       setLoading(true);
-      const galleryImages = await getAllGalleryImages();
-      setImages(galleryImages);
-      setFilteredImages(galleryImages);
+      const items = await getAllMediaItems();
+      setMediaItems(items);
+      setFilteredMediaItems(items);
     } catch (error) {
-      console.error("Error loading images:", error);
+      console.error("Error loading media items:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadImages();
+    loadMediaItems();
   }, []);
 
   useEffect(() => {
-    let filtered = images;
+    let filtered = mediaItems;
 
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (image) =>
-          image.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          image.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          image.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
+    // Filter by type
+    if (selectedType !== "all") {
+      filtered = filtered.filter((item) => item.type === selectedType);
     }
 
-    // Filter by category
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter((image) => image.category === selectedCategory);
-    }
+    setFilteredMediaItems(filtered);
+  }, [mediaItems, selectedType]);
 
-    setFilteredImages(filtered);
-  }, [images, searchTerm, selectedCategory]);
-
-  const handleToggleVisibility = async (image: GalleryImage) => {
+  const handleToggleVisibility = async (media: MediaItem) => {
     try {
-      await updateGalleryImage(image.id, { visible: !image.visible });
-      await loadImages();
+      await updateMediaItem(media.id, { visible: !media.visible });
+      await loadMediaItems();
     } catch (error) {
-      console.error("Error updating image visibility:", error);
+      console.error("Error updating media visibility:", error);
     }
   };
 
-  const handleToggleFeatured = async (image: GalleryImage) => {
-    try {
-      await updateGalleryImage(image.id, { featured: !image.featured });
-      await loadImages();
-    } catch (error) {
-      console.error("Error updating featured status:", error);
-    }
-  };
-
-  const handleDeleteImage = async (image: GalleryImage) => {
-    if (confirm(`Are you sure you want to delete "${image.title}"?`)) {
+  const handleDeleteMedia = async (media: MediaItem) => {
+    if (confirm(`Are you sure you want to delete this ${media.type} image?`)) {
       try {
         // Delete image from storage
-        if (image.imageUrl) {
-          await deleteImage(image.imageUrl);
+        if (media.imageUrl) {
+          await deleteImage(media.imageUrl);
         }
         // Delete from database
-        await deleteGalleryImage(image.id);
-        await loadImages();
+        await deleteMediaItem(media.id);
+        await loadMediaItems();
       } catch (error) {
-        console.error("Error deleting image:", error);
+        console.error("Error deleting media:", error);
       }
     }
   };
 
-  const handleImageAdded = () => {
+  const handleMediaAdded = () => {
     setShowAddForm(false);
-    loadImages();
+    loadMediaItems();
   };
 
-  const handleImageUpdated = () => {
-    setEditingImage(null);
-    loadImages();
+  const handleMediaUpdated = () => {
+    setEditingMedia(null);
+    loadMediaItems();
   };
 
   if (loading) {
@@ -133,34 +106,34 @@ export default function AdminMediaPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Media Gallery</h1>
-          <p className="text-muted-foreground">Manage your gallery images and media content</p>
+          <h1 className="text-3xl font-bold text-foreground">Media Management</h1>
+          <p className="text-muted-foreground">Upload and manage images for gallery and media pages</p>
         </div>
         <Dialog open={showAddForm} onOpenChange={setShowAddForm}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Add Image
+              Upload Image
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>Add New Image</DialogTitle>
+              <DialogTitle>Upload New Image</DialogTitle>
             </DialogHeader>
-            <GalleryForm onImageAdded={handleImageAdded} />
+            <SimpleMediaForm onMediaAdded={handleMediaAdded} />
           </DialogContent>
         </Dialog>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
               <ImageIcon className="h-8 w-8 text-blue-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-muted-foreground">Total Images</p>
-                <p className="text-2xl font-bold">{images.length}</p>
+                <p className="text-2xl font-bold">{mediaItems.length}</p>
               </div>
             </div>
           </CardContent>
@@ -170,8 +143,8 @@ export default function AdminMediaPage() {
             <div className="flex items-center">
               <Eye className="h-8 w-8 text-green-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Visible</p>
-                <p className="text-2xl font-bold">{images.filter(img => img.visible).length}</p>
+                <p className="text-sm font-medium text-muted-foreground">Gallery Images</p>
+                <p className="text-2xl font-bold">{mediaItems.filter(item => item.type === 'gallery').length}</p>
               </div>
             </div>
           </CardContent>
@@ -181,19 +154,8 @@ export default function AdminMediaPage() {
             <div className="flex items-center">
               <ImageIcon className="h-8 w-8 text-yellow-600" />
               <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Featured</p>
-                <p className="text-2xl font-bold">{images.filter(img => img.featured).length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <Filter className="h-8 w-8 text-purple-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-muted-foreground">Categories</p>
-                <p className="text-2xl font-bold">{new Set(images.map(img => img.category)).size}</p>
+                <p className="text-sm font-medium text-muted-foreground">Media Images</p>
+                <p className="text-2xl font-bold">{mediaItems.filter(item => item.type === 'media').length}</p>
               </div>
             </div>
           </CardContent>
@@ -203,46 +165,33 @@ export default function AdminMediaPage() {
       {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle>Filter by Type</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="Search images..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.value} value={category.value}>
-                    {category.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Select value={selectedType} onValueChange={setSelectedType}>
+            <SelectTrigger className="w-full md:w-48">
+              <SelectValue placeholder="Select media type" />
+            </SelectTrigger>
+            <SelectContent>
+              {mediaTypes.map((type) => (
+                <SelectItem key={type.value} value={type.value}>
+                  {type.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </CardContent>
       </Card>
 
-      {/* Images Grid */}
+      {/* Media Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredImages.map((image) => (
-          <Card key={image.id} className="overflow-hidden group">
+        {filteredMediaItems.map((media) => (
+          <Card key={media.id} className="overflow-hidden group">
             <div className="aspect-square relative overflow-hidden">
-              {image.imageUrl ? (
+              {media.imageUrl ? (
                 <img
-                  src={image.imageUrl}
-                  alt={image.altText || image.title}
+                  src={media.imageUrl}
+                  alt={`${media.type} image`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                 />
               ) : (
@@ -257,21 +206,21 @@ export default function AdminMediaPage() {
                   <Button
                     size="sm"
                     variant="secondary"
-                    onClick={() => setEditingImage(image)}
+                    onClick={() => setEditingMedia(media)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button
                     size="sm"
                     variant="secondary"
-                    onClick={() => handleToggleVisibility(image)}
+                    onClick={() => handleToggleVisibility(media)}
                   >
-                    {image.visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    {media.visible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                   </Button>
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => handleDeleteImage(image)}
+                    onClick={() => handleDeleteMedia(media)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -280,31 +229,14 @@ export default function AdminMediaPage() {
             </div>
             
             <CardContent className="p-4">
-              <div className="space-y-2">
-                <div className="flex items-start justify-between">
-                  <h3 className="font-semibold text-sm line-clamp-1">{image.title}</h3>
-                  <div className="flex gap-1">
-                    {image.featured && (
-                      <Badge variant="secondary" className="text-xs">Featured</Badge>
-                    )}
-                    {!image.visible && (
-                      <Badge variant="outline" className="text-xs">Hidden</Badge>
-                    )}
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground line-clamp-2">{image.description}</p>
-                <div className="flex items-center justify-between">
-                  <Badge variant="outline" className="text-xs capitalize">
-                    {image.category.replace("-", " ")}
-                  </Badge>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => handleToggleFeatured(image)}
-                    className="text-xs h-6 px-2"
-                  >
-                    {image.featured ? "Unfeature" : "Feature"}
-                  </Button>
+              <div className="flex items-center justify-between">
+                <Badge variant="outline" className="text-xs capitalize">
+                  {media.type}
+                </Badge>
+                <div className="flex gap-1">
+                  {!media.visible && (
+                    <Badge variant="outline" className="text-xs">Hidden</Badge>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -312,35 +244,35 @@ export default function AdminMediaPage() {
         ))}
       </div>
 
-      {filteredImages.length === 0 && (
+      {filteredMediaItems.length === 0 && (
         <div className="text-center py-12">
           <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No images found</h3>
+          <h3 className="text-lg font-semibold mb-2">No media found</h3>
           <p className="text-muted-foreground mb-4">
-            {searchTerm || selectedCategory !== "all" 
-              ? "No images match your current filters."
-              : "Start building your gallery by adding your first image."
+            {selectedType !== "all" 
+              ? `No ${selectedType} images found. Upload some images to get started.`
+              : "Start building your media library by uploading your first image."
             }
           </p>
-          {!searchTerm && selectedCategory === "all" && (
+          {selectedType === "all" && (
             <Button onClick={() => setShowAddForm(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Add First Image
+              Upload First Image
             </Button>
           )}
         </div>
       )}
 
       {/* Edit Dialog */}
-      <Dialog open={!!editingImage} onOpenChange={() => setEditingImage(null)}>
-        <DialogContent className="max-w-2xl">
+      <Dialog open={!!editingMedia} onOpenChange={() => setEditingMedia(null)}>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Edit Image</DialogTitle>
+            <DialogTitle>Edit Media</DialogTitle>
           </DialogHeader>
-          {editingImage && (
-            <GalleryForm 
-              image={editingImage} 
-              onImageAdded={handleImageUpdated} 
+          {editingMedia && (
+            <SimpleMediaForm 
+              media={editingMedia} 
+              onMediaAdded={handleMediaUpdated} 
             />
           )}
         </DialogContent>

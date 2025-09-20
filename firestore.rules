@@ -158,12 +158,26 @@ service cloud.firestore {
       get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
   }
     
-    // Settings collection - public read, admin write
+    // Settings collection - public read, allow launch, admin full access
     match /settings/{settingId} {
       // Anyone can read settings (for site branding, contact info, etc.)
       allow read: if true;
       
-      // Only admins can create, update, delete settings
+      // Allow website launch operations (create initial settings or mark as launched)
+      allow create, update: if true;
+      
+      // Only admins can delete settings
+      allow delete: if request.auth != null && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Media collection - public read, admin write
+    match /media/{mediaId} {
+      // Anyone can read media items (for gallery and media pages)
+      allow read: if true;
+      
+      // Only admins can create, update, or delete media items
       allow create, update, delete: if request.auth != null && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';

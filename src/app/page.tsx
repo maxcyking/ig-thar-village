@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { PropertiesSection } from "@/components/home/properties-section";
 import { ProductsSection } from "@/components/home/products-section";
 import { ServicesSection } from "@/components/home/services-section";
+import EnhancedHero from "@/components/enhanced-hero";
 import { 
   Mountain, 
   Tent, 
@@ -103,67 +104,15 @@ const testimonials = [
   }
 ];
 
-const stats = [
-  { number: "500+", label: "Happy Guests", icon: Users },
-  { number: "50+", label: "Organic Products", icon: Leaf },
-  { number: "15+", label: "Cultural Programs", icon: Star },
-  { number: "5+", label: "Awards Won", icon: Award }
-];
+// Stats moved to EnhancedHero component
 
 
 
 export default function Home() {
   return (
     <div className="flex flex-col">
-      {/* Hero Section - Reduced Height */}
-      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 hero-gradient pattern-agricultural"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-6xl mx-auto text-center">
-            <Badge className="mb-6 bg-green-100 text-green-800 border-green-200 text-sm px-4 py-2 font-accent rounded-md">
-              🏆 Award-Winning Desert Experience
-            </Badge>
-            <h1 className="desert-title text-gray-900 mb-6 leading-tight">
-              Discover Authentic
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-green-600 via-orange-500 to-blue-600">
-                Thar Desert Life
-              </span>
-            </h1>
-            <p className="body-text text-xl md:text-2xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Experience the rich heritage of West Rajasthan through sustainable farm stays, 
-              organic products, and authentic cultural immersion in the heart of Thar Desert.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 text-lg rounded-md shadow-vibrant cta-button">
-                <Link href="/services" className="flex items-center">
-                  Start Your Journey
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" className="border-2 border-orange-500 text-orange-600 hover:bg-orange-50 px-8 py-4 text-lg rounded-md cta-button">
-                <Play className="mr-2 h-5 w-5" />
-                Watch Virtual Tour
-              </Button>
-            </div>
-            
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-2xl mx-auto">
-              {stats.map((stat, index) => {
-                const IconComponent = stat.icon;
-                return (
-                  <div key={index} className="text-center">
-                    <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm border border-gray-100">
-                      <IconComponent className="h-6 w-6 text-green-600 mx-auto mb-2" />
-                      <div className="price-text text-gray-900">{stat.number}</div>
-                      <div className="text-sm text-gray-600 font-body">{stat.label}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Enhanced Desert Hero Section */}
+      <EnhancedHero />
 
       {/* Showcase Cards Section - New */}
       <section className="py-16 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
