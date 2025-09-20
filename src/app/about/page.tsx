@@ -145,7 +145,7 @@ export default function AboutPage() {
       <section className="py-20 bg-white">
         <div className="container mx-auto px-6">
           <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-8">
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
@@ -158,8 +158,8 @@ export default function AboutPage() {
                     To increase farmers' income and promote organic agriculture awareness for the betterment 
                     of farmers and society. We are dedicated to empowering rural communities through sustainable 
                     farming practices and authentic desert experiences.
-                  </p>
-                </div>
+              </p>
+            </div>
 
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
@@ -172,8 +172,8 @@ export default function AboutPage() {
                     To create a thriving ecosystem where traditional knowledge meets modern innovation, 
                     ensuring sustainable livelihoods for rural communities while preserving the rich 
                     cultural heritage of the Thar Desert.
-                  </p>
-                </div>
+                </p>
+              </div>
               </div>
 
               <div className="relative">
@@ -208,20 +208,20 @@ export default function AboutPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Impact in Numbers</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Every number tells a story of transformed lives, sustainable practices, and thriving communities
-              </p>
-            </div>
-            
+            </p>
+          </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
                 <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white">
                   <CardContent className="p-8">
                     <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-opacity-10 flex items-center justify-center ${stat.color.replace('text-', 'bg-')}`}>
                       <stat.icon className={`h-8 w-8 ${stat.color}`} />
-                    </div>
+              </div>
                     <div className={`text-4xl font-bold mb-2 ${stat.color}`}>{stat.value}</div>
                     <div className="text-gray-600 font-medium">{stat.label}</div>
                   </CardContent>
-                </Card>
+            </Card>
               ))}
             </div>
           </div>
@@ -236,8 +236,8 @@ export default function AboutPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Journey</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 From humble beginnings to transforming rural communities across Rajasthan
-              </p>
-            </div>
+            </p>
+          </div>
 
             <div className="space-y-12">
               {milestones.map((milestone, index) => (
@@ -258,7 +258,7 @@ export default function AboutPage() {
                         <h3 className="text-2xl font-bold text-gray-900 mb-3">{milestone.title}</h3>
                         <p className="text-gray-700 leading-relaxed">{milestone.description}</p>
                       </CardContent>
-                    </Card>
+            </Card>
                   </div>
                   <div className="lg:w-1/2 flex justify-center">
                     <div className="w-48 h-48 bg-gradient-to-br from-amber-100 to-green-100 rounded-full flex items-center justify-center">
@@ -280,10 +280,10 @@ export default function AboutPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Core Values</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 The principles that guide everything we do and every decision we make
-              </p>
-            </div>
+            </p>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {values.map((value, index) => (
                 <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white group">
                   <CardContent className="p-8">
@@ -297,7 +297,7 @@ export default function AboutPage() {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+            </Card>
               ))}
             </div>
           </div>
@@ -312,15 +312,15 @@ export default function AboutPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What We Do</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Our comprehensive approach to sustainable development and community empowerment
-              </p>
-            </div>
+                </p>
+              </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-green-50 to-emerald-50">
                 <CardContent className="p-8 text-center">
                   <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Wheat className="h-8 w-8 text-white" />
-                  </div>
+            </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">Organic Agriculture</h3>
                   <p className="text-gray-700 mb-6 leading-relaxed">
                     Training farmers in sustainable organic farming practices, helping them transition 
@@ -409,15 +409,15 @@ export default function AboutPage() {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Leadership</h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Guided by passionate leaders committed to sustainable development and community empowerment
-              </p>
-            </div>
+            </p>
+          </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white text-center">
                 <CardContent className="p-8">
                   <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Users className="h-12 w-12 text-white" />
-                  </div>
+              </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Founder & Director</h3>
                   <p className="text-amber-600 font-medium mb-4">Visionary Leader</p>
                   <p className="text-gray-700 text-sm leading-relaxed">
@@ -431,7 +431,7 @@ export default function AboutPage() {
                 <CardContent className="p-8">
                   <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
                     <Leaf className="h-12 w-12 text-white" />
-                  </div>
+            </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">Agriculture Expert</h3>
                   <p className="text-green-600 font-medium mb-4">Organic Specialist</p>
                   <p className="text-gray-700 text-sm leading-relaxed">
@@ -456,7 +456,7 @@ export default function AboutPage() {
               </Card>
             </div>
           </div>
-        </div>
+              </div>
       </section>
 
       {/* Call to Action */}
@@ -488,11 +488,11 @@ export default function AboutPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                 <div className="flex items-center justify-center gap-3">
                   <MapPin className="h-5 w-5" />
-                  <span>Barmer, Rajasthan, India</span>
+                  <span>Village & Post - Jhak, Tehsil - Batadu, District - Barmer, Rajasthan - 344035</span>
                 </div>
                 <div className="flex items-center justify-center gap-3">
                   <Phone className="h-5 w-5" />
-                  <span>+91 XXXXX XXXXX</span>
+                  <span>+91 8302676869</span>
                 </div>
                 <div className="flex items-center justify-center gap-3">
                   <Mail className="h-5 w-5" />

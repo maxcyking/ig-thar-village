@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import { Menu, Mountain, Phone, ShoppingCart, Heart, User } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
 import { useWishlist } from "@/contexts/wishlist-context";
+import { useSettings } from "@/contexts/settings-context";
 import { Badge } from "@/components/ui/badge";
 
 const navigation = [
@@ -25,6 +27,7 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { state: cartState } = useCart();
   const { state: wishlistState } = useWishlist();
+  const { settings } = useSettings();
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
@@ -32,12 +35,31 @@ export function Navbar() {
         <div className="flex h-18 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-              <Mountain className="h-7 w-7 text-white" />
-            </div>
+            {settings?.logo ? (
+              <div className="w-12 h-12 rounded-xl overflow-hidden">
+                <Image
+                  src={settings.logo}
+                  alt={settings.siteName}
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            ) : (
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                <Mountain className="h-7 w-7 text-white" />
+              </div>
+            )}
             <div>
-              <span className="text-xl font-bold text-gray-900">IG Thar Village</span>
-              <p className="text-xs text-gray-600 hidden sm:block">Authentic Desert Experience</p>
+              <span className="text-xl font-bold text-gray-900">
+                {settings?.siteName ? 
+                  (settings.siteName.length > 20 ? "IG Thar Village" : settings.siteName)
+                  : "IG Thar Village"
+                }
+              </span>
+              <p className="text-xs text-gray-600 hidden sm:block">
+                {settings?.tagline || "Village Life, Global Wellness"}
+              </p>
             </div>
           </Link>
 

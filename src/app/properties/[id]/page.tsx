@@ -9,8 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { 
   ArrowLeft,
-  MapPin,
-  Users,
+  MapPin, 
+  Users, 
   Bed,
   Bath,
   Wifi,
@@ -48,13 +48,13 @@ export default function PropertyDetailsPage() {
   const fetchProperty = async (id: string) => {
     try {
       const propertyData = await getProperty(id);
-      setProperty(propertyData);
-    } catch (error) {
-      console.error("Error fetching property:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        setProperty(propertyData);
+      } catch (error) {
+        console.error("Error fetching property:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const handleBookNow = () => {
     if (!property) return;
@@ -72,7 +72,7 @@ export default function PropertyDetailsPage() {
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Image skeleton */}
-              <div className="space-y-4">
+                <div className="space-y-4">
                 <div className="aspect-[4/3] bg-gray-200 rounded-lg animate-pulse"></div>
                 <div className="grid grid-cols-4 gap-2">
                   {[...Array(4)].map((_, i) => (
@@ -99,14 +99,14 @@ export default function PropertyDetailsPage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
         <div className="container mx-auto px-4 py-12">
-          <div className="text-center">
+        <div className="text-center">
             <Mountain className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Property Not Found</h1>
-            <p className="text-gray-600 mb-6">The property you're looking for doesn't exist or has been removed.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Property Not Found</h1>
+          <p className="text-gray-600 mb-6">The property you're looking for doesn't exist or has been removed.</p>
             <Button onClick={() => router.push('/services')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Services
-            </Button>
+          </Button>
           </div>
         </div>
       </div>
@@ -126,17 +126,17 @@ export default function PropertyDetailsPage() {
           <span>Properties</span>
           <span>/</span>
           <span className="font-medium text-gray-900">{property.name}</span>
-        </div>
+      </div>
 
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Images */}
             <div className="lg:col-span-2 space-y-4">
               <div className="aspect-[4/3] overflow-hidden rounded-xl bg-gray-100">
-                {property.images && property.images.length > 0 ? (
-                  <Image
+          {property.images && property.images.length > 0 ? (
+              <Image
                     src={property.images[selectedImageIndex]}
-                    alt={property.name}
+                alt={property.name}
                     width={800}
                     height={600}
                     className="w-full h-full object-cover"
@@ -151,8 +151,8 @@ export default function PropertyDetailsPage() {
               {property.images && property.images.length > 1 && (
                 <div className="grid grid-cols-4 gap-2">
                   {property.images.map((image, index) => (
-                    <button
-                      key={index}
+                      <button
+                        key={index}
                       onClick={() => setSelectedImageIndex(index)}
                       className={`aspect-square overflow-hidden rounded-lg border-2 transition-all ${
                         selectedImageIndex === index 
@@ -169,9 +169,9 @@ export default function PropertyDetailsPage() {
                       />
                     </button>
                   ))}
-                </div>
-              )}
             </div>
+          )}
+          </div>
 
             {/* Property Info */}
             <div className="space-y-6">
@@ -181,12 +181,12 @@ export default function PropertyDetailsPage() {
                   <Badge variant="outline" className="capitalize">
                     {property.category}
                   </Badge>
-                  {property.featured && (
+            {property.featured && (
                     <Badge className="bg-amber-600 text-white">
-                      <Star className="h-3 w-3 mr-1" />
-                      Featured
-                    </Badge>
-                  )}
+                <Star className="h-3 w-3 mr-1" />
+                Featured
+              </Badge>
+            )}
                 </div>
                 
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">{property.name}</h1>
@@ -209,8 +209,8 @@ export default function PropertyDetailsPage() {
                     ))}
                   </div>
                   <span className="text-sm text-gray-500">(4.8 - 156 reviews)</span>
-                </div>
-              </div>
+          </div>
+        </div>
 
               {/* Price */}
               <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
@@ -243,7 +243,7 @@ export default function PropertyDetailsPage() {
                   <Mountain className="h-4 w-4" />
                   <span className="text-sm">Desert view</span>
                 </div>
-              </div>
+                </div>
 
               {/* Availability */}
               <div className="flex items-center gap-4">
@@ -320,7 +320,7 @@ export default function PropertyDetailsPage() {
                 </div>
               </div>
             </div>
-          </div>
+            </div>
 
           {/* Property Details */}
           <div className="mt-16 space-y-8">
@@ -338,10 +338,10 @@ export default function PropertyDetailsPage() {
 
             {/* Amenities */}
             <Card>
-              <CardHeader>
+                <CardHeader>
                 <CardTitle>Amenities & Services</CardTitle>
-              </CardHeader>
-              <CardContent>
+                </CardHeader>
+                <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="flex items-center gap-3">
                     <Wifi className="h-5 w-5 text-amber-600" />
@@ -366,18 +366,18 @@ export default function PropertyDetailsPage() {
                   <div className="flex items-center gap-3">
                     <Mountain className="h-5 w-5 text-amber-600" />
                     <span>Desert Safari Access</span>
+                        </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
             {/* Included */}
             {property.included && property.included.length > 0 && (
               <Card>
-                <CardHeader>
+              <CardHeader>
                   <CardTitle>What's Included</CardTitle>
-                </CardHeader>
-                <CardContent>
+              </CardHeader>
+              <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {property.included.map((item, index) => (
                       <div key={index} className="flex items-start gap-2">
@@ -385,9 +385,9 @@ export default function PropertyDetailsPage() {
                         <span className="text-gray-600">{item}</span>
                       </div>
                     ))}
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </CardContent>
+            </Card>
             )}
 
             {/* House Rules */}
@@ -402,7 +402,7 @@ export default function PropertyDetailsPage() {
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
                       <span>Check-in: 2:00 PM - 8:00 PM</span>
-                    </div>
+                </div>
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
                       <span>Check-out: 11:00 AM</span>

@@ -228,6 +228,23 @@ export interface ServiceBooking {
   updatedAt: Date;
 }
 
+// Settings Interface
+export interface SiteSettings {
+  id: string;
+  siteName: string;
+  tagline: string;
+  logo?: string;
+  favicon?: string;
+  address: string;
+  phone: string;
+  email: string;
+  isLaunched: boolean;
+  launchedAt?: Date;
+  launchedBy?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Properties Functions
 export const getProperties = async (featured?: boolean): Promise<Property[]> => {
   try {
@@ -1074,6 +1091,110 @@ export const getServiceBooking = async (id: string): Promise<ServiceBooking | nu
     return null;
   } catch (error) {
     console.error("Error getting service booking:", error);
+    throw error;
+  }
+};
+
+// Settings Functions
+export const getSettings = async (): Promise<SiteSettings | null> => {
+  try {
+    const q = query(collection(db, "settings"), limit(1));
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      const doc = querySnapshot.docs[0];
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        launchedAt: data.launchedAt?.toDate() || null,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as SiteSettings;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error getting settings:", error);
+    throw error;
+  }
+};
+
+export const createSettings = async (settingsData: Omit<SiteSettings, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+  try {
+    const cleanSettingsData: any = {
+      ...settingsData,
+      launchedAt: settingsData.launchedAt ? Timestamp.fromDate(settingsData.launchedAt) : null,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    };
+
+    // Remove undefined fields
+    Object.keys(cleanSettingsData).forEach(key => {
+      if (cleanSettingsData[key] === undefined) {
+        delete cleanSettingsData[key];
+      }
+    });
+    
+    const docRef = await addDoc(collection(db, "settings"), cleanSettingsData);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating settings:", error);
+    throw error;
+  }
+};
+
+export const updateSettings = async (id: string, settingsData: Partial<SiteSettings>): Promise<void> => {
+  try {
+    const docRef = doc(db, "settings", id);
+    
+    const updateData: any = {
+      ...settingsData,
+      updatedAt: Timestamp.now(),
+    };
+
+    // Convert dates to Timestamps
+    if (settingsData.launchedAt) {
+      updateData.launchedAt = Timestamp.fromDate(settingsData.launchedAt);
+    }
+
+    // Remove undefined fields
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
+
+    await updateDoc(docRef, updateData);
+  } catch (error) {
+    console.error("Error updating settings:", error);
+    throw error;
+  }
+};
+
+export const launchWebsite = async (): Promise<void> => {
+  try {
+    const settings = await getSettings();
+    
+    if (settings) {
+      await updateSettings(settings.id, {
+        isLaunched: true,
+        launchedAt: new Date(),
+      });
+    } else {
+      // Create initial settings if none exist
+      await createSettings({
+        siteName: "IG Thar Village Global Herbs Pure Food & Agro Tourism Group",
+        tagline: "Village Life, Global Wellness",
+        address: "Village & Post - Jhak, Tehsil - Batadu, District - Barmer, Rajasthan - 344035",
+        phone: "8302676869",
+        email: "info@igtharvillage.com",
+        isLaunched: true,
+        launchedAt: new Date(),
+      });
+    }
+  } catch (error) {
+    console.error("Error launching website:", error);
     throw error;
   }
 };

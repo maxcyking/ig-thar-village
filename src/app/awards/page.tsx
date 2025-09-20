@@ -154,10 +154,10 @@ export default function AwardsPage() {
                     {category.label}
                   </Button>
                 ))}
-              </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
       )}
 
       {/* Awards Grid */}
@@ -173,7 +173,7 @@ export default function AwardsPage() {
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(6)].map((_, i) => (
                 <Card key={i} className="overflow-hidden">
                   <div className="aspect-video bg-gray-200 animate-pulse"></div>
@@ -193,7 +193,7 @@ export default function AwardsPage() {
                 const IconComponent = categoryIcons[award.category as keyof typeof categoryIcons] || Medal;
                 const colorClass = categoryColors[award.category as keyof typeof categoryColors] || "text-gray-600 bg-gray-50";
                 
-                return (
+              return (
                   <Card key={award.id} className="group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 shadow-lg hover:-translate-y-3 cursor-pointer h-72 rounded-xl">
                     {/* Certificate Image Background */}
                     <div className="absolute inset-0">
@@ -271,13 +271,13 @@ export default function AwardsPage() {
                               View Certificate
                             </Button>
                           )}
-                        </div>
+                      </div>
                       </div>
                     </div>
-                  </Card>
-                );
-              })}
-            </div>
+                </Card>
+              );
+            })}
+          </div>
           ) : (
             <div className="text-center py-16">
               <div className="bg-gray-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
@@ -332,15 +332,15 @@ export default function AwardsPage() {
       {/* Testimonials from Award Bodies */}
       {(awards.some(award => award.testimonial) || awards.length > 0) && (
         <section className="py-16 bg-gradient-to-br from-gray-50 to-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                What They Say About Us
-              </h2>
+              What They Say About Us
+            </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Testimonials from award organizations and recognition bodies
-              </p>
-            </div>
+              Testimonials from award organizations and recognition bodies
+            </p>
+          </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {/* Dynamic testimonials from awards */}
@@ -379,65 +379,65 @@ export default function AwardsPage() {
               {awards.filter(award => award.testimonial && award.testimonialAuthor).length < 2 && (
                 <>
                   <Card className="bg-white shadow-lg border-0 hover:shadow-xl transition-shadow duration-300">
-                    <CardContent className="p-8">
+              <CardContent className="p-8">
                       <div className="flex items-center mb-6">
                         <Quote className="h-8 w-8 text-primary/20 mr-3" />
                         <div className="flex items-center">
-                          {[1, 2, 3, 4, 5].map((star) => (
+                  {[1, 2, 3, 4, 5].map((star) => (
                             <Star key={star} className="h-4 w-4 text-yellow-500 fill-current" />
-                          ))}
-                        </div>
+                  ))}
+                </div>
                       </div>
                       <blockquote className="text-gray-700 mb-6 italic text-lg leading-relaxed">
-                        "IG Thar Village represents the perfect blend of authentic cultural preservation 
-                        and sustainable tourism practices. Their commitment to showcasing traditional 
-                        desert life while supporting local communities is truly commendable."
+                  "IG Thar Village represents the perfect blend of authentic cultural preservation 
+                  and sustainable tourism practices. Their commitment to showcasing traditional 
+                  desert life while supporting local communities is truly commendable."
                       </blockquote>
                       <div className="flex items-center">
                         <div className="bg-primary/10 rounded-full p-2 mr-4">
                           <Trophy className="h-5 w-5 text-primary" />
                         </div>
-                        <div>
+                <div>
                           <p className="font-semibold text-gray-900">Dr. Rajesh Sharma</p>
                           <p className="text-sm text-gray-600">Director, Rajasthan Tourism Board</p>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
+                </div>
+              </CardContent>
+            </Card>
+
                   {awards.filter(award => award.testimonial && award.testimonialAuthor).length === 0 && (
                     <Card className="bg-white shadow-lg border-0 hover:shadow-xl transition-shadow duration-300">
-                      <CardContent className="p-8">
+              <CardContent className="p-8">
                         <div className="flex items-center mb-6">
                           <Quote className="h-8 w-8 text-primary/20 mr-3" />
                           <div className="flex items-center">
-                            {[1, 2, 3, 4, 5].map((star) => (
+                  {[1, 2, 3, 4, 5].map((star) => (
                               <Star key={star} className="h-4 w-4 text-yellow-500 fill-current" />
-                            ))}
-                          </div>
+                  ))}
+                </div>
                         </div>
                         <blockquote className="text-gray-700 mb-6 italic text-lg leading-relaxed">
-                          "The innovative approach of Dr. Devaram Pawar and Dhapu in creating authentic 
-                          desert experiences while maintaining ecological balance sets a new standard 
-                          for rural tourism in India."
+                  "The innovative approach of Dr. Devaram Pawar and Dhapu in creating authentic 
+                  desert experiences while maintaining ecological balance sets a new standard 
+                  for rural tourism in India."
                         </blockquote>
                         <div className="flex items-center">
                           <div className="bg-primary/10 rounded-full p-2 mr-4">
                             <Medal className="h-5 w-5 text-primary" />
                           </div>
-                          <div>
+                <div>
                             <p className="font-semibold text-gray-900">Prof. Meera Joshi</p>
                             <p className="text-sm text-gray-600">Cultural Heritage Expert</p>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                </div>
+              </CardContent>
+            </Card>
                   )}
                 </>
               )}
-            </div>
           </div>
-        </section>
+        </div>
+      </section>
       )}
 
       {/* Future Goals */}
@@ -464,7 +464,7 @@ export default function AwardsPage() {
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 h-full">
                 <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                   <Trophy className="h-10 w-10 text-white" />
-                </div>
+              </div>
                 <h3 className="text-2xl font-bold text-white mb-4">National Recognition</h3>
                 <p className="text-white/80 leading-relaxed">
                   Aiming for national-level awards for cultural preservation and sustainable tourism excellence, 
@@ -477,7 +477,7 @@ export default function AwardsPage() {
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 h-full">
                 <div className="bg-gradient-to-br from-green-400 to-emerald-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                   <Users className="h-10 w-10 text-white" />
-                </div>
+              </div>
                 <h3 className="text-2xl font-bold text-white mb-4">Community Impact</h3>
                 <p className="text-white/80 leading-relaxed">
                   Expanding our positive impact on local communities through increased tourism, 
@@ -490,15 +490,15 @@ export default function AwardsPage() {
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all duration-300 h-full">
                 <div className="bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                   <Leaf className="h-10 w-10 text-white" />
-                </div>
+              </div>
                 <h3 className="text-2xl font-bold text-white mb-4">Sustainability Leadership</h3>
                 <p className="text-white/80 leading-relaxed">
                   Becoming a model for sustainable desert tourism practices across India and beyond, 
                   inspiring others to follow our eco-friendly approach.
-                </p>
-              </div>
+              </p>
             </div>
           </div>
+        </div>
 
           {/* Call to Action */}
           <div className="text-center mt-16">

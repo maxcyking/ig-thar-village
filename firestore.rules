@@ -158,10 +158,13 @@ service cloud.firestore {
       get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
   }
     
-    // Settings collection - admin only
+    // Settings collection - public read, admin write
     match /settings/{settingId} {
-      // Only admins can read and write settings
-      allow read, write: if request.auth != null && 
+      // Anyone can read settings (for site branding, contact info, etc.)
+      allow read: if true;
+      
+      // Only admins can create, update, delete settings
+      allow create, update, delete: if request.auth != null && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }

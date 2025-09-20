@@ -12,7 +12,7 @@ import {
   MapPin,
   Users,
   Clock,
-  Star,
+  Star, 
   Heart,
   Share2,
   Calendar,
@@ -54,13 +54,13 @@ export default function ServiceDetailsPage() {
   const fetchService = async (id: string) => {
     try {
       const serviceData = await getService(id);
-      setService(serviceData);
-    } catch (error) {
-      console.error("Error fetching service:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        setService(serviceData);
+      } catch (error) {
+        console.error("Error fetching service:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const handleBookNow = () => {
     if (!service) return;
@@ -78,7 +78,7 @@ export default function ServiceDetailsPage() {
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Image skeleton */}
-              <div className="space-y-4">
+                <div className="space-y-4">
                 <div className="aspect-[4/3] bg-gray-200 rounded-lg animate-pulse"></div>
                 <div className="grid grid-cols-4 gap-2">
                   {[...Array(4)].map((_, i) => (
@@ -105,14 +105,14 @@ export default function ServiceDetailsPage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
         <div className="container mx-auto px-4 py-12">
-          <div className="text-center">
+        <div className="text-center">
             <Mountain className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Service Not Found</h1>
-            <p className="text-gray-600 mb-6">The service you're looking for doesn't exist or has been removed.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Service Not Found</h1>
+          <p className="text-gray-600 mb-6">The service you're looking for doesn't exist or has been removed.</p>
             <Button onClick={() => router.push('/services')}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Services
-            </Button>
+          </Button>
           </div>
         </div>
       </div>
@@ -134,17 +134,17 @@ export default function ServiceDetailsPage() {
           <span className="capitalize">{service.category}</span>
           <span>/</span>
           <span className="font-medium text-gray-900">{service.name}</span>
-        </div>
+      </div>
 
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Images */}
             <div className="lg:col-span-2 space-y-4">
               <div className="aspect-[4/3] overflow-hidden rounded-xl bg-gray-100">
-                {service.images && service.images.length > 0 ? (
-                  <Image
+          {service.images && service.images.length > 0 ? (
+              <Image
                     src={service.images[selectedImageIndex]}
-                    alt={service.name}
+                alt={service.name}
                     width={800}
                     height={600}
                     className="w-full h-full object-cover"
@@ -159,8 +159,8 @@ export default function ServiceDetailsPage() {
               {service.images && service.images.length > 1 && (
                 <div className="grid grid-cols-4 gap-2">
                   {service.images.map((image, index) => (
-                    <button
-                      key={index}
+                      <button
+                        key={index}
                       onClick={() => setSelectedImageIndex(index)}
                       className={`aspect-square overflow-hidden rounded-lg border-2 transition-all ${
                         selectedImageIndex === index 
@@ -177,9 +177,9 @@ export default function ServiceDetailsPage() {
                       />
                     </button>
                   ))}
-                </div>
-              )}
             </div>
+          )}
+          </div>
 
             {/* Service Info */}
             <div className="space-y-6">
@@ -190,12 +190,12 @@ export default function ServiceDetailsPage() {
                     <CategoryIcon className="h-3 w-3 mr-1" />
                     {service.category}
                   </Badge>
-                  {service.featured && (
+            {service.featured && (
                     <Badge className="bg-orange-600 text-white">
-                      <Star className="h-3 w-3 mr-1" />
+                <Star className="h-3 w-3 mr-1" />
                       Featured
-                    </Badge>
-                  )}
+              </Badge>
+            )}
                 </div>
                 
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">{service.name}</h1>
@@ -218,8 +218,8 @@ export default function ServiceDetailsPage() {
                     ))}
                   </div>
                   <span className="text-sm text-gray-500">(4.7 - 89 reviews)</span>
-                </div>
-              </div>
+          </div>
+        </div>
 
               {/* Price */}
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -252,7 +252,7 @@ export default function ServiceDetailsPage() {
                   <Award className="h-4 w-4" />
                   <span className="text-sm">Certified Guide</span>
                 </div>
-              </div>
+                </div>
 
               {/* Availability */}
               <div className="flex items-center gap-4">
@@ -329,7 +329,7 @@ export default function ServiceDetailsPage() {
                 </div>
               </div>
             </div>
-          </div>
+            </div>
 
           {/* Service Details */}
           <div className="mt-16 space-y-8">
@@ -435,7 +435,7 @@ export default function ServiceDetailsPage() {
                     <li>• Light jacket for evening experiences</li>
                   </ul>
                 </div>
-                
+
                 <Separator />
                 
                 <div>
@@ -445,7 +445,7 @@ export default function ServiceDetailsPage() {
                     50% refund for cancellations within 24 hours. No refund for no-shows.
                   </p>
                 </div>
-                
+
                 <Separator />
                 
                 <div>

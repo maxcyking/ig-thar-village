@@ -1,8 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
 import { Mountain, Phone, Mail, MapPin, Facebook, Instagram, Youtube, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/contexts/settings-context";
 
 export function Footer() {
+  const { settings } = useSettings();
+
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-16">
@@ -10,12 +16,31 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-                <Mountain className="h-7 w-7 text-white" />
-              </div>
+              {settings?.logo ? (
+                <div className="w-12 h-12 rounded-xl overflow-hidden">
+                  <Image
+                    src={settings.logo}
+                    alt={settings.siteName}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                  <Mountain className="h-7 w-7 text-white" />
+                </div>
+              )}
               <div>
-                <span className="text-xl font-bold">IG Thar Village</span>
-                <p className="text-xs text-gray-400">Authentic Desert Experience</p>
+                <span className="text-xl font-bold">
+                  {settings?.siteName ? 
+                    (settings.siteName.length > 20 ? "IG Thar Village" : settings.siteName)
+                    : "IG Thar Village"
+                  }
+                </span>
+                <p className="text-xs text-gray-400">
+                  {settings?.tagline || "Authentic Desert Experience"}
+                </p>
               </div>
             </div>
             <p className="text-sm text-gray-300 leading-relaxed">
@@ -71,21 +96,27 @@ export function Footer() {
                 <MapPin className="h-5 w-5 text-green-400 mt-0.5" />
                 <div>
                   <p className="text-sm text-white font-medium">Location</p>
-                  <p className="text-sm text-gray-300">Thar Desert, West Rajasthan, India</p>
+                  <p className="text-sm text-gray-300">
+                    {settings?.address || "Village & Post - Jhak, Tehsil - Batadu, District - Barmer, Rajasthan - 344035"}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <Phone className="h-5 w-5 text-green-400 mt-0.5" />
                 <div>
                   <p className="text-sm text-white font-medium">Phone</p>
-                  <p className="text-sm text-gray-300">+91 XXXXX XXXXX</p>
+                  <p className="text-sm text-gray-300">
+                    +91 {settings?.phone || "8302676869"}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <Mail className="h-5 w-5 text-green-400 mt-0.5" />
                 <div>
                   <p className="text-sm text-white font-medium">Email</p>
-                  <p className="text-sm text-gray-300">info@igtharvillage.com</p>
+                  <p className="text-sm text-gray-300">
+                    {settings?.email || "info@igtharvillage.com"}
+                  </p>
                 </div>
               </div>
             </div>
