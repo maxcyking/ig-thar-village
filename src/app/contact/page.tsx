@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, Twitter, MessageCircle, Users, Navigation } from "lucide-react";
+import Link from "next/link";
 
 export default function ContactPage() {
     const [formData, setFormData] = useState({
@@ -35,13 +37,32 @@ export default function ContactPage() {
     return (
         <div className="flex flex-col">
             {/* Hero Section */}
-            <section className="py-16 desert-gradient">
-                <div className="container mx-auto px-4">
-                    <div className="max-w-4xl mx-auto text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
-                            Contact Us
+            <section className="py-20 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 relative overflow-hidden">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-5">
+                    <div className="absolute top-10 left-10 w-32 h-32 bg-orange-600 rounded-full"></div>
+                    <div className="absolute bottom-20 right-20 w-24 h-24 bg-amber-600 rounded-full"></div>
+                    <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-red-600 rounded-full"></div>
+                </div>
+
+                <div className="container mx-auto px-4 relative">
+                    <div className="max-w-5xl mx-auto text-center">
+                        <Badge className="mb-6 bg-amber-100 text-amber-800 border-amber-200 px-6 py-3 text-lg font-medium rounded-full">
+                            🌾 IG THAR VILLAGE 🐐
+                        </Badge>
+                        
+                        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                            Connect With
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600"> Desert Heritage</span>
                         </h1>
-                        <p className="text-xl text-primary/80 mb-8">
+                        
+                        <p className="text-xl md:text-2xl text-gray-700 mb-8 leading-relaxed max-w-4xl mx-auto">
+                            Thanks to your love, support & blessings, IG Agro & Goat Farm has now become 
+                            <span className="font-semibold text-amber-700"> "IG THAR VILLAGE"</span>. 
+                            Connect with us on social media and plan your authentic desert experience!
+                        </p>
+                        
+                        <p className="text-lg text-gray-600 mb-8">
                             Ready to experience authentic desert culture? Get in touch with us to plan your perfect visit
                         </p>
                     </div>
@@ -72,9 +93,9 @@ export default function ContactPage() {
                                             <div>
                                                 <h3 className="font-semibold text-primary mb-2">Location</h3>
                                                 <p className="text-muted-foreground">
-                                                    IG Thar Village<br />
-                                                    Thar Desert, West Rajasthan<br />
-                                                    India
+                                                    Village & Post - Jhak<br />
+                                                    Tehsil - Batadu, District - Barmer<br />
+                                                    Rajasthan - 344035, India
                                                 </p>
                                             </div>
                                         </div>
@@ -90,8 +111,8 @@ export default function ContactPage() {
                                             <div>
                                                 <h3 className="font-semibold text-primary mb-2">Phone</h3>
                                                 <p className="text-muted-foreground">
-                                                    +91 XXXXX XXXXX<br />
-                                                    +91 XXXXX XXXXX
+                                                    +91 8302676869<br />
+                                                    Available 24/7
                                                 </p>
                                             </div>
                                         </div>
@@ -128,6 +149,55 @@ export default function ContactPage() {
                                                     Response time: Within 2-4 hours
                                                 </p>
                                             </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+
+                                {/* Social Media & Quick Connect */}
+                                <Card className="rounded-lg bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
+                                    <CardContent className="p-6">
+                                        <h3 className="font-semibold text-primary mb-4 flex items-center">
+                                            <Users className="h-5 w-5 mr-2" />
+                                            Connect With Us
+                                        </h3>
+                                        <div className="space-y-4">
+                                            {/* Social Media Links */}
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <Link href="https://www.facebook.com/IGTharVillage" target="_blank" className="flex items-center justify-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                                    <Facebook className="h-4 w-4 mr-2" />
+                                                    Facebook
+                                                </Link>
+                                                <Link href="https://instagram.com/igtharvillage" target="_blank" className="flex items-center justify-center p-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">
+                                                    <Instagram className="h-4 w-4 mr-2" />
+                                                    Instagram
+                                                </Link>
+                                                <Link href="https://youtube.com/@IgTharVillage" target="_blank" className="flex items-center justify-center p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                                    <Youtube className="h-4 w-4 mr-2" />
+                                                    YouTube
+                                                </Link>
+                                                <Link href="https://twitter.com/IgTharVillage" target="_blank" className="flex items-center justify-center p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                                    <Twitter className="h-4 w-4 mr-2" />
+                                                    Twitter
+                                                </Link>
+                                            </div>
+                                            
+                                            {/* WhatsApp Options */}
+                                            <div className="space-y-2">
+                                                <Link href="https://whatsapp.com/channel/0029VaBeUbeK0IBr0zHvNX3Q" target="_blank" className="flex items-center justify-center p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors w-full">
+                                                    <MessageCircle className="h-4 w-4 mr-2" />
+                                                    WhatsApp Channel
+                                                </Link>
+                                                <Link href="https://chat.whatsapp.com/G0zWTztE6559NkVZbXLEex" target="_blank" className="flex items-center justify-center p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors w-full">
+                                                    <Users className="h-4 w-4 mr-2" />
+                                                    WhatsApp Group
+                                                </Link>
+                                            </div>
+                                            
+                                            {/* Location */}
+                                            <Link href="https://share.google/K6JChsw8ylbZbn8qf" target="_blank" className="flex items-center justify-center p-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors w-full">
+                                                <Navigation className="h-4 w-4 mr-2" />
+                                                View on Google Maps
+                                            </Link>
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -176,7 +246,7 @@ export default function ContactPage() {
                                                 <Label htmlFor="phone">Phone Number</Label>
                                                 <Input
                                                     id="phone"
-                                                    placeholder="+91 XXXXX XXXXX"
+                                                    placeholder="+91 8302676869"
                                                     value={formData.phone}
                                                     onChange={(e) => handleChange("phone", e.target.value)}
                                                     className="rounded-lg"

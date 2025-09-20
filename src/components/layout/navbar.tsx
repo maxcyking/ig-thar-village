@@ -111,18 +111,6 @@ export function Navbar() {
               </Link>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="hidden md:flex items-center space-x-3">
-              <Button asChild variant="outline" size="sm" className="border-green-600 text-green-600 hover:bg-green-50 rounded-lg">
-                <Link href="/contact">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Contact
-                </Link>
-              </Button>
-              <Button asChild size="sm" className="bg-green-600 hover:bg-green-700 text-white rounded-lg">
-                <Link href="/services">Book Now</Link>
-              </Button>
-            </div>
           </div>
 
           {/* Mobile Navigation */}
@@ -163,15 +151,6 @@ export function Navbar() {
                       Cart ({cartState.itemCount})
                     </Link>
                   </div>
-                  <Button asChild variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-50 rounded-lg">
-                    <Link href="/contact">
-                      <Phone className="h-4 w-4 mr-2" />
-                      Contact Us
-                    </Link>
-                  </Button>
-                  <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white rounded-lg">
-                    <Link href="/services">Book Experience</Link>
-                  </Button>
                 </div>
               </div>
             </SheetContent>

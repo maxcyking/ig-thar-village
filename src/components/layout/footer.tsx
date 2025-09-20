@@ -47,18 +47,26 @@ export function Footer() {
               Experience authentic Thar Desert culture, traditional hospitality, and organic farming practices in the heart of West Rajasthan.
             </p>
             <div className="flex space-x-3">
-              <Button size="icon" variant="outline" className="border-gray-600 text-gray-300 hover:bg-green-600 hover:border-green-600 hover:text-white rounded-lg">
-                <Facebook className="h-4 w-4" />
-              </Button>
-              <Button size="icon" variant="outline" className="border-gray-600 text-gray-300 hover:bg-green-600 hover:border-green-600 hover:text-white rounded-lg">
-                <Instagram className="h-4 w-4" />
-              </Button>
-              <Button size="icon" variant="outline" className="border-gray-600 text-gray-300 hover:bg-green-600 hover:border-green-600 hover:text-white rounded-lg">
-                <Youtube className="h-4 w-4" />
-              </Button>
-              <Button size="icon" variant="outline" className="border-gray-600 text-gray-300 hover:bg-green-600 hover:border-green-600 hover:text-white rounded-lg">
-                <Twitter className="h-4 w-4" />
-              </Button>
+              <Link href="https://www.facebook.com/IGTharVillage" target="_blank">
+                <Button size="icon" variant="outline" className="border-gray-600 text-gray-300 hover:bg-blue-600 hover:border-blue-600 hover:text-white rounded-lg">
+                  <Facebook className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="https://instagram.com/igtharvillage" target="_blank">
+                <Button size="icon" variant="outline" className="border-gray-600 text-gray-300 hover:bg-pink-600 hover:border-pink-600 hover:text-white rounded-lg">
+                  <Instagram className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="https://youtube.com/@IgTharVillage" target="_blank">
+                <Button size="icon" variant="outline" className="border-gray-600 text-gray-300 hover:bg-red-600 hover:border-red-600 hover:text-white rounded-lg">
+                  <Youtube className="h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="https://twitter.com/IgTharVillage" target="_blank">
+                <Button size="icon" variant="outline" className="border-gray-600 text-gray-300 hover:bg-blue-500 hover:border-blue-500 hover:text-white rounded-lg">
+                  <Twitter className="h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
 
