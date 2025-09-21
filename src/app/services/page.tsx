@@ -37,6 +37,7 @@ export default function ServicesPage() {
   const router = useRouter();
   const [services, setServices] = useState<Service[]>([]);
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
   const [featuredServices, setFeaturedServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +65,8 @@ export default function ServicesPage() {
         ]);
         
         setServices(allServices);
-        setFeaturedProducts(allProducts.filter(product => product.featured).slice(0, 3));
+        setAllProducts(allProducts);
+        setFeaturedProducts(allProducts.slice(0, 8)); // Show up to 8 products in horizontal scroll
         setFeaturedProperties(allProperties.filter(property => property.featured).slice(0, 3));
         setFeaturedServices(allServices.filter(service => service.featured).slice(0, 3));
       } catch (error) {
@@ -156,30 +158,145 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Available Properties */}
+      {/* Best Property Showcase */}
       <section className="py-24 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="section-title text-gray-900 mb-6">Available Properties</h2>
+            <h2 className="section-title text-gray-900 mb-6">Our Premier Desert Property</h2>
             <p className="body-text text-lg text-gray-600 max-w-3xl mx-auto">
-              Book your authentic desert experience with our carefully selected accommodations
+              Experience authentic desert living at its finest with our flagship accommodation
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {featuredProperties.map((property) => (
-              <PropertyCard
-                key={property.id}
-                property={{
-                  ...property,
-                  rating: 4.8,
-                  reviewCount: Math.floor(Math.random() * 200) + 50
-                }}
-                onViewDetails={handleViewDetails}
-                onToggleFavorite={handleToggleFavorite}
-                isFavorite={favorites.includes(property.id)}
-              />
-            ))}
-          </div>
+          
+          {featuredProperties.length > 0 && (
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+                {/* Image Gallery */}
+                <div className="space-y-4">
+                  <div className="relative group">
+                    <div className="aspect-[4/3] relative rounded-2xl overflow-hidden shadow-2xl">
+                      {featuredProperties[0].images && featuredProperties[0].images.length > 0 ? (
+                        <Image
+                          src={featuredProperties[0].images[0]}
+                          alt={featuredProperties[0].name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-amber-200 via-orange-200 to-red-200 flex items-center justify-center">
+                          <div className="text-center">
+                            <Tent className="h-20 w-20 text-amber-600 mx-auto mb-4" />
+                            <h3 className="text-2xl font-bold text-amber-800">{featuredProperties[0].name}</h3>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Property Badges */}
+                    <div className="absolute top-6 left-6">
+                      <Badge className="bg-white/95 text-gray-900 backdrop-blur-sm px-4 py-2 text-sm font-semibold rounded-full shadow-lg">
+                        <Star className="h-4 w-4 mr-1 text-amber-500" />
+                        Premium Stay
+                      </Badge>
+                    </div>
+                    
+                    <div className="absolute top-6 right-6">
+                      <Badge className="bg-green-600 text-white px-4 py-2 text-sm font-semibold rounded-full shadow-lg">
+                        100% Authentic
+                      </Badge>
+                    </div>
+
+                    {/* Price Badge */}
+                    <div className="absolute bottom-6 right-6">
+                      <Badge className="bg-orange-600 text-white px-6 py-3 text-lg font-bold rounded-full shadow-lg">
+                        ₹{featuredProperties[0].price}/night
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  {/* Additional Images */}
+                  {featuredProperties[0].images && featuredProperties[0].images.length > 1 && (
+                    <div className="grid grid-cols-3 gap-4">
+                      {featuredProperties[0].images.slice(1, 4).map((image, index) => (
+                        <div key={index} className="aspect-square relative rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                          <Image
+                            src={image}
+                            alt={`${featuredProperties[0].name} - View ${index + 2}`}
+                            fill
+                            className="object-cover hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Property Details */}
+                <div className="space-y-8">
+                  <div>
+                    <h3 className="text-4xl font-bold text-gray-900 mb-4">{featuredProperties[0].name}</h3>
+                    <div className="flex items-center gap-6 text-gray-600 mb-6">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5 text-orange-600" />
+                        <span className="font-medium">{featuredProperties[0].location}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="h-5 w-5 text-orange-600" />
+                        <span>Up to {featuredProperties[0].capacity} guests</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-5 w-5 text-amber-500 fill-current" />
+                        <span>4.9 (127 reviews)</span>
+                      </div>
+                    </div>
+                    <p className="text-lg text-gray-700 leading-relaxed mb-8">
+                      {featuredProperties[0].description}
+                    </p>
+                  </div>
+
+                  {/* Amenities */}
+                  {featuredProperties[0].amenities && featuredProperties[0].amenities.length > 0 && (
+                    <div className="space-y-4">
+                      <h4 className="text-xl font-semibold text-gray-900">What's Included</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        {featuredProperties[0].amenities.slice(0, 8).map((amenity, index) => (
+                          <div key={index} className="flex items-center gap-3 text-gray-700">
+                            <CheckCircle className="h-5 w-5 text-green-600" />
+                            <span className="capitalize">{amenity.replace('-', ' ')}</span>
+                          </div>
+                        ))}
+                      </div>
+                      {featuredProperties[0].amenities.length > 8 && (
+                        <p className="text-gray-500 text-sm">
+                          +{featuredProperties[0].amenities.length - 8} more amenities
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-4 pt-6">
+                    <Button 
+                      size="lg" 
+                      className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-full py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                      onClick={() => handleViewDetails(featuredProperties[0].id)}
+                    >
+                      <Calendar className="h-5 w-5 mr-2" />
+                      Book Now
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="px-8 border-2 border-orange-600 text-orange-600 hover:bg-orange-50 rounded-full py-4 font-semibold"
+                      onClick={() => handleViewDetails(featuredProperties[0].id)}
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -194,48 +311,107 @@ export default function ServicesPage() {
               flavors and exceptional nutritional value.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {featuredProducts.map((product) => (
-              <Link key={product.id} href={`/products/${product.id}`} className="group">
-                <div className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                  <div className="relative h-56">
-                    {product.images && product.images.length > 0 ? (
-                      <Image
-                        src={product.images[0]}
-                        alt={product.name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-green-100 to-green-200 flex items-center justify-center">
-                        <TreePine className="h-12 w-12 text-green-600" />
+
+          {/* Horizontal Scroll Container */}
+          <div className="overflow-x-auto scrollbar-hide pb-4">
+            <div className="flex gap-6 w-max">
+              {featuredProducts.map((product) => (
+                <Card key={product.id} className="flex-none w-80 group overflow-hidden border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 rounded-2xl bg-white hover:border-orange-300 hover:-translate-y-2">
+                  <div className="relative overflow-hidden">
+                    <div className="aspect-[4/3] relative">
+                      {product.images && product.images.length > 0 ? (
+                        <Image
+                          src={product.images[0]}
+                          alt={product.name}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-orange-200 to-amber-200 flex items-center justify-center">
+                          <TreePine className="h-20 w-20 text-orange-600" />
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Enhanced Badges */}
+                    {product.organic && (
+                      <div className="absolute top-4 left-4">
+                        <Badge className="bg-green-600 text-white px-3 py-1 rounded-full shadow-lg backdrop-blur-sm">
+                          <TreePine className="h-3 w-3 mr-1" />
+                          Organic
+                        </Badge>
                       </div>
                     )}
-                    {product.organic && (
-                      <Badge className="absolute top-4 left-4 bg-green-600 text-white">
-                        Organic
-                      </Badge>
+                    
+                    {product.featured && (
+                      <div className="absolute top-4 right-4">
+                        <Badge className="bg-amber-600 text-white px-3 py-1 rounded-full shadow-lg backdrop-blur-sm">
+                          <Star className="h-3 w-3 mr-1" />
+                          Featured
+                        </Badge>
+                      </div>
                     )}
                   </div>
-                  <div className="p-6">
-                    <h3 className="card-title text-gray-900 mb-3 group-hover:text-green-600 transition-colors">{product.name}</h3>
-                    <p className="body-text text-gray-600 mb-4">{product.shortDescription || product.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="price-text text-green-600">₹{product.price}/{product.unit}</span>
-                      <Button 
-                        className="cta-button bg-green-600 hover:bg-green-700 text-white"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          router.push(`/products/${product.id}`);
-                        }}
-                      >
-                        View Details
-                      </Button>
+                  
+                  <CardContent className="p-6 space-y-4">
+                    <div>
+                      <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-300 mb-2">
+                        {product.name}
+                      </CardTitle>
+                      <CardDescription className="text-gray-600 text-sm leading-relaxed">
+                        {product.shortDescription || product.description}
+                      </CardDescription>
                     </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
+                    
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <div className="text-left">
+                        <div className="text-2xl font-bold text-orange-600">₹{product.price}</div>
+                        <div className="text-sm text-gray-500">per {product.unit}</div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-orange-200 text-orange-600 hover:bg-orange-50 transition-colors duration-300"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            router.push(`/products/${product.id}`);
+                          }}
+                        >
+                          View Details
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="bg-orange-600 hover:bg-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            // Add to cart functionality can be added here
+                            router.push(`/products/${product.id}`);
+                          }}
+                        >
+                          <TreePine className="h-4 w-4 mr-1" />
+                          Buy Now
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* View All Products Button */}
+          <div className="text-center mt-12">
+            <Link href="/products">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-2 border-orange-600 text-orange-600 hover:bg-orange-50 px-8 py-3 rounded-full font-semibold"
+              >
+                View All Products
+                <TreePine className="h-5 w-5 ml-2" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
