@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Award, Trophy, Star, Medal, Users, Leaf, Download, ExternalLink, Quote, ArrowRight, CheckCircle } from "lucide-react";
+import { Award, Trophy, Star, Medal, Users, Leaf, Download, ExternalLink, Quote, ArrowRight, CheckCircle, X, Calendar } from "lucide-react";
 import { getAwards, type Award as AwardType } from "@/lib/database";
 
 const categoryIcons = {
@@ -57,6 +57,7 @@ export default function AwardsPage() {
   const [awards, setAwards] = useState<AwardType[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedAward, setSelectedAward] = useState<AwardType | null>(null);
 
   useEffect(() => {
     const loadAwards = async () => {
@@ -188,96 +189,54 @@ export default function AwardsPage() {
               ))}
             </div>
           ) : filteredAwards.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {filteredAwards.map((award) => {
                 const IconComponent = categoryIcons[award.category as keyof typeof categoryIcons] || Medal;
                 const colorClass = categoryColors[award.category as keyof typeof categoryColors] || "text-gray-600 bg-gray-50";
                 
-              return (
-                  <Card key={award.id} className="group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 shadow-lg hover:-translate-y-3 cursor-pointer h-72 rounded-xl">
-                    {/* Certificate Image Background */}
-                    <div className="absolute inset-0">
+                return (
+                  <div 
+                    key={award.id} 
+                    className="group relative overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 shadow-lg hover:-translate-y-3 cursor-pointer aspect-[4/3] rounded-2xl bg-white"
+                    onClick={() => setSelectedAward(award)}
+                  >
+                    {/* Clean Image Display */}
+                    <div className="w-full h-full relative overflow-hidden rounded-2xl">
                       {award.certificateUrl ? (
                         <img
                           src={award.certificateUrl}
                           alt={award.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 bg-white p-2"
                         />
                       ) : award.imageUrl ? (
                         <img
                           src={award.imageUrl}
                           alt={award.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 bg-white p-2"
                         />
                       ) : (
-                        <div className={`w-full h-full flex items-center justify-center ${colorClass.split(' ').slice(-1)[0]} bg-gradient-to-br from-gray-100 to-gray-200`}>
+                        <div className={`w-full h-full flex items-center justify-center ${colorClass.split(' ').slice(-1)[0]} bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl`}>
                           <IconComponent className="h-16 w-16 text-gray-400" />
                         </div>
                       )}
                     </div>
                     
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent group-hover:from-black/90 group-hover:via-black/60 transition-all duration-500" />
+                    {/* Subtle hover effect overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-300 rounded-2xl" />
                     
-                    {/* Content */}
-                    <div className="absolute inset-0 p-4 flex flex-col justify-between text-white">
-                      {/* Top badges */}
-                      <div className="flex items-start justify-between">
-                        {award.featured && (
-                          <Badge className="bg-yellow-500/90 text-white border-0 text-xs">
-                            <Star className="h-3 w-3 mr-1" />
-                            Featured
-                          </Badge>
-                        )}
-                        <Badge variant="secondary" className="bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs">
-                          {award.year}
+                    {/* Only featured badge visible */}
+                    {award.featured && (
+                      <div className="absolute top-3 right-3">
+                        <Badge className="bg-yellow-500 text-white border-0 text-xs shadow-lg">
+                          <Star className="h-3 w-3 mr-1" />
+                          Featured
                         </Badge>
                       </div>
-                      
-                      {/* Bottom content */}
-                      <div className="space-y-2">
-                        <Badge 
-                          variant="outline" 
-                          className="text-xs capitalize bg-white/20 text-white border-white/30 backdrop-blur-sm w-fit"
-                        >
-                          {award.category.replace("-", " ")}
-                        </Badge>
-                        
-                        <h3 className="text-lg font-bold leading-tight line-clamp-2">
-                          {award.title}
-                        </h3>
-                        
-                        <p className="text-sm text-white/90 font-medium">
-                          {award.organization}
-                        </p>
-                        
-                        {/* Hidden description that appears on hover */}
-                        <div className="transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
-                          <p className="text-xs text-white/80 leading-relaxed line-clamp-3 mb-3">
-                            {award.description}
-                          </p>
-                          
-                          {award.certificateUrl && (
-                            <Button 
-                              variant="secondary" 
-                              size="sm" 
-                              className="w-full bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-sm text-xs h-8"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                window.open(award.certificateUrl, '_blank');
-                              }}
-                            >
-                              <Download className="h-3 w-3 mr-1" />
-                              View Certificate
-                            </Button>
-                          )}
-                      </div>
-                      </div>
-                    </div>
-                </Card>
-              );
-            })}
-          </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           ) : (
             <div className="text-center py-16">
               <div className="bg-gray-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
@@ -298,7 +257,7 @@ export default function AwardsPage() {
       </section>
 
       {/* Media Recognition */}
-      <section className="py-16 agricultural-green">
+      <section className="py-16 bg-green-700">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -526,6 +485,135 @@ export default function AwardsPage() {
         <div className="absolute bottom-1/4 right-10 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
       </section>
+
+      {/* Award Preview Modal */}
+      {selectedAward && (
+        <div 
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedAward(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white"
+                onClick={() => setSelectedAward(null)}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
+              {/* Image Side */}
+              <div className="relative bg-gray-50 flex items-center justify-center p-8">
+                {selectedAward.certificateUrl ? (
+                  <img
+                    src={selectedAward.certificateUrl}
+                    alt={selectedAward.title}
+                    className="w-full h-full max-h-[60vh] object-contain rounded-lg shadow-lg"
+                  />
+                ) : selectedAward.imageUrl ? (
+                  <img
+                    src={selectedAward.imageUrl}
+                    alt={selectedAward.title}
+                    className="w-full h-full max-h-[60vh] object-contain rounded-lg shadow-lg"
+                  />
+                ) : (
+                  <div className="w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
+                    {(() => {
+                      const IconComponent = categoryIcons[selectedAward.category as keyof typeof categoryIcons] || Medal;
+                      return <IconComponent className="h-20 w-20 text-gray-400" />;
+                    })()}
+                  </div>
+                )}
+              </div>
+
+              {/* Content Side */}
+              <div className="p-8 space-y-6 overflow-y-auto">
+                {/* Header */}
+                <div className="space-y-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <h2 className="text-3xl font-bold text-gray-900 leading-tight">
+                      {selectedAward.title}
+                    </h2>
+                    {selectedAward.featured && (
+                      <Badge className="bg-yellow-500 text-white">
+                        <Star className="h-4 w-4 mr-1" />
+                        Featured
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center gap-4 text-lg text-gray-600">
+                    <div className="flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold">{selectedAward.organization}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-5 w-5 text-blue-600" />
+                      <span>{selectedAward.year}</span>
+                    </div>
+                  </div>
+
+                  <Badge 
+                    variant="outline" 
+                    className="text-sm capitalize w-fit"
+                  >
+                    {selectedAward.category.replace("-", " ")}
+                  </Badge>
+                </div>
+
+                {/* Description */}
+                <div className="space-y-3">
+                  <h3 className="text-lg font-semibold text-gray-900">About This Award</h3>
+                  <p className="text-gray-700 leading-relaxed text-lg">
+                    {selectedAward.description}
+                  </p>
+                </div>
+
+                {/* Testimonial if available */}
+                {selectedAward.testimonial && (
+                  <div className="space-y-3">
+                    <h3 className="text-lg font-semibold text-gray-900">Testimonial</h3>
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <Quote className="h-6 w-6 text-gray-400 mb-3" />
+                      <blockquote className="text-gray-700 italic text-lg leading-relaxed mb-4">
+                        "{selectedAward.testimonial}"
+                      </blockquote>
+                      {selectedAward.testimonialAuthor && (
+                        <div className="text-sm text-gray-600">
+                          <p className="font-semibold">{selectedAward.testimonialAuthor}</p>
+                          {selectedAward.testimonialPosition && (
+                            <p>{selectedAward.testimonialPosition}</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex gap-4 pt-4">
+                  {selectedAward.certificateUrl && (
+                    <Button 
+                      className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg"
+                      onClick={() => window.open(selectedAward.certificateUrl, '_blank')}
+                    >
+                      <Download className="h-5 w-5 mr-2" />
+                      View Certificate
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
