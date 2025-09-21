@@ -77,15 +77,15 @@ export function EnhancedHero() {
   }, []);
 
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
-      {/* Desert Background with Image */}
-      <div className="absolute inset-0">
-        {/* Background Image */}
+    <section className="relative w-full hero-section flex items-center justify-center overflow-hidden">
+      {/* Desert Background with Image - Responsive Aspect Ratio */}
+      <div className="absolute inset-0 w-full h-full">
+        {/* Background Image - Maintains proportional aspect ratio */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 hero-bg"
           style={{
             backgroundImage: `url('data:image/svg+xml,${encodeURIComponent(`
-              <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
                 <defs>
                   <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />

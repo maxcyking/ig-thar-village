@@ -71,6 +71,7 @@ export default function SimpleMediaForm({ media, onMediaAdded }: SimpleMediaForm
       newErrors.type = "Please select a media type";
     }
 
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -100,6 +101,7 @@ export default function SimpleMediaForm({ media, onMediaAdded }: SimpleMediaForm
         imageUrl = await uploadImage(selectedFile, `media/${formData.type}`);
       }
 
+      // Both gallery and media items now use the simple media structure
       const mediaData = {
         imageUrl,
         type: formData.type,
@@ -166,6 +168,8 @@ export default function SimpleMediaForm({ media, onMediaAdded }: SimpleMediaForm
             accept="image/*"
             onChange={handleFileSelect}
             className="hidden"
+            aria-label="Upload image file"
+            title="Upload image file"
           />
         </div>
         {errors.image && (
@@ -189,6 +193,7 @@ export default function SimpleMediaForm({ media, onMediaAdded }: SimpleMediaForm
           <p className="text-sm text-destructive">{errors.type}</p>
         )}
       </div>
+
 
       {/* Visibility */}
       <div className="flex items-center space-x-2">

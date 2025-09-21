@@ -120,7 +120,7 @@ export default function MediaPage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="py-16 thar-sand">
+      <section className="py-16 bg-amber-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
@@ -214,8 +214,10 @@ export default function MediaPage() {
           )}
 
           {!loading && mediaImages.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {mediaImages.map((image) => (
+            <>
+              <h3 className="text-2xl font-bold text-center mb-8 text-primary">Uploaded Media Images</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {mediaImages.map((image) => (
                 <Card key={image.id} className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
                   <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 relative overflow-hidden">
                     {image.imageUrl ? (
@@ -238,8 +240,9 @@ export default function MediaPage() {
                     )}
                   </div>
                 </Card>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
 
           {!loading && mediaImages.length === 0 && (
@@ -259,7 +262,7 @@ export default function MediaPage() {
       </section>
 
       {/* Press Kit Section */}
-      <section className="py-16 agricultural-green">
+      <section className="py-16 bg-primary">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -301,7 +304,7 @@ export default function MediaPage() {
                 For specific media requirements, custom photography, or additional information, 
                 please contact our media relations team.
               </p>
-              <Button asChild variant="secondary" size="lg" className="rounded-lg">
+              <Button asChild size="lg" className="rounded-lg bg-white text-primary hover:bg-gray-100">
                 <Link href="/contact">Contact Media Team</Link>
               </Button>
             </div>
@@ -381,7 +384,7 @@ export default function MediaPage() {
       </section>
 
       {/* Social Media */}
-      <section className="py-16 rajasthani-orange">
+      <section className="py-16 bg-orange-600">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
@@ -393,16 +396,16 @@ export default function MediaPage() {
           </div>
 
           <div className="flex justify-center space-x-6">
-            <Button variant="secondary" size="lg" className="rounded-lg">
+            <Button variant="outline" size="lg" className="rounded-lg bg-white text-orange-600 border-white hover:bg-orange-50">
               Instagram
             </Button>
-            <Button variant="secondary" size="lg" className="rounded-lg">
+            <Button variant="outline" size="lg" className="rounded-lg bg-white text-orange-600 border-white hover:bg-orange-50">
               Facebook
             </Button>
-            <Button variant="secondary" size="lg" className="rounded-lg">
+            <Button variant="outline" size="lg" className="rounded-lg bg-white text-orange-600 border-white hover:bg-orange-50">
               YouTube
             </Button>
-            <Button variant="secondary" size="lg" className="rounded-lg">
+            <Button variant="outline" size="lg" className="rounded-lg bg-white text-orange-600 border-white hover:bg-orange-50">
               LinkedIn
             </Button>
           </div>

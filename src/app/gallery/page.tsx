@@ -83,16 +83,16 @@ export default function GalleryPage() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center p-4">
-                      <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <span className="text-2xl text-primary">📸</span>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center p-4">
+                          <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span className="text-2xl text-primary">📸</span>
+                          </div>
+                          <p className="text-sm text-primary/70 font-medium">
+                            Gallery Image
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-primary/70 font-medium">
-                        Gallery Image
-                      </p>
-                    </div>
-                  </div>
                     )}
                 </div>
               </Card>
