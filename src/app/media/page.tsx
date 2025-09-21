@@ -1,14 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, ExternalLink, FileText, Video, Image as ImageIcon, Newspaper } from "lucide-react";
+import { Calendar, ExternalLink, FileText, Video, Image as ImageIcon, Newspaper, X } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { getMediaItems, type MediaItem } from "@/lib/database";
 
-const mediaItems = [
+const staticMediaItems = [
   {
     id: 1,
     type: "Press Release",
@@ -48,26 +47,6 @@ const mediaItems = [
     source: "National Geographic India",
     icon: ImageIcon,
     category: "Photography"
-  },
-  {
-    id: 5,
-    type: "Interview",
-    title: "Dr. Devaram Pawar Speaks on Sustainable Desert Tourism",
-    description: "Exclusive interview with the founder about vision, challenges, and future of desert tourism.",
-    date: "November 25, 2023",
-    source: "Rural Tourism Today",
-    icon: FileText,
-    category: "Interview"
-  },
-  {
-    id: 6,
-    type: "News Article",
-    title: "Organic Farming in Arid Regions: A Success Story",
-    description: "Feature article on innovative organic farming practices in the Thar Desert region.",
-    date: "October 15, 2023",
-    source: "Agriculture Weekly",
-    icon: Newspaper,
-    category: "News Coverage"
   }
 ];
 
@@ -92,30 +71,27 @@ const mediaKit = [
   },
   {
     title: "Founder Biographies",
-    description: "Detailed biographies of Dr. Devaram Pawar and Dhapu",
+    description: "Professional biographies of Dr. Devaram Pawar and team members",
     format: "PDF, DOC",
     size: "1 page each"
   }
 ];
 
 export default function MediaPage() {
-  const [mediaImages, setMediaImages] = useState<MediaItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadMediaImages = async () => {
-      try {
-        const images = await getMediaItems('media');
-        setMediaImages(images);
-      } catch (error) {
-        console.error("Error loading media images:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadMediaImages();
-  }, []);
+  // Media images from public/images/media/ (numbered 1-55)
+  const mediaImages = Array.from({ length: 55 }, (_, index) => {
+    const number = index + 1;
+    // Determine file extension based on known patterns
+    let extension = 'jpeg';
+    if ([3, 12, 13, 14, 15, 16, 17, 18].includes(number)) {
+      extension = 'png';
+    } else if ([5, 6, 7].includes(number)) {
+      extension = 'jpg';
+    }
+    return `${number}.${extension}`;
+  });
 
   return (
     <div className="flex flex-col">
@@ -146,118 +122,70 @@ export default function MediaPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Latest Media Coverage
+              Press Coverage & Media Features
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Recent news articles, features, and press coverage about our authentic desert experiences
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {mediaItems.map((item) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {staticMediaItems.map((item) => {
               const IconComponent = item.icon;
               return (
-                <Card key={item.id} className="rounded-lg border-2 hover:shadow-lg transition-all duration-300 hover:border-primary/50">
+                <Card key={item.id} className="rounded-lg hover:shadow-lg transition-shadow">
                   <CardHeader>
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <div className="bg-primary/10 rounded-lg p-3">
-                          <IconComponent className="h-6 w-6 text-primary" />
-                        </div>
-                        <Badge variant="secondary">{item.category}</Badge>
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <IconComponent className="h-5 w-5 text-primary" />
                       </div>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        {item.date}
-                      </div>
+                      <Badge variant="outline" className="text-xs">
+                        {item.type}
+                      </Badge>
                     </div>
-                    <CardTitle className="text-lg text-primary line-clamp-2">{item.title}</CardTitle>
-                    <CardDescription className="text-sm font-medium text-primary/70">
-                      {item.source}
+                    <CardTitle className="line-clamp-2">{item.title}</CardTitle>
+                    <CardDescription className="line-clamp-3">
+                      {item.description}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground mb-4 line-clamp-3">{item.description}</p>
-                    <Button variant="outline" size="sm" className="w-full rounded-lg">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Read More
-                    </Button>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="h-4 w-4" />
+                        <span>{item.date}</span>
+                      </div>
+                      <span>{item.source}</span>
+                    </div>
                   </CardContent>
                 </Card>
               );
             })}
           </div>
-        </div>
-      </section>
 
-      {/* Media Images Gallery */}
-      <section className="py-16 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Media Gallery
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Visual assets and images available for media use
-            </p>
-          </div>
-
-          {loading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, i) => (
-                <Card key={i} className="rounded-lg overflow-hidden">
-                  <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 animate-pulse">
-                  </div>
-                </Card>
+          {/* Media Images Section */}
+          <div className="mb-12">
+            <h3 className="text-2xl font-bold text-center mb-8 text-primary">Media Images</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {mediaImages.map((imageName, index) => (
+                <div 
+                  key={index}
+                  className="aspect-square bg-gray-100 rounded-lg overflow-hidden group cursor-pointer"
+                  onClick={() => setSelectedImage(`/images/media/${imageName}`)}
+                >
+                  <img
+                    src={`/images/media/${imageName}`}
+                    alt={`Media image ${index + 1}`}
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      console.log(`Failed to load media image: ${imageName}`);
+                      // Hide broken images
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
               ))}
             </div>
-          )}
-
-          {!loading && mediaImages.length > 0 && (
-            <>
-              <h3 className="text-2xl font-bold text-center mb-8 text-primary">Uploaded Media Images</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {mediaImages.map((image) => (
-                <Card key={image.id} className="rounded-lg overflow-hidden hover:shadow-lg transition-shadow group">
-                  <div className="aspect-square bg-gradient-to-br from-primary/10 to-primary/20 relative overflow-hidden">
-                    {image.imageUrl ? (
-                      <img
-                        src={image.imageUrl}
-                        alt="Media image"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center p-4">
-                          <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span className="text-2xl text-primary">📸</span>
-                          </div>
-                          <p className="text-sm text-primary/70 font-medium">
-                            Media Image
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </Card>
-                ))}
-              </div>
-            </>
-          )}
-
-          {!loading && mediaImages.length === 0 && (
-            <div className="text-center py-16">
-              <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">📸</span>
-              </div>
-              <h3 className="text-2xl font-bold text-primary mb-4">
-                No Media Images Yet
-              </h3>
-              <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                Media images will be uploaded by our team and made available for press use.
-              </p>
-            </div>
-          )}
+          </div>
         </div>
       </section>
 
@@ -417,6 +345,31 @@ export default function MediaPage() {
           </div>
         </div>
       </section>
+
+      {/* Image Preview Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-7xl max-h-full">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute top-4 right-4 text-white hover:bg-white/20 z-10"
+              onClick={() => setSelectedImage(null)}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+            <img
+              src={selectedImage}
+              alt="Preview"
+              className="max-w-full max-h-[90vh] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
