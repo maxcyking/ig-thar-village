@@ -1,23 +1,22 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PropertiesSection } from "@/components/home/properties-section";
 import { ProductsSection } from "@/components/home/products-section";
 import { ServicesSection } from "@/components/home/services-section";
+import { FeaturedProductsSection } from "@/components/home/featured-products-section";
 import EnhancedHero from "@/components/enhanced-hero";
-import { 
-  Mountain, 
-  Tent, 
-  Utensils, 
-  Camera, 
-  TreePine, 
-  Users, 
+import {
+  Mountain,
+  Tent,
+  Utensils,
+  Camera,
+  TreePine,
+  Users,
   Star,
   Quote,
   Award,
-  MapPin,
   Phone,
-  Mail,
   CheckCircle,
   Leaf,
   Sun,
@@ -25,8 +24,7 @@ import {
   Shield,
   Clock,
   Globe,
-  ArrowRight,
-  Play
+  ArrowRight
 } from "lucide-react";
 import Link from "next/link";
 
@@ -106,69 +104,93 @@ const testimonials = [
 
 // Stats moved to EnhancedHero component
 
-
-
 export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Enhanced Desert Hero Section */}
       <EnhancedHero />
 
-      {/* Showcase Cards Section - New */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+      {/* Ultra-Compact Cool Showcase Section */}
+      <section className="py-4 sm:py-8 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Badge className="mb-4 bg-purple-100 text-purple-800 border-purple-200 font-accent rounded-md">
-              Experience Highlights
-            </Badge>
-            <h2 className="section-title text-gray-900 mb-6">
-              Why Choose IG Thar Village
-            </h2>
+          {/* Mobile: Compact 4-column grid */}
+          <div className="grid grid-cols-4 gap-3 sm:hidden">
+            <div className="group text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                <Leaf className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-xs font-semibold text-gray-800">Organic</span>
+            </div>
+            
+            <div className="group text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                <Sun className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-xs font-semibold text-gray-800">Culture</span>
+            </div>
+            
+            <div className="group text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                <Heart className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-xs font-semibold text-gray-800">Care</span>
+            </div>
+            
+            <div className="group text-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-all duration-300 shadow-lg">
+                <Award className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-xs font-semibold text-gray-800">Awards</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            <Card className="group hover:shadow-md transition-all duration-300 border border-gray-100 shadow-sm rounded-lg overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100">
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Leaf className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="card-title text-gray-900 mb-2">100% Organic</h3>
-                <p className="body-text text-gray-600 text-sm">Chemical-free farming and pure products from our sustainable farm</p>
-              </CardContent>
-            </Card>
-
-            <Card className="group hover:shadow-md transition-all duration-300 border border-gray-100 shadow-sm rounded-lg overflow-hidden bg-gradient-to-br from-orange-50 to-amber-100">
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Sun className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="card-title text-gray-900 mb-2">Authentic Culture</h3>
-                <p className="body-text text-gray-600 text-sm">Traditional lifestyle and genuine cultural immersion experiences</p>
-              </CardContent>
-            </Card>
-
-            <Card className="group hover:shadow-md transition-all duration-300 border border-gray-100 shadow-sm rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-100">
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Heart className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="card-title text-gray-900 mb-2">Warm Hospitality</h3>
-                <p className="body-text text-gray-600 text-sm">Genuine care and personalized service from local hosts</p>
-              </CardContent>
-            </Card>
-
-            <Card className="group hover:shadow-md transition-all duration-300 border border-gray-100 shadow-sm rounded-lg overflow-hidden bg-gradient-to-br from-purple-50 to-violet-100">
-              <CardContent className="p-6 text-center">
-                <div className="w-16 h-16 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <Award className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="card-title text-gray-900 mb-2">Award Winning</h3>
-                <p className="body-text text-gray-600 text-sm">Recognized excellence in sustainable tourism and hospitality</p>
-              </CardContent>
-            </Card>
+          {/* Desktop: Elegant horizontal layout */}
+          <div className="hidden sm:flex justify-center items-center space-x-8 lg:space-x-12">
+            <div className="group flex items-center space-x-3 hover:scale-105 transition-all duration-300">
+              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl">
+                <Leaf className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900">100% Organic</h3>
+                <p className="text-sm text-gray-600">Chemical-free farming</p>
+              </div>
+            </div>
+            
+            <div className="group flex items-center space-x-3 hover:scale-105 transition-all duration-300">
+              <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl">
+                <Sun className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900">Authentic Culture</h3>
+                <p className="text-sm text-gray-600">Traditional lifestyle</p>
+              </div>
+            </div>
+            
+            <div className="group flex items-center space-x-3 hover:scale-105 transition-all duration-300">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl">
+                <Heart className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900">Warm Hospitality</h3>
+                <p className="text-sm text-gray-600">Genuine care</p>
+              </div>
+            </div>
+            
+            <div className="group flex items-center space-x-3 hover:scale-105 transition-all duration-300">
+              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl">
+                <Award className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-gray-900">Award Winning</h3>
+                <p className="text-sm text-gray-600">Excellence recognized</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Featured Products Section */}
+      <FeaturedProductsSection />
 
       {/* Accommodations Section */}
       <PropertiesSection />
@@ -187,7 +209,7 @@ export default function Home() {
               Immerse in Desert Culture
             </h2>
             <p className="body-text text-xl text-gray-600 max-w-3xl mx-auto">
-              From traditional farming practices to cultural performances, 
+              From traditional farming practices to cultural performances,
               discover the authentic lifestyle of Rajasthan's desert communities
             </p>
           </div>
@@ -229,16 +251,16 @@ export default function Home() {
                 <span className="block text-green-600">Farmer Couple</span>
               </h2>
               <p className="body-text text-lg text-gray-700 mb-6 leading-relaxed">
-                Established in 2023 by Dr. Devaram Pawar and Dhapu, IG Thar Village represents 
-                a revolutionary approach to sustainable tourism and cultural preservation in the 
+                Established in 2023 by Dr. Devaram Pawar and Dhapu, IG Thar Village represents
+                a revolutionary approach to sustainable tourism and cultural preservation in the
                 heart of Rajasthan's Thar Desert.
               </p>
               <p className="body-text text-lg text-gray-700 mb-8 leading-relaxed">
-                Our mission extends beyond hospitality - we're dedicated to promoting innovation 
-                in agriculture, preserving traditional desert culture, and creating meaningful 
+                Our mission extends beyond hospitality - we're dedicated to promoting innovation
+                in agriculture, preserving traditional desert culture, and creating meaningful
                 connections between visitors and authentic rural life.
               </p>
-              
+
               <div className="grid grid-cols-2 gap-6 mb-8">
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="h-6 w-6 text-green-600" />
@@ -265,7 +287,7 @@ export default function Home() {
                 </Link>
               </Button>
             </div>
-            
+
             <div className="relative">
               <div className="glass-effect rounded-lg p-8 shadow-sm border border-gray-100">
                 <h3 className="card-title text-gray-900 mb-6">What Makes Us Special</h3>
@@ -371,7 +393,7 @@ export default function Home() {
               <h3 className="card-title text-gray-900 mb-2">Authentic & Safe</h3>
               <p className="body-text text-gray-600">Genuine experiences with complete safety and comfort</p>
             </div>
-            
+
             <div className="text-center group">
               <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Clock className="h-8 w-8 text-orange-600" />
@@ -379,7 +401,7 @@ export default function Home() {
               <h3 className="card-title text-gray-900 mb-2">24/7 Support</h3>
               <p className="body-text text-gray-600">Round-the-clock assistance for all your needs</p>
             </div>
-            
+
             <div className="text-center group">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Award className="h-8 w-8 text-blue-600" />
@@ -387,7 +409,7 @@ export default function Home() {
               <h3 className="card-title text-gray-900 mb-2">Award Winning</h3>
               <p className="body-text text-gray-600">Recognized for excellence in sustainable tourism</p>
             </div>
-            
+
             <div className="text-center group">
               <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                 <Globe className="h-8 w-8 text-purple-600" />
@@ -406,7 +428,7 @@ export default function Home() {
             Ready for Your Desert Adventure?
           </h2>
           <p className="body-text text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join hundreds of travelers who have discovered the magic of authentic Thar Desert culture. 
+            Join hundreds of travelers who have discovered the magic of authentic Thar Desert culture.
             Book your unforgettable experience today!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -1,0 +1,2 @@
+This directory contains hero poster images.
+Images will be added here for the carousel slides.

@@ -45,16 +45,28 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         newItems = [...state.items, { id: product.id, product, quantity }];
       }
 
-      const total = newItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-      const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
+      const total = newItems.reduce((sum, item) => {
+        if (!item || !item.product || typeof item.product.price !== 'number') {
+          console.warn('Invalid cart item:', item);
+          return sum;
+        }
+        return sum + (item.product.price * item.quantity);
+      }, 0);
+      const itemCount = newItems.reduce((sum, item) => sum + (item?.quantity || 0), 0);
 
       return { items: newItems, total, itemCount };
     }
 
     case 'REMOVE_ITEM': {
       const newItems = state.items.filter(item => item.id !== action.payload.productId);
-      const total = newItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-      const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
+      const total = newItems.reduce((sum, item) => {
+        if (!item || !item.product || typeof item.product.price !== 'number') {
+          console.warn('Invalid cart item:', item);
+          return sum;
+        }
+        return sum + (item.product.price * item.quantity);
+      }, 0);
+      const itemCount = newItems.reduce((sum, item) => sum + (item?.quantity || 0), 0);
 
       return { items: newItems, total, itemCount };
     }
@@ -68,8 +80,14 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       const newItems = state.items.map(item =>
         item.id === productId ? { ...item, quantity } : item
       );
-      const total = newItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-      const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
+      const total = newItems.reduce((sum, item) => {
+        if (!item || !item.product || typeof item.product.price !== 'number') {
+          console.warn('Invalid cart item:', item);
+          return sum;
+        }
+        return sum + (item.product.price * item.quantity);
+      }, 0);
+      const itemCount = newItems.reduce((sum, item) => sum + (item?.quantity || 0), 0);
 
       return { items: newItems, total, itemCount };
     }
@@ -91,6 +109,7 @@ interface CartContextType {
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
+  cleanupInvalidItems: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -104,9 +123,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (savedCart) {
       try {
         const cartData = JSON.parse(savedCart);
-        dispatch({ type: 'LOAD_CART', payload: cartData });
+        // Clean up invalid items before loading
+        const validItems = (cartData.items || []).filter((item: any) =>
+          item &&
+          item.product &&
+          item.product.id &&
+          typeof item.product.price === 'number' &&
+          item.quantity > 0
+        );
+
+        const total = validItems.reduce((sum: number, item: any) => sum + (item.product.price * item.quantity), 0);
+        const itemCount = validItems.reduce((sum: number, item: any) => sum + item.quantity, 0);
+
+        dispatch({ type: 'LOAD_CART', payload: { items: validItems, total, itemCount } });
       } catch (error) {
         console.error('Error loading cart from localStorage:', error);
+        // Clear invalid cart data
+        localStorage.removeItem('cart');
       }
     }
   }, []);
@@ -117,6 +150,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [state]);
 
   const addItem = (product: Product, quantity = 1) => {
+    if (!product || !product.id || typeof product.price !== 'number') {
+      console.error('Invalid product passed to addItem:', product);
+      return;
+    }
     dispatch({ type: 'ADD_ITEM', payload: { product, quantity } });
   };
 
@@ -132,8 +169,32 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'CLEAR_CART' });
   };
 
+  const cleanupInvalidItems = () => {
+    const validItems = state.items.filter(item =>
+      item &&
+      item.product &&
+      item.product.id &&
+      typeof item.product.price === 'number' &&
+      item.quantity > 0
+    );
+
+    if (validItems.length !== state.items.length) {
+      console.log('Cleaning up invalid cart items');
+      const total = validItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+      const itemCount = validItems.reduce((sum, item) => sum + item.quantity, 0);
+      dispatch({ type: 'LOAD_CART', payload: { items: validItems, total, itemCount } });
+    }
+  };
+
+  // Cleanup invalid items on mount
+  useEffect(() => {
+    if (state.items.length > 0) {
+      cleanupInvalidItems();
+    }
+  }, []); // Only run once on mount
+
   return (
-    <CartContext.Provider value={{ state, addItem, removeItem, updateQuantity, clearCart }}>
+    <CartContext.Provider value={{ state, addItem, removeItem, updateQuantity, clearCart, cleanupInvalidItems }}>
       {children}
     </CartContext.Provider>
   );
