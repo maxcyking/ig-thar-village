@@ -23,7 +23,10 @@ import {
   User,
   UserCheck,
   Baby,
-  Mountain
+  Mountain,
+  Phone,
+  Mail,
+  Navigation
 } from "lucide-react";
 import { format, addDays, differenceInDays } from "date-fns";
 import { getProperty, createPropertyBooking, type Property, type BookingGuest } from "@/lib/database";
@@ -115,7 +118,7 @@ export default function PropertyBookingPage() {
     }
     
     const nights = getTotalNights();
-    const subtotal = property.price * nights;
+    const subtotal = property.pricePerNight * nights;
     const tax = Math.round(subtotal * 0.12); // 12% tax
     const total = subtotal + tax;
     
@@ -187,7 +190,7 @@ export default function PropertyBookingPage() {
         checkOut: formData.checkOutDate!,
         guests: formData.guests,
         totalNights: nights,
-        pricePerNight: property.price,
+        pricePerNight: property.pricePerNight,
         subtotal,
         tax,
         total,
@@ -628,7 +631,7 @@ export default function PropertyBookingPage() {
                       {/* Price Breakdown */}
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span>₹{property.price} × {getTotalNights()} night{getTotalNights() !== 1 ? 's' : ''}</span>
+                          <span>₹{property.pricePerNight} × {getTotalNights()} night{getTotalNights() !== 1 ? 's' : ''}</span>
                           <span>₹{subtotal}</span>
                         </div>
                         <div className="flex justify-between">
@@ -653,6 +656,71 @@ export default function PropertyBookingPage() {
                       <li>• Local guide assistance</li>
                       <li>• Desert experience</li>
                     </ul>
+                  </div>
+
+                  {/* Location & Contact Info */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-gray-900">Location & Contact</h4>
+                    
+                    <div className="space-y-3 text-sm">
+                      <div className="flex items-start gap-2">
+                        <MapPin className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-gray-900">Address</p>
+                          <p className="text-gray-600">
+                            {property.detailedAddress || "Village & Post - Jhak, Tehsil - Batadu, District - Barmer, Rajasthan - 344035, India"}
+                          </p>
+                          {(property.googleMapsUrl || "https://share.google/K6JChsw8ylbZbn8qf") && (
+                            <a 
+                              href={property.googleMapsUrl || "https://share.google/K6JChsw8ylbZbn8qf"} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-amber-600 hover:text-amber-700 underline inline-flex items-center gap-1 mt-1"
+                            >
+                              <Navigation className="h-3 w-3" />
+                              View on Google Maps
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2">
+                        <Phone className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-gray-900">Phone</p>
+                          <a 
+                            href={`tel:${property.contactPhone || "+918302676869"}`}
+                            className="text-amber-600 hover:text-amber-700"
+                          >
+                            {property.contactPhone || "+91 8302676869"}
+                          </a>
+                          <p className="text-gray-500 text-xs">Available 24/7</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2">
+                        <Mail className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-gray-900">Email</p>
+                          <a 
+                            href={`mailto:${property.contactEmail || "bookings@igtharvillage.com"}`}
+                            className="text-amber-600 hover:text-amber-700"
+                          >
+                            {property.contactEmail || "bookings@igtharvillage.com"}
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-2">
+                        <Clock className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="font-medium text-gray-900">Operating Hours</p>
+                          <p className="text-gray-600">
+                            {property.operatingHours || "Daily: 6:00 AM - 10:00 PM"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

@@ -28,6 +28,11 @@ export interface Property {
   featured: boolean;
   available: boolean;
   location: string;
+  detailedAddress?: string;
+  googleMapsUrl?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  operatingHours?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -248,9 +253,31 @@ export interface SiteSettings {
   address: string;
   phone: string;
   email: string;
+  socialMedia?: {
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    youtube?: string;
+    whatsappChannel?: string;
+    whatsappGroup?: string;
+    googleMaps?: string;
+    googleMapsEmbed?: string;
+  };
   isLaunched: boolean;
   launchedAt?: Date;
   launchedBy?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Contact Form Interface
+export interface ContactForm {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  status: 'new' | 'read' | 'replied' | 'archived';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -903,6 +930,64 @@ export const deleteAward = async (id: string): Promise<void> => {
   }
 };
 
+// Contact Form Functions
+export const createContactForm = async (contactData: Omit<ContactForm, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
+  try {
+    const docRef = await addDoc(collection(db, "contactForms"), {
+      ...contactData,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating contact form:", error);
+    throw error;
+  }
+};
+
+export const getAllContactForms = async (): Promise<ContactForm[]> => {
+  try {
+    const q = query(
+      collection(db, "contactForms"),
+      orderBy("createdAt", "desc")
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+    })) as ContactForm[];
+  } catch (error) {
+    console.error("Error fetching contact forms:", error);
+    return [];
+  }
+};
+
+export const updateContactForm = async (id: string, contactData: Partial<ContactForm>): Promise<void> => {
+  try {
+    const docRef = doc(db, "contactForms", id);
+    await updateDoc(docRef, {
+      ...contactData,
+      updatedAt: Timestamp.now(),
+    });
+  } catch (error) {
+    console.error("Error updating contact form:", error);
+    throw error;
+  }
+};
+
+export const deleteContactForm = async (id: string): Promise<void> => {
+  try {
+    const docRef = doc(db, "contactForms", id);
+    await deleteDoc(docRef);
+  } catch (error) {
+    console.error("Error deleting contact form:", error);
+    throw error;
+  }
+};
+
 // Alias functions for detail pages
 export const getPropertyById = getProperty;
 export const getProductById = getProduct;
@@ -1189,6 +1274,83 @@ export const getServiceBooking = async (id: string): Promise<ServiceBooking | nu
     return null;
   } catch (error) {
     console.error("Error getting service booking:", error);
+    throw error;
+  }
+};
+
+// Get All Bookings Functions
+export const getAllPropertyBookings = async (): Promise<PropertyBooking[]> => {
+  try {
+    const q = query(
+      collection(db, "propertyBookings"), 
+      orderBy("createdAt", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+    
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        checkIn: data.checkIn?.toDate() || new Date(),
+        checkOut: data.checkOut?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as PropertyBooking;
+    });
+  } catch (error) {
+    console.error("Error getting property bookings:", error);
+    throw error;
+  }
+};
+
+export const getAllServiceBookings = async (): Promise<ServiceBooking[]> => {
+  try {
+    const q = query(
+      collection(db, "serviceBookings"), 
+      orderBy("createdAt", "desc")
+    );
+    const querySnapshot = await getDocs(q);
+    
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        bookingDate: data.bookingDate?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as ServiceBooking;
+    });
+  } catch (error) {
+    console.error("Error getting service bookings:", error);
+    throw error;
+  }
+};
+
+// Update Booking Status Functions
+export const updatePropertyBookingStatus = async (id: string, status: PropertyBooking['status']): Promise<void> => {
+  try {
+    const docRef = doc(db, "propertyBookings", id);
+    await updateDoc(docRef, {
+      status,
+      updatedAt: Timestamp.now()
+    });
+  } catch (error) {
+    console.error("Error updating property booking status:", error);
+    throw error;
+  }
+};
+
+export const updateServiceBookingStatus = async (id: string, status: ServiceBooking['status']): Promise<void> => {
+  try {
+    const docRef = doc(db, "serviceBookings", id);
+    await updateDoc(docRef, {
+      status,
+      updatedAt: Timestamp.now()
+    });
+  } catch (error) {
+    console.error("Error updating service booking status:", error);
     throw error;
   }
 };

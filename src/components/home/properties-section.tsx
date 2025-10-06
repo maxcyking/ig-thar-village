@@ -148,7 +148,7 @@ export function PropertiesSection() {
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="outline" className="flex-1 border-2 border-amber-600 text-amber-600 hover:bg-amber-600 hover:text-white rounded-xl">
-                    <Link href={`/contact?property=${property.id}`}>
+                    <Link href={`/booking/property/${property.id}`}>
                       <Calendar className="mr-2 h-5 w-5" />
                       Book Now
                     </Link>

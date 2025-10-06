@@ -8,10 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Product, getProducts, getAllProducts } from "@/lib/database";
 import { useCart } from "@/contexts/cart-context";
 import Link from "next/link";
-import { 
-  Search, 
-  Filter, 
-  ShoppingCart, 
+import {
+  Search,
+  Filter,
+  ShoppingCart,
   Star,
   Leaf,
   Award,
@@ -62,14 +62,14 @@ export default function ProductsPage() {
 
   const displayProducts = showOutOfStock ? allProducts : products;
   const outOfStockCount = allProducts.length - products.length;
-  
+
   const filteredProducts = displayProducts.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
+      product.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
     const matchesOrganic = !showOnlyOrganic || product.organic;
     const matchesFeatured = !showOnlyFeatured || product.featured;
-    
+
     return matchesSearch && matchesCategory && matchesOrganic && matchesFeatured;
   });
 
@@ -114,7 +114,7 @@ export default function ProductsPage() {
               Organic Desert Products
             </h1>
             <p className="text-xl mb-8 text-green-100">
-              Discover authentic, organic products from the heart of the Thar Desert. 
+              Discover authentic, organic products from the heart of the Thar Desert.
               Sustainably sourced and traditionally crafted.
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm">
@@ -249,19 +249,19 @@ export default function ProductsPage() {
             <div className="text-center py-12">
               <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                {allProducts.length === 0 
+                {allProducts.length === 0
                   ? "No products available"
                   : products.length === 0 && !showOutOfStock
-                  ? "All products are currently out of stock"
-                  : "No products found"
+                    ? "All products are currently out of stock"
+                    : "No products found"
                 }
               </h3>
               <p className="text-gray-500 mb-4">
-                {allProducts.length === 0 
+                {allProducts.length === 0
                   ? "We're working on adding amazing organic products from the desert."
                   : products.length === 0 && !showOutOfStock
-                  ? "Check back soon or enable 'Show Out of Stock' to see all products."
-                  : "Try adjusting your search or filter criteria."
+                    ? "Check back soon or enable 'Show Out of Stock' to see all products."
+                    : "Try adjusting your search or filter criteria."
                 }
               </p>
               {products.length === 0 && outOfStockCount > 0 && !showOutOfStock && (
@@ -293,7 +293,7 @@ export default function ProductsPage() {
                           <Package className="h-12 w-12 text-green-600" />
                         </div>
                       )}
-                      
+
                       {/* Badges */}
                       <div className="absolute top-2 left-2 flex gap-2">
                         {product.organic && (
@@ -309,9 +309,9 @@ export default function ProductsPage() {
                           </Badge>
                         )}
                       </div>
-                      
+
                       <div className="absolute top-2 right-2">
-                        <Badge 
+                        <Badge
                           className={`text-xs ${product.inStock ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}
                         >
                           {product.inStock ? 'In Stock' : 'Out of Stock'}
@@ -350,7 +350,7 @@ export default function ProductsPage() {
                           )}
                           <div className="text-xl font-bold text-green-600">₹{product.price}</div>
                         </div>
-                        <div className="text-xs text-gray-500">per {product.unit}</div>
+                        <div className="text-xs text-gray-500">per{product.weight} {product.unit}</div>
                       </div>
                     </div>
                   </CardHeader>
@@ -362,7 +362,7 @@ export default function ProductsPage() {
 
                     <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
                       {product.weight && (
-                        <span>Size: {product.weight}</span>
+                        <span>Size: {product.weight} {product.unit}</span>
                       )}
                       {product.stock && product.inStock && (
                         <span>{product.stock} available</span>
@@ -370,7 +370,7 @@ export default function ProductsPage() {
                     </div>
 
                     <div className="flex gap-2">
-                      <Button 
+                      <Button
                         className="flex-1 rounded-lg bg-green-600 hover:bg-green-700"
                         disabled={!product.inStock || addingToCart === product.id}
                         onClick={(e) => {
@@ -379,13 +379,13 @@ export default function ProductsPage() {
                         }}
                       >
                         <ShoppingCart className="h-4 w-4 mr-2" />
-                        {addingToCart === product.id ? 'Adding...' : 
-                         product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                        {addingToCart === product.id ? 'Adding...' :
+                          product.inStock ? 'Add to Cart' : 'Out of Stock'}
                       </Button>
-                      
+
                       <Link href={`/products/${product.id}`}>
-                        <Button 
-                          variant="outline" 
+                        <Button
+                          variant="outline"
                           className="rounded-lg"
                         >
                           View

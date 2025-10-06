@@ -35,6 +35,11 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
     name: "",
     category: "",
     location: "",
+    detailedAddress: "",
+    googleMapsUrl: "",
+    contactPhone: "",
+    contactEmail: "",
+    operatingHours: "",
     pricePerNight: "",
     maxGuests: "",
     shortDescription: "",
@@ -54,6 +59,11 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
         name: property.name || "",
         category: property.category || "",
         location: property.location || "",
+        detailedAddress: property.detailedAddress || "",
+        googleMapsUrl: property.googleMapsUrl || "",
+        contactPhone: property.contactPhone || "",
+        contactEmail: property.contactEmail || "",
+        operatingHours: property.operatingHours || "",
         pricePerNight: property.pricePerNight?.toString() || "",
         maxGuests: property.maxGuests?.toString() || "",
         shortDescription: property.shortDescription || "",
@@ -64,6 +74,11 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
         available: property.available !== false,
         images: []
       });
+
+      // Set existing images as previews
+      if (property.images && property.images.length > 0) {
+        setImagePreviews(property.images);
+      }
     }
   }, [property]);
 
@@ -101,7 +116,7 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
       setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }));
-      
+
       files.forEach(file => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -126,7 +141,9 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
     const propertyData = {
       ...formData,
       pricePerNight: parseFloat(formData.pricePerNight),
-      maxGuests: parseInt(formData.maxGuests)
+      maxGuests: parseInt(formData.maxGuests),
+      // Preserve existing images if no new images are uploaded
+      existingImages: property?.images || []
     };
 
     onSave(propertyData);
@@ -203,6 +220,72 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
             required
             className="rounded-lg"
           />
+        </div>
+      </div>
+
+      {/* Detailed Location & Contact Information */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">Location & Contact Details</h3>
+
+        <div className="space-y-2">
+          <Label htmlFor="detailedAddress">Detailed Address</Label>
+          <Textarea
+            id="detailedAddress"
+            placeholder="Village & Post - Jhak, Tehsil - Batadu, District - Barmer, Rajasthan - 344035, India"
+            value={formData.detailedAddress}
+            onChange={(e) => handleInputChange("detailedAddress", e.target.value)}
+            rows={2}
+            className="rounded-lg"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="googleMapsUrl">Google Maps URL</Label>
+            <Input
+              id="googleMapsUrl"
+              placeholder="https://share.google/K6JChsw8ylbZbn8qf"
+              value={formData.googleMapsUrl}
+              onChange={(e) => handleInputChange("googleMapsUrl", e.target.value)}
+              className="rounded-lg"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="contactPhone">Contact Phone</Label>
+            <Input
+              id="contactPhone"
+              placeholder="+91 8302676869"
+              value={formData.contactPhone}
+              onChange={(e) => handleInputChange("contactPhone", e.target.value)}
+              className="rounded-lg"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="contactEmail">Contact Email</Label>
+            <Input
+              id="contactEmail"
+              type="email"
+              placeholder="bookings@igtharvillage.com"
+              value={formData.contactEmail}
+              onChange={(e) => handleInputChange("contactEmail", e.target.value)}
+              className="rounded-lg"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="operatingHours">Operating Hours</Label>
+            <Input
+              id="operatingHours"
+              placeholder="Daily: 6:00 AM - 10:00 PM"
+              value={formData.operatingHours}
+              onChange={(e) => handleInputChange("operatingHours", e.target.value)}
+              className="rounded-lg"
+            />
+          </div>
         </div>
       </div>
 
@@ -315,7 +398,7 @@ export function PropertyForm({ property, onSave, onCancel }: PropertyFormProps) 
                 aria-label="Upload property images"
               />
             </div>
-            
+
             {/* Image Previews */}
             {imagePreviews.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">

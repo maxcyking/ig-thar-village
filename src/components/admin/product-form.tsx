@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Upload, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface ProductFormProps {
   product?: any;
@@ -60,6 +61,16 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
         inStock: product.inStock || false,
         image: null
       });
+      
+      // Set existing image preview if product has images
+      if (product.images && product.images.length > 0) {
+        setImagePreview(product.images[0]); // Show first image as preview
+      } else {
+        setImagePreview(null);
+      }
+    } else {
+      // Reset form for new product
+      setImagePreview(null);
     }
   }, [product]);
 
@@ -220,12 +231,19 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                   >
                     <X className="h-4 w-4" />
                   </Button>
+                  {product && product.images && product.images.includes(imagePreview) && (
+                    <div className="absolute bottom-2 left-2">
+                      <Badge variant="secondary" className="text-xs">
+                        Current Image
+                      </Badge>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="text-center">
                   <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                   <p className="text-sm text-muted-foreground mb-2">
-                    Click to upload product image
+                    {product ? "Click to change product image" : "Click to upload product image"}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     PNG, JPG up to 5MB
@@ -240,6 +258,11 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 aria-label="Upload product image"
               />
             </div>
+            {product && !formData.image && imagePreview && (
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                💡 Current image will be kept if no new image is uploaded
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>

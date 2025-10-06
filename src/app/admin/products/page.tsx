@@ -99,8 +99,13 @@ export default function AdminProductsPage() {
     try {
       let imageUrls: string[] = [];
       
+      // Handle image upload
       if (productData.image) {
+        // New image uploaded
         imageUrls = await uploadMultipleImages([productData.image], 'products');
+      } else if (editingProduct && editingProduct.images) {
+        // No new image, keep existing images
+        imageUrls = editingProduct.images;
       }
 
       // Remove the image field and create clean product data

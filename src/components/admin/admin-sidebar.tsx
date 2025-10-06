@@ -14,7 +14,8 @@ import {
   BarChart3,
   Home,
   MapPin,
-  Award
+  Award,
+  Mail
 } from "lucide-react";
 
 const navigation = [
@@ -57,6 +58,11 @@ const navigation = [
     name: "Bookings",
     href: "/admin/bookings",
     icon: Users,
+  },
+  {
+    name: "Contact Forms",
+    href: "/admin/contacts",
+    icon: Mail,
   },
   {
     name: "Messages",

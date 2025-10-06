@@ -120,8 +120,8 @@ const heroSlides: HeroSlide[] = [
       icon: Camera
     },
     backgroundTheme: 'adventure',
-    posterImage: "/images/hero/desert-safari-poster.jpg",
-    overlayOpacity: 0.4,
+    posterImage: "/images/hero/Camel_Safari_Desert_Adventure.jpg",
+    overlayOpacity: 0.3,
     textPosition: 'left',
     floatingElements: [
       { icon: Mountain, position: "top-20 right-20", color: "text-orange-400", delay: "0s", duration: "4s" },
@@ -148,8 +148,8 @@ const heroSlides: HeroSlide[] = [
       icon: Music
     },
     backgroundTheme: 'cultural',
-    posterImage: "/images/hero/cultural-heritage-poster.jpg",
-    overlayOpacity: 0.5,
+    posterImage: "/images/hero/cultral_heritage.png",
+    overlayOpacity: 0.3,
     textPosition: 'right',
     floatingElements: [
       { icon: Music, position: "top-16 left-16", color: "text-purple-400", delay: "0s", duration: "4s" },
@@ -204,8 +204,8 @@ const heroSlides: HeroSlide[] = [
       icon: Camera
     },
     backgroundTheme: 'heritage',
-    posterImage: "/images/hero/heritage-stay-poster.jpg",
-    overlayOpacity: 0.4,
+    posterImage: "/images/hero/Rajasthani_Heritage_Stay_Mud_Houses.jpg",
+    overlayOpacity: 0.3,
     textPosition: 'left',
     floatingElements: [
       { icon: Tent, position: "top-20 right-24", color: "text-amber-400", delay: "0s", duration: "3.5s" },
@@ -232,8 +232,8 @@ const heroSlides: HeroSlide[] = [
       icon: ArrowRight
     },
     backgroundTheme: 'heritage',
-    posterImage: "/images/hero/village-life-poster.jpg",
-    overlayOpacity: 0.5,
+    posterImage: "/images/hero/Community_Experience_Village_Life_No_Text.jpg",
+    overlayOpacity: 0.3,
     textPosition: 'right',
     floatingElements: [
       { icon: Globe, position: "top-16 left-24", color: "text-blue-400", delay: "0s", duration: "3.5s" },
@@ -396,8 +396,8 @@ export function EnhancedHero() {
                 {slide.type === 'poster' ? (
                   // Poster Background - Image or CSS Generated
                   <>
-                    {slide.posterImage && slide.id === 4 ? (
-                      // Use actual image for slide 4 (Organic Farm)
+                    {slide.posterImage && (slide.id === 2 || slide.id === 3 || slide.id === 4 || slide.id === 5 || slide.id === 6) ? (
+                      // Use actual image for slide 2 (Desert Safari), slide 3 (Cultural Heritage), slide 4 (Organic Farm), slide 5 (Heritage Stay) and slide 6 (Village Life)
                       <Image
                         src={slide.posterImage}
                         alt={`${slide.title} ${slide.subtitle}`}
@@ -418,9 +418,9 @@ export function EnhancedHero() {
 
                     {/* Text Readability Overlay */}
                     <div className={`absolute inset-0 bg-gradient-to-br ${getBackgroundTheme(slide.backgroundTheme)} ${slide.overlayOpacity === 0.3 ? 'poster-overlay-light' :
-                        slide.overlayOpacity === 0.4 ? 'poster-overlay-medium' :
-                          slide.overlayOpacity === 0.5 ? 'poster-overlay-dark' :
-                            'poster-overlay-medium'
+                      slide.overlayOpacity === 0.4 ? 'poster-overlay-medium' :
+                        slide.overlayOpacity === 0.5 ? 'poster-overlay-dark' :
+                          'poster-overlay-medium'
                       }`}></div>
                   </>
                 ) : (
@@ -465,11 +465,11 @@ export function EnhancedHero() {
                 )}
               </div>
 
-              {/* Animated Desert Sun - Hidden for slide 4 */}
-              {slide.id !== 4 && <div className="desert-sun"></div>}
+              {/* Animated Desert Sun - Hidden for slide 2, 3, 4, 5 and 6 */}
+              {slide.id !== 2 && slide.id !== 3 && slide.id !== 4 && slide.id !== 5 && slide.id !== 6 && <div className="desert-sun"></div>}
 
-              {/* Dynamic Floating Elements - Hidden for slide 4 */}
-              {slide.id !== 4 && (
+              {/* Dynamic Floating Elements - Hidden for slide 2, 3, 4, 5 and 6 */}
+              {slide.id !== 2 && slide.id !== 3 && slide.id !== 4 && slide.id !== 5 && slide.id !== 6 && (
                 <div className="absolute inset-0 pointer-events-none">
                   {slide.floatingElements.map((element, elemIndex) => {
                     const IconComponent = element.icon;
@@ -497,8 +497,8 @@ export function EnhancedHero() {
                 </div>
               )}
 
-              {/* Desert Particles - Hidden for slide 4 */}
-              {slide.id !== 4 && (
+              {/* Desert Particles - Hidden for slide 2, 3, 4, 5 and 6 */}
+              {slide.id !== 2 && slide.id !== 3 && slide.id !== 4 && slide.id !== 5 && slide.id !== 6 && (
                 <div className="desert-particles">
                   {[...Array(12)].map((_, i) => (
                     <div key={i} className="particle"></div>
@@ -525,8 +525,8 @@ export function EnhancedHero() {
               {/* Main Content - Mobile-First Compact Design */}
               <div className="w-full h-full relative z-10 flex items-center justify-center px-2 sm:px-4 lg:px-8">
                 <div className={`w-full max-w-sm sm:max-w-2xl lg:max-w-6xl mx-auto ${slide.textPosition === 'left' ? 'text-left' :
-                    slide.textPosition === 'right' ? 'text-right' :
-                      'text-center'
+                  slide.textPosition === 'right' ? 'text-right' :
+                    'text-center'
                   }`}>
 
                   {/* Compact Badge for Mobile */}
@@ -544,8 +544,8 @@ export function EnhancedHero() {
                       {slide.title}
                     </span>
                     <span className={`block text-xl sm:text-3xl lg:text-5xl xl:text-6xl mt-0.5 sm:mt-1 ${slide.type === 'poster'
-                        ? 'text-white drop-shadow-2xl'
-                        : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-yellow-500 to-red-600'
+                      ? 'text-white drop-shadow-2xl'
+                      : 'text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-yellow-500 to-red-600'
                       }`}>
                       {slide.subtitle}
                     </span>
@@ -553,12 +553,12 @@ export function EnhancedHero() {
 
                   {/* Compact Mobile Description */}
                   <div className={`mb-3 sm:mb-4 lg:mb-6 ${slide.textPosition === 'center' ? 'max-w-xs sm:max-w-lg lg:max-w-3xl mx-auto' :
-                      slide.textPosition === 'left' ? 'max-w-xs sm:max-w-lg' :
-                        'max-w-xs sm:max-w-lg ml-auto'
+                    slide.textPosition === 'left' ? 'max-w-xs sm:max-w-lg' :
+                      'max-w-xs sm:max-w-lg ml-auto'
                     }`}>
                     <p className={`text-xs sm:text-sm lg:text-base leading-relaxed backdrop-blur-sm rounded-lg p-2 sm:p-3 lg:p-4 shadow-md ${slide.type === 'poster'
-                        ? 'text-white bg-black/60'
-                        : 'text-gray-800 bg-white/80'
+                      ? 'text-white bg-black/60'
+                      : 'text-gray-800 bg-white/80'
                       }`}>
                       {slide.description}
                     </p>
@@ -566,7 +566,7 @@ export function EnhancedHero() {
 
                   {/* Compact Mobile Buttons - Horizontal Row */}
                   <div className={`hero-cta-container flex flex-row gap-2 sm:gap-3 mb-4 sm:mb-6 lg:mb-8 ${slide.textPosition === 'center' ? 'justify-center' :
-                      slide.textPosition === 'right' ? 'justify-end' : 'justify-start'
+                    slide.textPosition === 'right' ? 'justify-end' : 'justify-start'
                     }`}>
                     <Button
                       size="sm"
@@ -585,8 +585,8 @@ export function EnhancedHero() {
                       variant="outline"
                       size="sm"
                       className={`hero-cta-button flex-1 sm:flex-none sm:w-auto border-2 px-3 sm:px-6 lg:px-8 py-2 sm:py-3 text-xs sm:text-sm lg:text-base rounded-lg sm:rounded-full shadow-md sm:shadow-lg transform hover:scale-105 transition-all duration-300 ${slide.type === 'poster'
-                          ? 'border-white text-white hover:bg-white hover:text-gray-900 backdrop-blur-sm bg-white/20'
-                          : 'border-orange-500 text-orange-700 hover:bg-orange-50 backdrop-blur-sm bg-white/80'
+                        ? 'border-white text-white hover:bg-white hover:text-gray-900 backdrop-blur-sm bg-white/20'
+                        : 'border-orange-500 text-orange-700 hover:bg-orange-50 backdrop-blur-sm bg-white/80'
                         }`}
                     >
                       <Link href={slide.secondaryCTA.href} className="flex items-center justify-center w-full">
@@ -619,8 +619,8 @@ export function EnhancedHero() {
                 </div>
               </div>
 
-              {/* Animated Sand Dune Waves at Bottom - Hidden for slide 4 */}
-              {slide.id !== 4 && (
+              {/* Animated Sand Dune Waves at Bottom - Hidden for slide 2, 3, 4, 5 and 6 */}
+              {slide.id !== 2 && slide.id !== 3 && slide.id !== 4 && slide.id !== 5 && slide.id !== 6 && (
                 <div className="sand-waves">
                   <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
                     <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
@@ -643,8 +643,8 @@ export function EnhancedHero() {
                 </div>
               )}
 
-              {/* Camel Silhouette - Hidden for slide 4 */}
-              {slide.id !== 4 && (
+              {/* Camel Silhouette - Hidden for slide 2, 3, 4, 5 and 6 */}
+              {slide.id !== 2 && slide.id !== 3 && slide.id !== 4 && slide.id !== 5 && slide.id !== 6 && (
                 <div className="camel-silhouette">
                   <svg width="60" height="40" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="sm:w-[90px] sm:h-[60px] lg:w-[120px] lg:h-[80px]">
                     <path d="M10 60 Q15 45 25 50 Q35 55 45 50 Q55 45 65 50 Q75 55 85 50 Q95 45 105 50 L110 60 Q105 65 95 65 Q85 65 75 65 Q65 65 55 65 Q45 65 35 65 Q25 65 15 65 Q10 65 10 60 Z"

@@ -1,37 +1,85 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, Twitter, MessageCircle, Users, Navigation } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, Twitter, MessageCircle, Users, Navigation, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { getSettings, createContactForm, type SiteSettings } from "@/lib/database";
 
 export default function ContactPage() {
+    const [settings, setSettings] = useState<SiteSettings | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         phone: "",
-        service: "",
-        message: "",
-        guests: "",
-        dates: ""
+        message: ""
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    useEffect(() => {
+        fetchSettings();
+    }, []);
+
+    const fetchSettings = async () => {
+        try {
+            const settingsData = await getSettings();
+            setSettings(settingsData);
+        } catch (error) {
+            console.error("Error fetching settings:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle form submission here
-        console.log("Form submitted:", formData);
-        // You can integrate with Firebase or email service here
-        alert("Thank you for your inquiry! We'll get back to you soon.");
+        setSubmitting(true);
+
+        try {
+            await createContactForm({
+                name: formData.name.trim(),
+                email: formData.email.trim(),
+                phone: formData.phone.trim() || undefined,
+                message: formData.message.trim(),
+                status: 'new'
+            });
+
+            setSubmitted(true);
+            setFormData({ name: "", email: "", phone: "", message: "" });
+        } catch (error) {
+            console.error("Error submitting contact form:", error);
+            alert("Sorry, there was an error sending your message. Please try again.");
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const handleChange = (field: string, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    // Default fallback data
+    const contactInfo = {
+        address: settings?.address || "Village & Post - Jhak, Tehsil - Batadu, District - Barmer, Rajasthan - 344035, India",
+        phone: settings?.phone || "8302676869",
+        email: settings?.email || "info@igtharvillage.com",
+        socialMedia: settings?.socialMedia || {
+            facebook: "https://www.facebook.com/IGTharVillage",
+            twitter: "https://twitter.com/IgTharVillage",
+            instagram: "https://instagram.com/igtharvillage",
+            youtube: "https://youtube.com/@IgTharVillage",
+            whatsappChannel: "https://whatsapp.com/channel/0029VaBeUbeK0IBr0zHvNX3Q",
+            whatsappGroup: "https://chat.whatsapp.com/G0zWTztE6559NkVZbXLEex",
+            googleMaps: "https://share.google/K6JChsw8ylbZbn8qf",
+            googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3580.878913341951!2d71.5730178!3d26.1680727!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3946bd7cad02130b%3A0x4a930e2515c99858!2sIG%20THAR%20VILLAGE!5e0!3m2!1sen!2sin!4v1759722154642!5m2!1sen!2sin"
+        }
     };
 
     return (
@@ -93,9 +141,7 @@ export default function ContactPage() {
                                             <div>
                                                 <h3 className="font-semibold text-primary mb-2">Location</h3>
                                                 <p className="text-muted-foreground">
-                                                    Village & Post - Jhak<br />
-                                                    Tehsil - Batadu, District - Barmer<br />
-                                                    Rajasthan - 344035, India
+                                                    {contactInfo.address}
                                                 </p>
                                             </div>
                                         </div>
@@ -111,7 +157,7 @@ export default function ContactPage() {
                                             <div>
                                                 <h3 className="font-semibold text-primary mb-2">Phone</h3>
                                                 <p className="text-muted-foreground">
-                                                    +91 8302676869<br />
+                                                    +91 {contactInfo.phone}<br />
                                                     Available 24/7
                                                 </p>
                                             </div>
@@ -128,7 +174,7 @@ export default function ContactPage() {
                                             <div>
                                                 <h3 className="font-semibold text-primary mb-2">Email</h3>
                                                 <p className="text-muted-foreground">
-                                                    info@igtharvillage.com<br />
+                                                    {contactInfo.email}<br />
                                                     bookings@igtharvillage.com
                                                 </p>
                                             </div>
@@ -163,41 +209,55 @@ export default function ContactPage() {
                                         <div className="space-y-4">
                                             {/* Social Media Links */}
                                             <div className="grid grid-cols-2 gap-3">
-                                                <Link href="https://www.facebook.com/IGTharVillage" target="_blank" className="flex items-center justify-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                                                    <Facebook className="h-4 w-4 mr-2" />
-                                                    Facebook
-                                                </Link>
-                                                <Link href="https://instagram.com/igtharvillage" target="_blank" className="flex items-center justify-center p-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">
-                                                    <Instagram className="h-4 w-4 mr-2" />
-                                                    Instagram
-                                                </Link>
-                                                <Link href="https://youtube.com/@IgTharVillage" target="_blank" className="flex items-center justify-center p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                                                    <Youtube className="h-4 w-4 mr-2" />
-                                                    YouTube
-                                                </Link>
-                                                <Link href="https://twitter.com/IgTharVillage" target="_blank" className="flex items-center justify-center p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
-                                                    <Twitter className="h-4 w-4 mr-2" />
-                                                    Twitter
-                                                </Link>
+                                                {contactInfo.socialMedia.facebook && (
+                                                    <Link href={contactInfo.socialMedia.facebook} target="_blank" className="flex items-center justify-center p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                                        <Facebook className="h-4 w-4 mr-2" />
+                                                        Facebook
+                                                    </Link>
+                                                )}
+                                                {contactInfo.socialMedia.instagram && (
+                                                    <Link href={contactInfo.socialMedia.instagram} target="_blank" className="flex items-center justify-center p-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors">
+                                                        <Instagram className="h-4 w-4 mr-2" />
+                                                        Instagram
+                                                    </Link>
+                                                )}
+                                                {contactInfo.socialMedia.youtube && (
+                                                    <Link href={contactInfo.socialMedia.youtube} target="_blank" className="flex items-center justify-center p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                                        <Youtube className="h-4 w-4 mr-2" />
+                                                        YouTube
+                                                    </Link>
+                                                )}
+                                                {contactInfo.socialMedia.twitter && (
+                                                    <Link href={contactInfo.socialMedia.twitter} target="_blank" className="flex items-center justify-center p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                                        <Twitter className="h-4 w-4 mr-2" />
+                                                        Twitter
+                                                    </Link>
+                                                )}
                                             </div>
                                             
                                             {/* WhatsApp Options */}
                                             <div className="space-y-2">
-                                                <Link href="https://whatsapp.com/channel/0029VaBeUbeK0IBr0zHvNX3Q" target="_blank" className="flex items-center justify-center p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors w-full">
-                                                    <MessageCircle className="h-4 w-4 mr-2" />
-                                                    WhatsApp Channel
-                                                </Link>
-                                                <Link href="https://chat.whatsapp.com/G0zWTztE6559NkVZbXLEex" target="_blank" className="flex items-center justify-center p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors w-full">
-                                                    <Users className="h-4 w-4 mr-2" />
-                                                    WhatsApp Group
-                                                </Link>
+                                                {contactInfo.socialMedia.whatsappChannel && (
+                                                    <Link href={contactInfo.socialMedia.whatsappChannel} target="_blank" className="flex items-center justify-center p-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors w-full">
+                                                        <MessageCircle className="h-4 w-4 mr-2" />
+                                                        WhatsApp Channel
+                                                    </Link>
+                                                )}
+                                                {contactInfo.socialMedia.whatsappGroup && (
+                                                    <Link href={contactInfo.socialMedia.whatsappGroup} target="_blank" className="flex items-center justify-center p-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors w-full">
+                                                        <Users className="h-4 w-4 mr-2" />
+                                                        WhatsApp Group
+                                                    </Link>
+                                                )}
                                             </div>
                                             
                                             {/* Location */}
-                                            <Link href="https://share.google/K6JChsw8ylbZbn8qf" target="_blank" className="flex items-center justify-center p-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors w-full">
-                                                <Navigation className="h-4 w-4 mr-2" />
-                                                View on Google Maps
-                                            </Link>
+                                            {contactInfo.socialMedia.googleMaps && (
+                                                <Link href={contactInfo.socialMedia.googleMaps} target="_blank" className="flex items-center justify-center p-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors w-full">
+                                                    <Navigation className="h-4 w-4 mr-2" />
+                                                    View on Google Maps
+                                                </Link>
+                                            )}
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -214,34 +274,53 @@ export default function ContactPage() {
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <form onSubmit={handleSubmit} className="space-y-6">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="name">Full Name *</Label>
-                                                <Input
-                                                    id="name"
-                                                    placeholder="Your full name"
-                                                    value={formData.name}
-                                                    onChange={(e) => handleChange("name", e.target.value)}
-                                                    required
-                                                    className="rounded-lg"
-                                                />
+                                    {submitted ? (
+                                        <div className="text-center py-8">
+                                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <CheckCircle className="h-8 w-8 text-green-600" />
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="email">Email *</Label>
-                                                <Input
-                                                    id="email"
-                                                    type="email"
-                                                    placeholder="your.email@example.com"
-                                                    value={formData.email}
-                                                    onChange={(e) => handleChange("email", e.target.value)}
-                                                    required
-                                                    className="rounded-lg"
-                                                />
-                                            </div>
+                                            <h3 className="text-xl font-semibold text-gray-900 mb-2">Message Sent Successfully!</h3>
+                                            <p className="text-gray-600 mb-6">
+                                                Thank you for your inquiry! We'll get back to you within 2-4 hours.
+                                            </p>
+                                            <Button 
+                                                onClick={() => setSubmitted(false)}
+                                                variant="outline"
+                                                className="rounded-lg"
+                                            >
+                                                Send Another Message
+                                            </Button>
                                         </div>
+                                    ) : (
+                                        <form onSubmit={handleSubmit} className="space-y-6">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="name">Full Name *</Label>
+                                                    <Input
+                                                        id="name"
+                                                        placeholder="Your full name"
+                                                        value={formData.name}
+                                                        onChange={(e) => handleChange("name", e.target.value)}
+                                                        required
+                                                        className="rounded-lg"
+                                                        disabled={submitting}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="email">Email *</Label>
+                                                    <Input
+                                                        id="email"
+                                                        type="email"
+                                                        placeholder="your.email@example.com"
+                                                        value={formData.email}
+                                                        onChange={(e) => handleChange("email", e.target.value)}
+                                                        required
+                                                        className="rounded-lg"
+                                                        disabled={submitting}
+                                                    />
+                                                </div>
+                                            </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <Label htmlFor="phone">Phone Number</Label>
                                                 <Input
@@ -250,73 +329,95 @@ export default function ContactPage() {
                                                     value={formData.phone}
                                                     onChange={(e) => handleChange("phone", e.target.value)}
                                                     className="rounded-lg"
+                                                    disabled={submitting}
                                                 />
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="service">Service Interest</Label>
-                                                <Select onValueChange={(value) => handleChange("service", value)}>
-                                                    <SelectTrigger className="rounded-lg">
-                                                        <SelectValue placeholder="Select a service" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="farm-stay">Farm Stay</SelectItem>
-                                                        <SelectItem value="desert-safari">Desert Safari</SelectItem>
-                                                        <SelectItem value="camel-safari">Camel Safari</SelectItem>
-                                                        <SelectItem value="cultural-tour">Cultural Tour</SelectItem>
-                                                        <SelectItem value="products">Organic Products</SelectItem>
-                                                        <SelectItem value="custom-package">Custom Package</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                        </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="space-y-2">
-                                                <Label htmlFor="guests">Number of Guests</Label>
-                                                <Input
-                                                    id="guests"
-                                                    placeholder="e.g., 2 adults, 1 child"
-                                                    value={formData.guests}
-                                                    onChange={(e) => handleChange("guests", e.target.value)}
+                                                <Label htmlFor="message">Message *</Label>
+                                                <Textarea
+                                                    id="message"
+                                                    placeholder="Tell us about your requirements, special requests, or any questions you have..."
+                                                    value={formData.message}
+                                                    onChange={(e) => handleChange("message", e.target.value)}
+                                                    required
+                                                    rows={5}
                                                     className="rounded-lg"
+                                                    disabled={submitting}
                                                 />
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="dates">Preferred Dates</Label>
-                                                <Input
-                                                    id="dates"
-                                                    placeholder="e.g., Dec 15-17, 2024"
-                                                    value={formData.dates}
-                                                    onChange={(e) => handleChange("dates", e.target.value)}
-                                                    className="rounded-lg"
-                                                />
-                                            </div>
-                                        </div>
 
-                                        <div className="space-y-2">
-                                            <Label htmlFor="message">Message *</Label>
-                                            <Textarea
-                                                id="message"
-                                                placeholder="Tell us about your requirements, special requests, or any questions you have..."
-                                                value={formData.message}
-                                                onChange={(e) => handleChange("message", e.target.value)}
-                                                required
-                                                rows={5}
-                                                className="rounded-lg"
-                                            />
-                                        </div>
-
-                                        <Button type="submit" size="lg" className="w-full rounded-lg">
-                                            <Send className="h-5 w-5 mr-2" />
-                                            Send Message
-                                        </Button>
-                                    </form>
+                                            <Button 
+                                                type="submit" 
+                                                size="lg" 
+                                                className="w-full rounded-lg"
+                                                disabled={submitting}
+                                            >
+                                                {submitting ? (
+                                                    <>
+                                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                                                        Sending...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Send className="h-5 w-5 mr-2" />
+                                                        Send Message
+                                                    </>
+                                                )}
+                                            </Button>
+                                        </form>
+                                    )}
                                 </CardContent>
                             </Card>
                         </div>
                     </div>
                 </div>
             </section>
+
+            {/* Google Maps Section */}
+            {contactInfo.socialMedia.googleMapsEmbed && (
+                <section className="py-16 bg-gray-50">
+                    <div className="container mx-auto px-4">
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                                Find Us on the Map
+                            </h2>
+                            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                                Located in the heart of Thar Desert, Rajasthan. Easy to reach with detailed directions provided.
+                            </p>
+                        </div>
+
+                        <div className="max-w-4xl mx-auto">
+                            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                                <iframe 
+                                    src={contactInfo.socialMedia.googleMapsEmbed}
+                                    width="100%" 
+                                    height="450" 
+                                    style={{ border: 0 }}
+                                    allowFullScreen
+                                    loading="lazy" 
+                                    referrerPolicy="no-referrer-when-downgrade"
+                                    className="w-full"
+                                    title="IG Thar Village Location"
+                                />
+                            </div>
+                            
+                            <div className="text-center mt-6">
+                                {contactInfo.socialMedia.googleMaps && (
+                                    <Link 
+                                        href={contactInfo.socialMedia.googleMaps} 
+                                        target="_blank"
+                                        className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                                    >
+                                        <Navigation className="h-5 w-5" />
+                                        Open in Google Maps
+                                    </Link>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {/* FAQ Section */}
             <section className="py-16 agricultural-green">

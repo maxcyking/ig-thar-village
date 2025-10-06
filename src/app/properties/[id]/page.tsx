@@ -216,7 +216,7 @@ export default function PropertyDetailsPage() {
               <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl font-bold text-amber-600">
-                    ₹{property.price}
+                    ₹{property.pricePerNight}
                   </span>
                   <span className="text-gray-600">per night</span>
                 </div>

@@ -45,6 +45,16 @@ export default function AdminSettingsPage() {
     address: "",
     phone: "",
     email: "",
+    socialMedia: {
+      facebook: "",
+      twitter: "",
+      instagram: "",
+      youtube: "",
+      whatsappChannel: "",
+      whatsappGroup: "",
+      googleMaps: "",
+      googleMapsEmbed: "",
+    },
     isLaunched: false,
   });
 
@@ -65,6 +75,16 @@ export default function AdminSettingsPage() {
           address: settingsData.address,
           phone: settingsData.phone,
           email: settingsData.email,
+          socialMedia: {
+            facebook: settingsData.socialMedia?.facebook || "",
+            twitter: settingsData.socialMedia?.twitter || "",
+            instagram: settingsData.socialMedia?.instagram || "",
+            youtube: settingsData.socialMedia?.youtube || "",
+            whatsappChannel: settingsData.socialMedia?.whatsappChannel || "",
+            whatsappGroup: settingsData.socialMedia?.whatsappGroup || "",
+            googleMaps: settingsData.socialMedia?.googleMaps || "",
+            googleMapsEmbed: settingsData.socialMedia?.googleMapsEmbed || "",
+          },
           isLaunched: settingsData.isLaunched,
         });
       } else {
@@ -77,6 +97,16 @@ export default function AdminSettingsPage() {
           address: "Village & Post - Jhak, Tehsil - Batadu, District - Barmer, Rajasthan - 344035",
           phone: "8302676869",
           email: "info@igtharvillage.com",
+          socialMedia: {
+            facebook: "https://www.facebook.com/IGTharVillage",
+            twitter: "https://twitter.com/IgTharVillage",
+            instagram: "https://instagram.com/igtharvillage",
+            youtube: "https://youtube.com/@IgTharVillage",
+            whatsappChannel: "https://whatsapp.com/channel/0029VaBeUbeK0IBr0zHvNX3Q",
+            whatsappGroup: "https://chat.whatsapp.com/G0zWTztE6559NkVZbXLEex",
+            googleMaps: "https://share.google/K6JChsw8ylbZbn8qf",
+            googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3580.878913341951!2d71.5730178!3d26.1680727!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3946bd7cad02130b%3A0x4a930e2515c99858!2sIG%20THAR%20VILLAGE!5e0!3m2!1sen!2sin!4v1759722154642!5m2!1sen!2sin",
+          },
           isLaunched: false,
         });
       }
@@ -90,6 +120,16 @@ export default function AdminSettingsPage() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSocialMediaChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      socialMedia: {
+        ...prev.socialMedia,
+        [field]: value
+      }
+    }));
   };
 
   const handleImageUpload = async (file: File, type: 'logo' | 'favicon') => {
@@ -375,6 +415,116 @@ export default function AdminSettingsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Social Media Links */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Globe className="h-5 w-5" />
+            Social Media & Links
+          </CardTitle>
+          <CardDescription>
+            Configure your social media profiles and important links
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="facebook">Facebook Page</Label>
+              <Input
+                id="facebook"
+                value={formData.socialMedia.facebook}
+                onChange={(e) => handleSocialMediaChange('facebook', e.target.value)}
+                placeholder="https://www.facebook.com/IGTharVillage"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="instagram">Instagram</Label>
+              <Input
+                id="instagram"
+                value={formData.socialMedia.instagram}
+                onChange={(e) => handleSocialMediaChange('instagram', e.target.value)}
+                placeholder="https://instagram.com/igtharvillage"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="twitter">Twitter</Label>
+              <Input
+                id="twitter"
+                value={formData.socialMedia.twitter}
+                onChange={(e) => handleSocialMediaChange('twitter', e.target.value)}
+                placeholder="https://twitter.com/IgTharVillage"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="youtube">YouTube</Label>
+              <Input
+                id="youtube"
+                value={formData.socialMedia.youtube}
+                onChange={(e) => handleSocialMediaChange('youtube', e.target.value)}
+                placeholder="https://youtube.com/@IgTharVillage"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="whatsappChannel">WhatsApp Channel</Label>
+              <Input
+                id="whatsappChannel"
+                value={formData.socialMedia.whatsappChannel}
+                onChange={(e) => handleSocialMediaChange('whatsappChannel', e.target.value)}
+                placeholder="https://whatsapp.com/channel/0029VaBeUbeK0IBr0zHvNX3Q"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="whatsappGroup">WhatsApp Group</Label>
+              <Input
+                id="whatsappGroup"
+                value={formData.socialMedia.whatsappGroup}
+                onChange={(e) => handleSocialMediaChange('whatsappGroup', e.target.value)}
+                placeholder="https://chat.whatsapp.com/G0zWTztE6559NkVZbXLEex"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="googleMaps">Google Maps Link</Label>
+              <Input
+                id="googleMaps"
+                value={formData.socialMedia.googleMaps}
+                onChange={(e) => handleSocialMediaChange('googleMaps', e.target.value)}
+                placeholder="https://share.google/K6JChsw8ylbZbn8qf"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="googleMapsEmbed">Google Maps Embed URL</Label>
+              <Input
+                id="googleMapsEmbed"
+                value={formData.socialMedia.googleMapsEmbed}
+                onChange={(e) => handleSocialMediaChange('googleMapsEmbed', e.target.value)}
+                placeholder="https://www.google.com/maps/embed?pb=..."
+              />
+            </div>
+          </div>
+
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <Info className="h-5 w-5 text-amber-600 mt-0.5" />
+              <div>
+                <h4 className="font-medium text-amber-900">Social Media Information</h4>
+                <p className="text-sm text-amber-700 mt-1">
+                  🌾 <strong>IG THAR VILLAGE</strong> 🐐<br />
+                  सार्वजनिक सूचना - आपके ढेर सारे प्यार, सहयोग व आशीर्वाद की वजह से आईजी एग्रो एण्ड गोट फार्म अब बन चुका है "आईजी थार विलेज"।<br />
+                  सोशल मीडिया प्लेटफॉर्म पर आप हमसे जुड़ सकते है... आईजी थार विलेज के नाम से।
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Launch Status */}
       <Card>
