@@ -142,7 +142,7 @@ export default function AdminProductsPage() {
         <div>
           <h1 className="text-3xl font-bold text-primary">Products</h1>
           <p className="text-muted-foreground">
-            Manage your organic products and inventory
+            Manage your natural products and inventory
           </p>
         </div>
         <Button onClick={handleAddProduct} className="rounded-lg">

@@ -9,8 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Service, getServices, Product, getProducts, Property, getProperties } from "@/lib/database";
 import { PropertyCard } from "@/components/ui/property-card";
-import { 
-  Search, 
+import {
+  Search,
   Clock,
   Users,
   Star,
@@ -63,7 +63,7 @@ export default function ServicesPage() {
           getProducts(),
           getProperties()
         ]);
-        
+
         setServices(allServices);
         setAllProducts(allProducts);
         setFeaturedProducts(allProducts.slice(0, 8)); // Show up to 8 products in horizontal scroll
@@ -81,10 +81,10 @@ export default function ServicesPage() {
 
   const filteredServices = services.filter(service => {
     const matchesSearch = service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         service.description.toLowerCase().includes(searchTerm.toLowerCase());
+      service.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "all" || service.category === selectedCategory;
     const matchesFeatured = !showOnlyFeatured || service.featured;
-    
+
     return matchesSearch && matchesCategory && matchesFeatured;
   });
 
@@ -93,8 +93,8 @@ export default function ServicesPage() {
   };
 
   const handleToggleFavorite = (propertyId: string) => {
-    setFavorites(prev => 
-      prev.includes(propertyId) 
+    setFavorites(prev =>
+      prev.includes(propertyId)
         ? prev.filter(id => id !== propertyId)
         : [...prev, propertyId]
     );
@@ -128,7 +128,7 @@ export default function ServicesPage() {
               Desert Accommodations
             </h1>
             <p className="body-text text-xl text-gray-700 max-w-4xl mx-auto mb-12">
-              Experience authentic desert living in our carefully curated accommodations. From traditional mud houses 
+              Experience authentic desert living in our carefully curated accommodations. From traditional mud houses
               to luxury desert camps, each property offers a unique glimpse into the timeless beauty of Thar Desert life.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -167,7 +167,7 @@ export default function ServicesPage() {
               Experience authentic desert living at its finest with our flagship accommodation
             </p>
           </div>
-          
+
           {featuredProperties.length > 0 && (
             <div className="max-w-7xl mx-auto">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
@@ -191,7 +191,7 @@ export default function ServicesPage() {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Property Badges */}
                     <div className="absolute top-6 left-6">
                       <Badge className="bg-white/95 text-gray-900 backdrop-blur-sm px-4 py-2 text-sm font-semibold rounded-full shadow-lg">
@@ -199,7 +199,7 @@ export default function ServicesPage() {
                         Premium Stay
                       </Badge>
                     </div>
-                    
+
                     <div className="absolute top-6 right-6">
                       <Badge className="bg-green-600 text-white px-4 py-2 text-sm font-semibold rounded-full shadow-lg">
                         100% Authentic
@@ -209,11 +209,11 @@ export default function ServicesPage() {
                     {/* Price Badge */}
                     <div className="absolute bottom-6 right-6">
                       <Badge className="bg-orange-600 text-white px-6 py-3 text-lg font-bold rounded-full shadow-lg">
-                        ₹{featuredProperties[0].price}/night
+                        ₹{featuredProperties[0].pricePerNight}/night
                       </Badge>
                     </div>
                   </div>
-                  
+
                   {/* Additional Images */}
                   {featuredProperties[0].images && featuredProperties[0].images.length > 1 && (
                     <div className="grid grid-cols-3 gap-4">
@@ -242,7 +242,7 @@ export default function ServicesPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Users className="h-5 w-5 text-orange-600" />
-                        <span>Up to {featuredProperties[0].capacity} guests</span>
+                        <span>Up to {featuredProperties[0].maxGuests} guests</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Star className="h-5 w-5 text-amber-500 fill-current" />
@@ -276,16 +276,16 @@ export default function ServicesPage() {
 
                   {/* Action Buttons */}
                   <div className="flex gap-4 pt-6">
-                    <Button 
-                      size="lg" 
+                    <Button
+                      size="lg"
                       className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-full py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                       onClick={() => handleViewDetails(featuredProperties[0].id)}
                     >
                       <Calendar className="h-5 w-5 mr-2" />
                       Book Now
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="lg"
                       className="px-8 border-2 border-orange-600 text-orange-600 hover:bg-orange-50 rounded-full py-4 font-semibold"
                       onClick={() => handleViewDetails(featuredProperties[0].id)}
@@ -304,10 +304,10 @@ export default function ServicesPage() {
       <section className="py-24 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="section-title text-gray-900 mb-6">Organic Desert Products</h2>
+            <h2 className="section-title text-gray-900 mb-6">Natural Desert Products</h2>
             <p className="body-text text-lg text-gray-600 max-w-4xl mx-auto mb-12">
-              Discover premium organic products cultivated in the unique climate of the Thar Desert. 
-              Our traditional farming methods, passed down through generations, create products with distinctive 
+              Discover premium natural products cultivated in the unique climate of the Thar Desert.
+              Our traditional farming methods, passed down through generations, create products with distinctive
               flavors and exceptional nutritional value.
             </p>
           </div>
@@ -332,17 +332,17 @@ export default function ServicesPage() {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Enhanced Badges */}
-                    {product.organic && (
+                    {product.natural && (
                       <div className="absolute top-4 left-4">
                         <Badge className="bg-green-600 text-white px-3 py-1 rounded-full shadow-lg backdrop-blur-sm">
                           <TreePine className="h-3 w-3 mr-1" />
-                          Organic
+                          Natural
                         </Badge>
                       </div>
                     )}
-                    
+
                     {product.featured && (
                       <div className="absolute top-4 right-4">
                         <Badge className="bg-amber-600 text-white px-3 py-1 rounded-full shadow-lg backdrop-blur-sm">
@@ -352,7 +352,7 @@ export default function ServicesPage() {
                       </div>
                     )}
                   </div>
-                  
+
                   <CardContent className="p-6 space-y-4">
                     <div>
                       <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-300 mb-2">
@@ -362,11 +362,11 @@ export default function ServicesPage() {
                         {product.shortDescription || product.description}
                       </CardDescription>
                     </div>
-                    
+
                     <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                       <div className="text-left">
                         <div className="text-2xl font-bold text-orange-600">₹{product.price}</div>
-                        <div className="text-sm text-gray-500">per {product.unit}</div>
+                        <div className="text-sm text-gray-500">per {product.weight}{product.unit}</div>
                       </div>
                       <div className="flex gap-2">
                         <Button
@@ -403,9 +403,9 @@ export default function ServicesPage() {
           {/* View All Products Button */}
           <div className="text-center mt-12">
             <Link href="/products">
-              <Button 
-                size="lg" 
-                variant="outline" 
+              <Button
+                size="lg"
+                variant="outline"
                 className="border-2 border-orange-600 text-orange-600 hover:bg-orange-50 px-8 py-3 rounded-full font-semibold"
               >
                 View All Products
@@ -426,30 +426,30 @@ export default function ServicesPage() {
               </h2>
               <div className="bg-amber-100 border-l-4 border-amber-600 p-6 max-w-4xl mx-auto mb-12">
                 <p className="text-xl font-semibold text-amber-800 italic">
-                  "To increase farmers' income and promote organic agriculture awareness for the betterment of farmers and society."
+                  "To increase farmers' income and promote natural agriculture awareness for the betterment of farmers and society."
                 </p>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div className="text-left space-y-6">
                 <h3 className="heritage-title text-gray-900 mb-6">Our Mission & Heritage</h3>
                 <p className="body-text text-lg text-gray-700">
-                  We are dedicated to empowering rural communities through sustainable farming practices and authentic desert experiences. 
-                  Based in Barmer district of Rajasthan, we work directly with local farmers to promote organic cultivation methods 
+                  We are dedicated to empowering rural communities through sustainable farming practices and authentic desert experiences.
+                  Based in Barmer district of Rajasthan, we work directly with local farmers to promote natural cultivation methods
                   that have been practiced for generations in the Thar Desert.
                 </p>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  Our initiatives span across agricultural training, rural tourism, and sustainable development. 
-                  From comprehensive farmer training programs to authentic desert safaris and traditional accommodations, 
+                  Our initiatives span across agricultural training, rural tourism, and sustainable development.
+                  From comprehensive farmer training programs to authentic desert safaris and traditional accommodations,
                   we bridge the gap between ancient wisdom and modern sustainable practices.
                 </p>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  Every experience we offer is rooted in authenticity, designed to showcase the rich cultural heritage 
+                  Every experience we offer is rooted in authenticity, designed to showcase the rich cultural heritage
                   of the Thar Desert while supporting local communities and preserving traditional ways of life.
                 </p>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-6">
                 <div className="bg-white border border-gray-200 p-6 text-center">
                   <div className="text-3xl font-bold text-amber-600 mb-2">525</div>
@@ -457,7 +457,7 @@ export default function ServicesPage() {
                 </div>
                 <div className="bg-white border border-gray-200 p-6 text-center">
                   <div className="text-3xl font-bold text-amber-600 mb-2">1000+</div>
-                  <div className="text-gray-600">Acres Under Organic</div>
+                  <div className="text-gray-600">Acres Under Natural</div>
                 </div>
                 <div className="bg-white border border-gray-200 p-6 text-center">
                   <div className="text-3xl font-bold text-amber-600 mb-2">Multiple</div>
@@ -515,7 +515,7 @@ export default function ServicesPage() {
                           <span className="text-sm">{service.duration}</span>
                         </div>
                       </div>
-                      <Button 
+                      <Button
                         className="cta-button w-full bg-blue-600 hover:bg-blue-700 text-white"
                         onClick={(e) => {
                           e.preventDefault();
@@ -595,7 +595,7 @@ export default function ServicesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {filteredServices.map((service) => {
                 const CategoryIcon = categoryIcons[service.category] || Mountain;
-                
+
                 return (
                   <Link key={service.id} href={`/services/${service.id}`} className="group">
                     <div className="bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -623,7 +623,7 @@ export default function ServicesPage() {
                           </Badge>
                         </div>
                         <div className="absolute top-4 right-4">
-                          <Badge 
+                          <Badge
                             className={service.available ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}
                           >
                             {service.available ? 'Available' : 'Unavailable'}
@@ -673,7 +673,7 @@ export default function ServicesPage() {
                           </div>
                         )}
 
-                        <Button 
+                        <Button
                           className="cta-button w-full bg-blue-600 hover:bg-blue-700 text-white"
                           disabled={!service.available}
                           onClick={(e) => {

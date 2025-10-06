@@ -65,8 +65,8 @@ const navigation = [
     icon: Mail,
   },
   {
-    name: "Messages",
-    href: "/admin/messages",
+    name: "Testimonials",
+    href: "/admin/testimonials",
     icon: MessageSquare,
   },
   {

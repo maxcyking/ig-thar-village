@@ -37,7 +37,7 @@
 - **Text Position**: Right-aligned
 - **CTA**: "Explore Culture" + "Book Show"
 
-#### **Slide 4: Organic Farm Experience**
+#### **Slide 4: Natural Farm Experience**
 - **Background**: Green to teal gradient with leaf patterns
 - **Theme**: Sustainability/nature
 - **Text Position**: Center-aligned

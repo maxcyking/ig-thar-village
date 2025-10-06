@@ -52,7 +52,7 @@ export interface Product {
   inStock: boolean;
   stock: number; // Quantity available
   featured: boolean;
-  organic: boolean;
+  natural: boolean;
   weight?: string;
   nutritionalInfo?: string;
   ingredients?: string[];

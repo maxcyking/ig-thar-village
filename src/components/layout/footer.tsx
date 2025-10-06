@@ -44,7 +44,7 @@ export function Footer() {
               </div>
             </div>
             <p className="text-sm text-gray-300 leading-relaxed">
-              Experience authentic Thar Desert culture, traditional hospitality, and organic farming practices in the heart of West Rajasthan.
+              Experience authentic Thar Desert culture, traditional hospitality, and natural farming practices in the heart of West Rajasthan.
             </p>
             <div className="flex space-x-3">
               {(settings?.socialMedia?.facebook || "https://www.facebook.com/IGTharVillage") && (
@@ -99,7 +99,7 @@ export function Footer() {
               <p className="text-sm text-gray-300">🏜️ Desert Safari Adventures</p>
               <p className="text-sm text-gray-300">🐪 Camel Safari Tours</p>
               <p className="text-sm text-gray-300">🎭 Cultural Programs</p>
-              <p className="text-sm text-gray-300">🌾 Organic Products</p>
+              <p className="text-sm text-gray-300">🌾 Natural Products</p>
               <p className="text-sm text-gray-300">🏛️ Heritage Tours</p>
             </div>
           </div>

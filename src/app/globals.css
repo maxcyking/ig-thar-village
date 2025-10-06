@@ -718,7 +718,7 @@ ster-specific background patterns */
   background-size: 40px 40px;
 }
 
-.poster-organic-pattern {
+.poster-natural-pattern {
   background-image: 
     radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%);
   background-size: 60px 60px;
@@ -755,7 +755,7 @@ ster-specific background patterns */
   );
 }
 
-.poster-gradient-organic {
+.poster-gradient-natural {
   background: linear-gradient(135deg, 
     #22c55e 0%, 
     #16a34a 25%, 

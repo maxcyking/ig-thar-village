@@ -5,10 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Service, getServices } from "@/lib/database";
-import { 
-  Star, 
-  Clock, 
-  Users, 
+import {
+  Star,
+  Clock,
+  Users,
   CheckCircle,
   ArrowRight,
   Camera,
@@ -35,7 +35,19 @@ export function ServicesSection() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const featuredServices = await getServices(true);
+        console.log("Fetching services...");
+        // First try to get featured services
+        let featuredServices = await getServices(true);
+        console.log("Featured services:", featuredServices);
+
+        // If no featured services, get all available services (limit to 3)
+        if (featuredServices.length === 0) {
+          console.log("No featured services found, fetching all services...");
+          const allServices = await getServices();
+          featuredServices = allServices.slice(0, 3); // Limit to 3 for home page
+          console.log("All services (limited to 3):", featuredServices);
+        }
+
         setServices(featuredServices);
       } catch (error) {
         console.error("Error fetching services:", error);
@@ -101,7 +113,7 @@ export function ServicesSection() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
               {services.map((service) => {
                 const CategoryIcon = categoryIcons[service.category] || Mountain;
-                
+
                 return (
                   <Card key={service.id} className={`relative rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 bg-white hover:border-gray-200 ${service.featured ? 'ring-2 ring-blue-400 scale-105' : ''}`}>
                     {service.featured && (
@@ -110,7 +122,7 @@ export function ServicesSection() {
                         Most Popular
                       </Badge>
                     )}
-                    
+
                     {/* Service Image */}
                     {service.images && service.images.length > 0 && (
                       <div className="relative h-48 overflow-hidden rounded-t-lg">
@@ -144,12 +156,12 @@ export function ServicesSection() {
                         </div>
                       </div>
                     </CardHeader>
-                    
+
                     <CardContent>
                       <p className="body-text text-gray-600 text-sm mb-4 line-clamp-2">
                         {service.shortDescription}
                       </p>
-                      
+
                       {/* Included Features */}
                       {service.included && service.included.length > 0 && (
                         <ul className="space-y-2 mb-6">
@@ -166,16 +178,16 @@ export function ServicesSection() {
                           )}
                         </ul>
                       )}
-                      
+
                       <div className="flex gap-2">
-                        <Button asChild className={`flex-1 rounded-md cta-button ${service.featured ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-900 hover:bg-gray-800'} text-white`}>
+                        <Button asChild variant="outline" className="flex-1 rounded-md cta-button border-gray-200 hover:border-gray-300">
                           <Link href={`/services/${service.id}`}>
                             View Details
                             <ArrowRight className="ml-2 h-4 w-4" />
                           </Link>
                         </Button>
-                        <Button asChild variant="outline" className="px-4 rounded-md cta-button border-gray-200 hover:border-gray-300">
-                          <Link href={`/contact?service=${service.id}`}>
+                        <Button asChild className={`px-4 rounded-md cta-button ${service.featured ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-900 hover:bg-gray-800'} text-white`}>
+                          <Link href={`/booking/service/${service.id}`}>
                             Book Now
                           </Link>
                         </Button>

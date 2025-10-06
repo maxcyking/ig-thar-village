@@ -50,16 +50,16 @@ const mockBlogs = [
   },
   {
     id: "3",
-    title: "Organic Products from the Desert: Nature's Hidden Treasures",
-    slug: "organic-products-desert-nature-treasures",
-    excerpt: "Learn about the unique organic products that thrive in desert conditions and their incredible health benefits.",
+    title: "Natural Products from the Desert: Nature's Hidden Treasures",
+    slug: "natural-products-desert-nature-treasures",
+    excerpt: "Learn about the unique natural products that thrive in desert conditions and their incredible health benefits.",
     content: "Full blog content here...",
     status: "published",
     author: "Dr. Devaram Pawar",
     publishedAt: new Date("2024-01-08"),
     createdAt: new Date("2024-01-05"),
     updatedAt: new Date("2024-01-08"),
-    tags: ["organic", "products", "health"],
+    tags: ["natural", "products", "health"],
     featuredImage: null,
     readTime: 5
   }

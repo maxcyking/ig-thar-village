@@ -180,7 +180,7 @@ export function LaunchCeremony({ onLaunchComplete }: LaunchCeremonyProps) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-3 bg-green-50 rounded-lg border border-green-200">
                   <Leaf className="h-6 w-6 text-green-600 mx-auto mb-2" />
-                  <h3 className="font-semibold text-green-800 text-sm">Organic Farming</h3>
+                  <h3 className="font-semibold text-green-800 text-sm">Natural Farming</h3>
                   <p className="text-xs text-green-600">Pure & Natural Products</p>
                 </div>
                 

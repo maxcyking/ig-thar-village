@@ -35,9 +35,9 @@
 - **Position**: Right-aligned text
 - **Overlay**: 50% opacity for contrast
 
-#### **Slide 4: Organic Farm Poster**
+#### **Slide 4: Natural Farm Poster**
 - **Image**: Sustainable farming landscape
-- **Theme**: Organic/Green gradient overlay
+- **Theme**: Natural/Green gradient overlay
 - **Position**: Center-aligned text
 - **Overlay**: 30% opacity (lighter for farm visibility)
 

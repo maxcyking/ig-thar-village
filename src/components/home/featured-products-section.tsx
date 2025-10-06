@@ -96,7 +96,7 @@ export function FeaturedProductsSection() {
                 <div className="flex items-center justify-between mb-4 sm:mb-6">
                     <div>
                         <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-1">
-                            100% Organic Products
+                            100% Natural Products
                         </h2>
                         <p className="text-sm text-gray-600">Fresh from our desert farm</p>
                     </div>
@@ -153,8 +153,8 @@ export function FeaturedProductsSection() {
                                             </div>
                                         )}
 
-                                        {/* Organic Badge */}
-                                        {product.organic && (
+                                        {/* Natural Badge */}
+                                        {product.natural && (
                                             <div className="absolute top-2 right-2 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
                                                 <div className="w-2 h-2 bg-white rounded-full"></div>
                                             </div>
@@ -164,7 +164,7 @@ export function FeaturedProductsSection() {
                                     {/* Product Info - Also clickable */}
                                     <div className="p-3 cursor-pointer">
                                         {/* Weight */}
-                                        <div className="text-xs text-gray-500 mb-1">{product.weight || product.unit}</div>
+                                        <div className="text-xs text-gray-500 mb-1">{product.weight }{ product.unit}</div>
 
                                         {/* Product Name */}
                                         <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 leading-tight">
@@ -172,7 +172,7 @@ export function FeaturedProductsSection() {
                                         </h3>
 
                                         {/* Rating - Using a default rating since it's not in the database */}
-                                        <div className="flex items-center mb-2">
+                                        <div className="flex items-center mb-1">
                                             <div className="flex items-center">
                                                 {[...Array(5)].map((_, i) => (
                                                     <Star
@@ -185,13 +185,13 @@ export function FeaturedProductsSection() {
                                         </div>
 
                                         {/* Delivery Time - Default since not in database */}
-                                        <div className="flex items-center text-xs text-green-600 mb-3">
+                                        <div className="flex items-center text-xs text-green-600 mb-1">
                                             <Clock className="h-3 w-3 mr-1" />
                                             2-3 days
                                         </div>
 
                                         {/* Price */}
-                                        <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center justify-between mb-1">
                                             <div>
                                                 <span className="text-sm font-bold text-gray-900">₹{displayPrice.toLocaleString()}</span>
                                                 {hasDiscount && (

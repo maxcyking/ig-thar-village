@@ -75,7 +75,7 @@
 ### 🎨 **Mobile Card Content**
 
 #### **Abbreviated Titles for Mobile**
-- **"100% Organic"** → **"Organic"**
+- **"100% Natural"** → **"Natural"**
 - **"Authentic Culture"** → **"Culture"**
 - **"Warm Hospitality"** → **"Care"**
 - **"Award Winning"** → **"Awards"**
@@ -83,9 +83,9 @@
 #### **Smart Content Display**
 ```html
 <!-- Mobile: Short title -->
-<span className="sm:hidden">Organic</span>
+<span className="sm:hidden">Natural</span>
 <!-- Desktop: Full title -->
-<span className="hidden sm:inline">100% Organic</span>
+<span className="hidden sm:inline">100% Natural</span>
 
 <!-- Mobile: No description -->
 <!-- Desktop: Full description -->
@@ -155,7 +155,7 @@ lg:p-6                /* 24px padding on desktop */
 ### 🎨 **Visual Consistency**
 
 #### **Color Themes Maintained**
-- **Green**: Organic/sustainability theme
+- **Green**: Natural/sustainability theme
 - **Orange**: Cultural/warmth theme
 - **Blue**: Hospitality/trust theme
 - **Purple**: Premium/awards theme

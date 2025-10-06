@@ -140,10 +140,10 @@ export default function WishlistPage() {
                   
                   {/* Badges */}
                   <div className="absolute top-2 left-2 flex gap-2">
-                    {product.organic && (
+                    {product.natural && (
                       <Badge className="bg-green-600 text-white text-xs">
                         <Leaf className="h-3 w-3 mr-1" />
-                        Organic
+                        Natural
                       </Badge>
                     )}
                     {product.featured && (
@@ -209,7 +209,7 @@ export default function WishlistPage() {
                       )}
                       <div className="text-xl font-bold text-green-600">₹{product.price}</div>
                     </div>
-                    <div className="text-xs text-gray-500">per {product.unit}</div>
+                    <div className="text-xs text-gray-500">per {product.weight }{ product.unit}</div>
                   </div>
                 </div>
               </CardHeader>

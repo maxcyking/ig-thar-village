@@ -17,7 +17,7 @@ const stats = [
   {
     title: "Total Products",
     value: "8",
-    description: "Organic products listed",
+    description: "Natural products listed",
     icon: Package,
     trend: "+2 this month"
   },
@@ -98,7 +98,7 @@ const recentMessages = [
     id: 2,
     name: "Michael Brown",
     email: "michael@email.com",
-    subject: "Organic Products Order",
+    subject: "Natural Products Order",
     time: "5 hours ago",
     unread: true
   },

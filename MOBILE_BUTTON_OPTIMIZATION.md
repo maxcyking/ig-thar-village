@@ -173,7 +173,7 @@
 - **Primary**: "Explore" (Explore Culture)
 - **Secondary**: "Book" (Book Show)
 
-#### **Slide 4: Organic Farm**
+#### **Slide 4: Natural Farm**
 - **Primary**: "Shop" (Shop Products)
 - **Secondary**: "Farm" (Farm Tour)
 

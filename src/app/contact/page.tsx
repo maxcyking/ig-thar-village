@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, Twitter, MessageCircle, Users, Navigation, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { getSettings, createContactForm, type SiteSettings } from "@/lib/database";
+import TestimonialForm from "@/components/testimonials/testimonial-form";
 
 export default function ContactPage() {
     const [settings, setSettings] = useState<SiteSettings | null>(null);
@@ -419,6 +420,24 @@ export default function ContactPage() {
                 </section>
             )}
 
+            {/* Testimonial Form Section */}
+            <section className="py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+                <div className="container mx-auto px-4">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                            Share Your Experience
+                        </h2>
+                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                            Help other travelers discover the magic of IG Thar Village by sharing your authentic experience
+                        </p>
+                    </div>
+                    
+                    <div className="max-w-2xl mx-auto">
+                        <TestimonialForm />
+                    </div>
+                </div>
+            </section>
+
             {/* FAQ Section */}
             <section className="py-16 agricultural-green">
                 <div className="container mx-auto px-4">
@@ -438,7 +457,7 @@ export default function ContactPage() {
                             </CardHeader>
                             <CardContent>
                                 <p className="text-white/90">
-                                    Farm stay includes traditional mud house accommodation, all meals with organic food,
+                                    Farm stay includes traditional mud house accommodation, all meals with natural food,
                                     cultural experiences, and access to farm activities. Bedding and basic amenities are provided.
                                 </p>
                             </CardContent>

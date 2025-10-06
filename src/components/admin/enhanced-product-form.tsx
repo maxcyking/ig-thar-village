@@ -47,7 +47,7 @@ export function EnhancedProductForm({ product, onSave, onCancel }: ProductFormPr
     storageInstructions: "",
     shelfLife: "",
     origin: "",
-    organic: false,
+    natural: false,
     featured: false,
     inStock: true,
     ingredients: [] as string[],
@@ -81,7 +81,7 @@ export function EnhancedProductForm({ product, onSave, onCancel }: ProductFormPr
         storageInstructions: product.storageInstructions || "",
         shelfLife: product.shelfLife || "",
         origin: product.origin || "",
-        organic: product.organic || false,
+        natural: product.natural || false,
         featured: product.featured || false,
         inStock: product.inStock || false,
         ingredients: product.ingredients || [],
@@ -265,7 +265,7 @@ export function EnhancedProductForm({ product, onSave, onCancel }: ProductFormPr
         storageInstructions: formData.storageInstructions.trim() || undefined,
         shelfLife: formData.shelfLife.trim() || undefined,
         origin: formData.origin.trim() || undefined,
-        organic: formData.organic,
+        natural: formData.natural,
         featured: formData.featured,
         inStock: formData.inStock && parseInt(formData.stock) > 0,
         ingredients: formData.ingredients.length > 0 ? formData.ingredients : undefined,
@@ -304,7 +304,7 @@ export function EnhancedProductForm({ product, onSave, onCancel }: ProductFormPr
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
-                placeholder="e.g., Organic Desert Honey"
+                placeholder="e.g., Natural Desert Honey"
                 className={errors.name ? "border-destructive" : ""}
               />
               {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
@@ -596,11 +596,11 @@ export function EnhancedProductForm({ product, onSave, onCancel }: ProductFormPr
 
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="organic"
-                checked={formData.organic}
-                onCheckedChange={(checked: boolean) => handleInputChange("organic", checked)}
+                id="natural"
+                checked={formData.natural}
+                onCheckedChange={(checked: boolean) => handleInputChange("natural", checked)}
               />
-              <Label htmlFor="organic">Organic Product</Label>
+              <Label htmlFor="natural">Natural Product</Label>
             </div>
 
             <div className="flex items-center space-x-2">

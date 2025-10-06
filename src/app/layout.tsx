@@ -3,9 +3,11 @@ import { Playfair_Display, Cinzel, Poppins, Montserrat } from "next/font/google"
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { MobileCartBar } from "@/components/ui/mobile-cart-bar";
 import { CartProvider } from "@/contexts/cart-context";
 import { WishlistProvider } from "@/contexts/wishlist-context";
 import { SettingsProvider } from "@/contexts/settings-context";
+import { AuthProvider } from "@/contexts/auth-context";
 import { LaunchWrapper } from "@/components/launch-wrapper";
 import { DynamicMetadata } from "@/components/dynamic-metadata";
 
@@ -41,8 +43,8 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "IG Thar Village Global Herbs - Pure Food & Agro Tourism Group",
-  description: "Village Life, Global Wellness. Experience authentic Thar Desert life with IG Thar Village. Organic farming, rural tourism, traditional Rajasthani culture, and sustainable agricultural practices from Barmer, Rajasthan.",
-  keywords: "IG Thar Village, Thar Desert, Organic Farming, Rural Tourism, Barmer Rajasthan, Traditional Agriculture, Desert Safari, Pure Food, Global Herbs, Village Life, Sustainable Farming",
+  description: "Village Life, Global Wellness. Experience authentic Thar Desert life with IG Thar Village. Natural farming, rural tourism, traditional Rajasthani culture, and sustainable agricultural practices from Barmer, Rajasthan.",
+  keywords: "IG Thar Village, Thar Desert, Natural Farming, Rural Tourism, Barmer Rajasthan, Traditional Agriculture, Desert Safari, Pure Food, Global Herbs, Village Life, Sustainable Farming",
 };
 
 export default function RootLayout({
@@ -55,17 +57,20 @@ export default function RootLayout({
       <body className={`${playfairDisplay.variable} ${cinzel.variable} ${poppins.variable} ${montserrat.variable} font-poppins antialiased`}>
         <SettingsProvider>
           <DynamicMetadata />
-          <CartProvider>
-            <WishlistProvider>
-              <LaunchWrapper>
-                <Navbar />
-                <main className="min-h-screen">
-                  {children}
-                </main>
-                <Footer />
-              </LaunchWrapper>
-            </WishlistProvider>
-          </CartProvider>
+          <AuthProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <LaunchWrapper>
+                  <Navbar />
+                  <main className="min-h-screen">
+                    {children}
+                  </main>
+                  <Footer />
+                  <MobileCartBar />
+                </LaunchWrapper>
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
         </SettingsProvider>
       </body>
     </html>

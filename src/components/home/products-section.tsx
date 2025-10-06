@@ -85,10 +85,10 @@ export function ProductsSection() {
             Our Products
           </Badge>
           <h2 className="section-title text-gray-900 mb-6">
-            Fresh Organic Products
+            Fresh Natural Products
           </h2>
           <p className="body-text text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover our range of 100% organic products, grown with love in the heart of Thar Desert. 
+            Discover our range of 100% natural products, grown with love in the heart of Thar Desert. 
             From fresh dairy to traditional grains, taste the purity of nature.
           </p>
         </div>
@@ -146,11 +146,11 @@ export function ProductsSection() {
                           </div>
                           
                           {/* Enhanced Badges */}
-                          {product.organic && (
+                          {product.natural && (
                             <div className="absolute top-4 left-4">
                               <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold text-xs px-3 py-1 rounded-full shadow-lg">
                                 <Leaf className="h-3 w-3 mr-1" />
-                                100% Organic
+                                100% Natural
                               </Badge>
                             </div>
                           )}
@@ -168,7 +168,7 @@ export function ProductsSection() {
                           <div className="absolute bottom-4 right-4">
                             <div className="bg-white/95 backdrop-blur-lg rounded-xl px-4 py-2 shadow-xl border border-white/50">
                               <div className="text-xl font-bold text-gray-900">₹{product.price.toLocaleString()}</div>
-                              <div className="text-xs text-gray-500 font-medium">per {product.unit}</div>
+                              <div className="text-xs text-gray-500 font-medium">per {product.weight }{ product.unit}</div>
                             </div>
                           </div>
 
@@ -213,7 +213,7 @@ export function ProductsSection() {
                                 {product.inStock ? 'In Stock' : 'Out of Stock'}
                               </span>
                             </div>
-                            {product.organic && (
+                            {product.natural && (
                               <div className="flex items-center text-green-600 text-xs bg-green-50 px-2 py-1 rounded-full">
                                 <Leaf className="h-3 w-3 mr-1" />
                                 <span className="font-medium">Certified</span>
@@ -253,7 +253,7 @@ export function ProductsSection() {
                       </div>
                       <h3 className="text-xl font-bold text-gray-900 mb-4">Explore All Products</h3>
                       <p className="text-gray-700 mb-6 leading-relaxed">
-                        Discover our complete range of 100% organic desert products and traditional items.
+                        Discover our complete range of 100% natural desert products and traditional items.
                       </p>
                       <Button asChild size="lg" className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white rounded-xl px-6 py-3 font-bold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
                         <Link href="/products">

@@ -28,7 +28,7 @@ import {
 
 const stats = [
   { number: "500+", label: "Happy Guests", icon: Users },
-  { number: "50+", label: "Organic Products", icon: Leaf },
+  { number: "50+", label: "Natural Products", icon: Leaf },
   { number: "15+", label: "Cultural Programs", icon: Star },
   { number: "5+", label: "Awards Won", icon: Award }
 ];
@@ -59,7 +59,7 @@ interface HeroSlide {
     href: string;
     icon: any;
   };
-  backgroundTheme: 'desert' | 'cultural' | 'organic' | 'adventure' | 'heritage';
+  backgroundTheme: 'desert' | 'cultural' | 'natural' | 'adventure' | 'heritage';
   posterImage?: string;
   overlayOpacity?: number;
   textPosition?: 'center' | 'left' | 'right';
@@ -79,7 +79,7 @@ const heroSlides: HeroSlide[] = [
     type: 'content',
     title: "Discover Authentic",
     subtitle: "Thar Desert Life",
-    description: "Experience the rich heritage of West Rajasthan through sustainable farm stays, organic products, and authentic cultural immersion in the heart of Thar Desert.",
+    description: "Experience the rich heritage of West Rajasthan through sustainable farm stays, natural products, and authentic cultural immersion in the heart of Thar Desert.",
     badge: "🏆 Award-Winning Desert Experience",
     badgeIcon: Award,
     primaryCTA: {
@@ -156,14 +156,14 @@ const heroSlides: HeroSlide[] = [
       { icon: Heart, position: "bottom-28 left-20", color: "text-pink-400", delay: "1.5s", duration: "3.5s" }
     ]
   },
-  // Poster Slide 4 - Organic Farm
+  // Poster Slide 4 - Natural Farm
   {
     id: 4,
     type: 'poster',
-    title: "Organic Farm",
+    title: "Natural Farm",
     subtitle: "Pure & Natural",
-    description: "Experience sustainable farming practices and taste 100% organic products grown in the heart of Thar Desert.",
-    badge: "🌱 Organic Farming",
+    description: "Experience sustainable farming practices and taste 100% natural products grown in the heart of Thar Desert.",
+    badge: "🌱 Natural Farming",
     badgeIcon: Leaf,
     primaryCTA: {
       text: "Shop Products",
@@ -175,7 +175,7 @@ const heroSlides: HeroSlide[] = [
       href: "/services",
       icon: TreePine
     },
-    backgroundTheme: 'organic',
+    backgroundTheme: 'natural',
     posterImage: "/images/hero/image (9).png",
     overlayOpacity: 0.3,
     textPosition: 'center',
@@ -254,7 +254,7 @@ export function EnhancedHero() {
 
     const interval = setInterval(() => {
       nextSlide();
-    }, 6000); // Change slide every 6 seconds
+    }, 2000); // Change slide every 4 seconds
 
     return () => clearInterval(interval);
   }, [currentSlide, isAutoPlaying]);
@@ -330,7 +330,7 @@ export function EnhancedHero() {
         return 'from-amber-900 via-orange-800 to-red-900';
       case 'cultural':
         return 'from-purple-900 via-pink-800 to-red-900';
-      case 'organic':
+      case 'natural':
         return 'from-green-900 via-emerald-800 to-teal-900';
       case 'adventure':
         return 'from-orange-900 via-red-800 to-pink-900';
@@ -348,7 +348,7 @@ export function EnhancedHero() {
         return 'bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-600';
       case 3: // Cultural Heritage
         return 'bg-gradient-to-br from-purple-500 via-pink-500 to-red-500';
-      case 4: // Organic Farm
+      case 4: // Natural Farm
         return 'bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600';
       case 5: // Heritage Stay
         return 'bg-gradient-to-br from-amber-500 via-orange-500 to-red-600';
@@ -366,7 +366,7 @@ export function EnhancedHero() {
         return 'bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.1)_0%,_transparent_50%)] bg-[length:100px_50px]';
       case 3: // Cultural Heritage - Geometric pattern
         return 'bg-[linear-gradient(45deg,_rgba(255,255,255,0.1)_25%,_transparent_25%,_transparent_75%,_rgba(255,255,255,0.1)_75%)] bg-[length:40px_40px]';
-      case 4: // Organic Farm - Leaf pattern
+      case 4: // Natural Farm - Leaf pattern
         return 'bg-[radial-gradient(circle_at_25%_25%,_rgba(255,255,255,0.1)_0%,_transparent_50%)] bg-[length:60px_60px]';
       case 5: // Heritage Stay - Brick pattern
         return 'bg-[linear-gradient(90deg,_rgba(255,255,255,0.1)_50%,_transparent_50%)] bg-[length:80px_40px]';
@@ -397,7 +397,7 @@ export function EnhancedHero() {
                   // Poster Background - Image or CSS Generated
                   <>
                     {slide.posterImage && (slide.id === 2 || slide.id === 3 || slide.id === 4 || slide.id === 5 || slide.id === 6) ? (
-                      // Use actual image for slide 2 (Desert Safari), slide 3 (Cultural Heritage), slide 4 (Organic Farm), slide 5 (Heritage Stay) and slide 6 (Village Life)
+                      // Use actual image for slide 2 (Desert Safari), slide 3 (Cultural Heritage), slide 4 (Natural Farm), slide 5 (Heritage Stay) and slide 6 (Village Life)
                       <Image
                         src={slide.posterImage}
                         alt={`${slide.title} ${slide.subtitle}`}

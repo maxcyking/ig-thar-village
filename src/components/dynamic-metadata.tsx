@@ -15,7 +15,7 @@ export function DynamicMetadata() {
       const metaDescription = document.querySelector('meta[name="description"]');
       if (metaDescription) {
         metaDescription.setAttribute('content', 
-          `${settings.tagline}. Experience authentic Thar Desert life with ${settings.siteName}. Organic farming, rural tourism, traditional Rajasthani culture, and sustainable agricultural practices from Barmer, Rajasthan.`
+          `${settings.tagline}. Experience authentic Thar Desert life with ${settings.siteName}. Natural farming, rural tourism, traditional Rajasthani culture, and sustainable agricultural practices from Barmer, Rajasthan.`
         );
       }
 
@@ -54,13 +54,13 @@ export function DynamicMetadata() {
       const ogDescription = document.querySelector('meta[property="og:description"]');
       if (ogDescription) {
         ogDescription.setAttribute('content', 
-          `${settings.tagline}. Experience authentic Thar Desert life with organic farming, rural tourism, and traditional Rajasthani culture.`
+          `${settings.tagline}. Experience authentic Thar Desert life with natural farming, rural tourism, and traditional Rajasthani culture.`
         );
       } else {
         const meta = document.createElement('meta');
         meta.setAttribute('property', 'og:description');
         meta.setAttribute('content', 
-          `${settings.tagline}. Experience authentic Thar Desert life with organic farming, rural tourism, and traditional Rajasthani culture.`
+          `${settings.tagline}. Experience authentic Thar Desert life with natural farming, rural tourism, and traditional Rajasthani culture.`
         );
         document.head.appendChild(meta);
       }

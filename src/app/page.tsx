@@ -1,11 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PropertiesSection } from "@/components/home/properties-section";
 import { ProductsSection } from "@/components/home/products-section";
 import { ServicesSection } from "@/components/home/services-section";
 import { FeaturedProductsSection } from "@/components/home/featured-products-section";
 import EnhancedHero from "@/components/enhanced-hero";
+import TestimonialsSection from "@/components/testimonials/testimonials-section";
 import {
   Mountain,
   Tent,
@@ -13,8 +13,6 @@ import {
   Camera,
   TreePine,
   Users,
-  Star,
-  Quote,
   Award,
   Phone,
   CheckCircle,
@@ -43,8 +41,8 @@ const features = [
   },
   {
     icon: Utensils,
-    title: "Organic Cuisine",
-    description: "Savor authentic Rajasthani dishes made with fresh, organic ingredients",
+    title: "Natural Cuisine",
+    description: "Savor authentic Rajasthani dishes made with fresh, natural ingredients",
     color: "text-blue-600"
   },
   {
@@ -56,7 +54,7 @@ const features = [
   {
     icon: TreePine,
     title: "Sustainable Farming",
-    description: "Learn about innovative organic farming practices in arid regions",
+    description: "Learn about innovative natural farming practices in arid regions",
     color: "text-green-600"
   },
   {
@@ -67,40 +65,7 @@ const features = [
   }
 ];
 
-const testimonials = [
-  {
-    name: "Sarah Johnson",
-    location: "New York, USA",
-    rating: 5,
-    text: "An absolutely magical experience! The authentic desert lifestyle, warm hospitality, and organic food made our stay unforgettable. Dr. Devaram and Dhapu are wonderful hosts.",
-    image: "👩‍💼",
-    experience: "Desert Explorer Package"
-  },
-  {
-    name: "Rajesh Sharma",
-    location: "Mumbai, India",
-    rating: 5,
-    text: "Perfect blend of adventure and culture. The camel safari at sunset was breathtaking, and the traditional performances were mesmerizing. Highly recommended!",
-    image: "👨‍💻",
-    experience: "Cultural Heritage Package"
-  },
-  {
-    name: "Emma Wilson",
-    location: "London, UK",
-    rating: 5,
-    text: "The organic products are exceptional! Fresh goat milk, traditional grains, and desert vegetables - everything was pure and delicious. A true farm-to-table experience.",
-    image: "👩‍🎨",
-    experience: "Farm Visit & Products"
-  },
-  {
-    name: "Amit Patel",
-    location: "Delhi, India",
-    rating: 5,
-    text: "Educational and inspiring! Learning about sustainable farming in the desert was fascinating. The mud house accommodation was surprisingly comfortable and authentic.",
-    image: "👨‍🔬",
-    experience: "Farm Stay Experience"
-  }
-];
+
 
 // Stats moved to EnhancedHero component
 
@@ -119,23 +84,23 @@ export default function Home() {
               <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-all duration-300 shadow-lg">
                 <Leaf className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xs font-semibold text-gray-800">Organic</span>
+              <span className="text-xs font-semibold text-gray-800">Natural</span>
             </div>
-            
+
             <div className="group text-center">
               <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-all duration-300 shadow-lg">
                 <Sun className="h-6 w-6 text-white" />
               </div>
               <span className="text-xs font-semibold text-gray-800">Culture</span>
             </div>
-            
+
             <div className="group text-center">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-all duration-300 shadow-lg">
                 <Heart className="h-6 w-6 text-white" />
               </div>
               <span className="text-xs font-semibold text-gray-800">Care</span>
             </div>
-            
+
             <div className="group text-center">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-all duration-300 shadow-lg">
                 <Award className="h-6 w-6 text-white" />
@@ -151,11 +116,11 @@ export default function Home() {
                 <Leaf className="h-7 w-7 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900">100% Organic</h3>
+                <h3 className="font-bold text-gray-900">100% Natural</h3>
                 <p className="text-sm text-gray-600">Chemical-free farming</p>
               </div>
             </div>
-            
+
             <div className="group flex items-center space-x-3 hover:scale-105 transition-all duration-300">
               <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl">
                 <Sun className="h-7 w-7 text-white" />
@@ -165,7 +130,7 @@ export default function Home() {
                 <p className="text-sm text-gray-600">Traditional lifestyle</p>
               </div>
             </div>
-            
+
             <div className="group flex items-center space-x-3 hover:scale-105 transition-all duration-300">
               <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl">
                 <Heart className="h-7 w-7 text-white" />
@@ -175,7 +140,7 @@ export default function Home() {
                 <p className="text-sm text-gray-600">Genuine care</p>
               </div>
             </div>
-            
+
             <div className="group flex items-center space-x-3 hover:scale-105 transition-all duration-300">
               <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl">
                 <Award className="h-7 w-7 text-white" />
@@ -198,37 +163,49 @@ export default function Home() {
       {/* Products Section */}
       <ProductsSection />
 
-      {/* Features Section */}
-      <section className="py-16 bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50">
+      {/* Compact Features Section */}
+      <section className="py-12 bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Badge className="mb-4 bg-blue-100 text-blue-800 border-blue-200 font-accent rounded-md">
+          <div className="text-center mb-8">
+            <Badge className="mb-3 bg-blue-100 text-blue-800 border-blue-200 font-accent rounded-md">
               Our Experiences
             </Badge>
-            <h2 className="section-title text-gray-900 mb-6">
-              Immerse in Desert Culture
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              Desert Culture Immersion
             </h2>
-            <p className="body-text text-xl text-gray-600 max-w-3xl mx-auto">
-              From traditional farming practices to cultural performances,
-              discover the authentic lifestyle of Rajasthan's desert communities
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Authentic experiences that connect you with traditional Rajasthani desert life
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, index) => {
+          {/* Compact 2x2 Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {features.slice(0, 4).map((feature, index) => {
               const IconComponent = feature.icon;
               return (
-                <Card key={index} className="group hover:shadow-md transition-all duration-300 border border-gray-100 shadow-sm rounded-lg overflow-hidden">
-                  <CardHeader className="pb-4">
-                    <div className={`w-14 h-14 rounded-lg bg-gradient-to-br from-white to-gray-50 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                      <IconComponent className={`h-7 w-7 ${feature.color}`} />
-                    </div>
-                    <CardTitle className="card-title text-gray-900">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="body-text text-gray-600 leading-relaxed">{feature.description}</p>
-                  </CardContent>
-                </Card>
+                <div key={index} className="group text-center p-4 bg-white rounded-lg border border-gray-100 hover:shadow-md transition-all duration-300">
+                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br from-white to-gray-50 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
+                    <IconComponent className={`h-6 w-6 ${feature.color}`} />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 text-sm mb-2">{feature.title}</h3>
+                  <p className="text-xs text-gray-600 leading-relaxed">{feature.description}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Additional Features - Mobile Hidden, Desktop Minimal */}
+          <div className="hidden lg:grid grid-cols-2 gap-4 max-w-2xl mx-auto mt-4">
+            {features.slice(4).map((feature, index) => {
+              const IconComponent = feature.icon;
+              return (
+                <div key={index + 4} className="group text-center p-4 bg-white rounded-lg border border-gray-100 hover:shadow-md transition-all duration-300">
+                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br from-white to-gray-50 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 shadow-sm`}>
+                    <IconComponent className={`h-6 w-6 ${feature.color}`} />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 text-sm mb-2">{feature.title}</h3>
+                  <p className="text-xs text-gray-600 leading-relaxed">{feature.description}</p>
+                </div>
               );
             })}
           </div>
@@ -272,7 +249,7 @@ export default function Home() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="h-6 w-6 text-green-600" />
-                  <span className="body-text text-gray-700">Organic Farming</span>
+                  <span className="body-text text-gray-700">Natural Farming</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <CheckCircle className="h-6 w-6 text-green-600" />
@@ -297,7 +274,7 @@ export default function Home() {
                       <Leaf className="h-6 w-6 text-green-600" />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">100% Organic</h4>
+                      <h4 className="font-semibold text-gray-900">100% Natural</h4>
                       <p className="text-gray-600 text-sm">Chemical-free farming and pure products</p>
                     </div>
                   </div>
@@ -328,50 +305,8 @@ export default function Home() {
 
 
 
-      {/* Testimonials Section */}
-      <section className="py-16 bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Badge className="mb-4 bg-yellow-100 text-yellow-800 border-yellow-200 font-accent rounded-md">
-              Guest Stories
-            </Badge>
-            <h2 className="section-title text-gray-900 mb-6">
-              What Our Guests Say
-            </h2>
-            <p className="body-text text-xl text-gray-600 max-w-3xl mx-auto">
-              Real experiences from travelers who discovered the magic of authentic desert life
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="glass-effect border border-gray-100 shadow-sm rounded-lg hover:shadow-md transition-all duration-300">
-                <CardContent className="p-8">
-                  <div className="flex items-center mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 text-yellow-500 fill-current" />
-                    ))}
-                  </div>
-                  <Quote className="h-8 w-8 text-gray-400 mb-4" />
-                  <p className="body-text text-gray-700 mb-6 leading-relaxed italic">
-                    "{testimonial.text}"
-                  </p>
-                  <div className="flex items-center space-x-4">
-                    <div className="text-3xl">{testimonial.image}</div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 font-accent">{testimonial.name}</h4>
-                      <p className="body-text text-gray-600 text-sm">{testimonial.location}</p>
-                      <Badge variant="outline" className="mt-1 text-xs font-accent rounded-md border-gray-200">
-                        {testimonial.experience}
-                      </Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Dynamic Testimonials Section */}
+      <TestimonialsSection showForm={true} maxTestimonials={4} featured={true} />
 
       {/* Why Choose Us */}
       <section className="py-16 bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-50">

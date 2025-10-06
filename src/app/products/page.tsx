@@ -26,7 +26,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [showOnlyOrganic, setShowOnlyOrganic] = useState(false);
+  const [showOnlyNatural, setShowOnlyNatural] = useState(false);
   const [showOnlyFeatured, setShowOnlyFeatured] = useState(false);
   const [showOutOfStock, setShowOutOfStock] = useState(false);
   const [addingToCart, setAddingToCart] = useState<string | null>(null);
@@ -67,10 +67,10 @@ export default function ProductsPage() {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
-    const matchesOrganic = !showOnlyOrganic || product.organic;
+    const matchesNatural = !showOnlyNatural || product.natural;
     const matchesFeatured = !showOnlyFeatured || product.featured;
 
-    return matchesSearch && matchesCategory && matchesOrganic && matchesFeatured;
+    return matchesSearch && matchesCategory && matchesNatural && matchesFeatured;
   });
 
   const handleAddToCart = async (product: Product) => {
@@ -111,16 +111,16 @@ export default function ProductsPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Organic Desert Products
+              Natural Desert Products
             </h1>
             <p className="text-xl mb-8 text-green-100">
-              Discover authentic, organic products from the heart of the Thar Desert.
+              Discover authentic, natural products from the heart of the Thar Desert.
               Sustainably sourced and traditionally crafted.
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm">
               <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full">
                 <Leaf className="h-4 w-4" />
-                100% Organic
+                100% Natural
               </div>
               <div className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full">
                 <Award className="h-4 w-4" />
@@ -156,9 +156,9 @@ export default function ProductsPage() {
               )}
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-600">
-                  {allProducts.filter(p => p.organic).length}
+                  {allProducts.filter(p => p.natural).length}
                 </div>
-                <div className="text-gray-600">Organic</div>
+                <div className="text-gray-600">Natural</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">
@@ -208,11 +208,11 @@ export default function ProductsPage() {
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
-                  checked={showOnlyOrganic}
-                  onChange={(e) => setShowOnlyOrganic(e.target.checked)}
+                  checked={showOnlyNatural}
+                  onChange={(e) => setShowOnlyNatural(e.target.checked)}
                   className="rounded"
                 />
-                Organic Only
+                Natural Only
               </label>
               <label className="flex items-center gap-2 text-sm">
                 <input
@@ -258,7 +258,7 @@ export default function ProductsPage() {
               </h3>
               <p className="text-gray-500 mb-4">
                 {allProducts.length === 0
-                  ? "We're working on adding amazing organic products from the desert."
+                  ? "We're working on adding amazing natural products from the desert."
                   : products.length === 0 && !showOutOfStock
                     ? "Check back soon or enable 'Show Out of Stock' to see all products."
                     : "Try adjusting your search or filter criteria."
@@ -296,10 +296,10 @@ export default function ProductsPage() {
 
                       {/* Badges */}
                       <div className="absolute top-2 left-2 flex gap-2">
-                        {product.organic && (
+                        {product.natural && (
                           <Badge className="bg-green-600 text-white text-xs">
                             <Leaf className="h-3 w-3 mr-1" />
-                            Organic
+                            Natural
                           </Badge>
                         )}
                         {product.featured && (

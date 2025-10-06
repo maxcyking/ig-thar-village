@@ -1,6 +1,6 @@
 # IG Thar Village - Desert Experience Platform
 
-A comprehensive Next.js application for IG Thar Village, featuring authentic desert experiences, organic products, and cultural tourism in West Rajasthan.
+A comprehensive Next.js application for IG Thar Village, featuring authentic desert experiences, natural products, and cultural tourism in West Rajasthan.
 
 ## 🌟 Features
 
@@ -8,7 +8,7 @@ A comprehensive Next.js application for IG Thar Village, featuring authentic des
 - **Home Page**: Hero section with desert theme and service highlights
 - **About Us**: Story of founders Dr. Devaram Pawar and Dhapu
 - **Services**: Farm stays, desert safaris, cultural experiences
-- **Products**: Organic desert products with ordering system
+- **Products**: Natural desert products with ordering system
 - **Gallery**: Visual showcase of experiences and culture
 - **Awards**: Recognition and achievements
 - **Media Corner**: Press releases and media coverage
@@ -16,7 +16,7 @@ A comprehensive Next.js application for IG Thar Village, featuring authentic des
 
 ### Admin Panel
 - **Dashboard**: Overview of bookings, products, and analytics
-- **Product Management**: Add, edit, and manage organic products
+- **Product Management**: Add, edit, and manage natural products
 - **Blog Management**: Create and manage blog posts
 - **Media Management**: Upload and organize images/videos
 - **Booking Management**: Handle service bookings
@@ -100,7 +100,7 @@ The application features a custom desert and agricultural theme with:
    - Go to Firebase Console > Firestore Database
    - Create database in production mode
    - Set up the following collections:
-     - `products` - for organic products
+     - `products` - for natural products
      - `blogs` - for blog posts
      - `bookings` - for service bookings
      - `messages` - for contact inquiries
@@ -158,7 +158,7 @@ ig-thar-village/
 - `/` - Home page with hero and features
 - `/about` - About IG Thar Village and founders
 - `/services` - Available services and packages
-- `/products` - Organic products catalog
+- `/products` - Natural products catalog
 - `/gallery` - Photo gallery and virtual tours
 - `/awards` - Awards and recognition
 - `/media` - Media coverage and press kit

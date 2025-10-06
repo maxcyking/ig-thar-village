@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Heart,
   Users,
   Leaf,
@@ -48,7 +48,7 @@ import Link from "next/link";
 export default function AboutPage() {
   const stats = [
     { icon: Users, value: "500+", label: "Happy Visitors", color: "text-amber-600" },
-    { icon: Leaf, value: "100%", label: "Organic Products", color: "text-green-600" },
+    { icon: Leaf, value: "100%", label: "Natural Products", color: "text-green-600" },
     { icon: Home, value: "1", label: "Authentic Experience", color: "text-orange-600" },
     { icon: Award, value: "2023", label: "Year Established", color: "text-red-600" },
   ];
@@ -62,8 +62,8 @@ export default function AboutPage() {
     },
     {
       icon: Leaf,
-      title: "Organic Innovation",
-      description: "Leading innovation in agriculture and animal husbandry through organic farming practices and sustainable methods.",
+      title: "Natural Innovation",
+      description: "Leading innovation in agriculture and animal husbandry through natural farming practices and sustainable methods.",
       color: "text-green-500"
     },
     {
@@ -128,8 +128,8 @@ export default function AboutPage() {
     },
     {
       year: "2023",
-      title: "Organic Farming Initiative",
-      description: "Launched innovative organic farming and animal husbandry programs in the heart of the Thar Desert.",
+      title: "Natural Farming Initiative",
+      description: "Launched innovative natural farming and animal husbandry programs in the heart of the Thar Desert.",
       icon: Sprout
     },
     {
@@ -169,28 +169,28 @@ export default function AboutPage() {
           <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-red-600 rounded-full"></div>
           <div className="absolute bottom-1/4 right-1/3 w-20 h-20 bg-yellow-600 rounded-full"></div>
         </div>
-        
+
         <div className="relative container mx-auto px-6">
           <div className="max-w-5xl mx-auto text-center">
             <Badge className="mb-8 bg-amber-100 text-amber-800 border-amber-200 px-6 py-3 text-lg font-medium rounded-full">
               <Crown className="h-5 w-5 mr-2" />
               About IG Thar Village
             </Badge>
-            
+
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-8 leading-tight">
-              Preserving 
+              Preserving
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-600"> Desert </span>
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600"> Heritage</span>
               <span className="text-gray-900"> Since 2023</span>
             </h1>
-            
+
             <p className="text-xl md:text-2xl text-gray-700 mb-12 leading-relaxed font-light max-w-4xl mx-auto">
-              Founded by visionary farmer couple <span className="font-semibold text-amber-700">Dr. Devaram Pawar and Dhapu</span>, 
-              we are dedicated to promoting traditional desert lifestyle, culture, and organic innovation 
+              Founded by visionary farmer couple <span className="font-semibold text-amber-700">Dr. Devaram Pawar and Dhapu</span>,
+              we are dedicated to promoting traditional desert lifestyle, culture, and natural innovation
               to every corner of the world.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
               <Button size="lg" className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white px-8 py-4 text-lg rounded-full shadow-lg">
                 <Tent className="h-5 w-5 mr-2" />
@@ -223,6 +223,172 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Mission & Vision */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div className="space-y-12">
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center">
+                      <Target className="h-8 w-8 text-amber-600" />
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Our Mission</h2>
+                  </div>
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    To promote and preserve the traditional desert lifestyle, culture, clothing, and cuisine
+                    of Rajasthan, while advancing innovation in agriculture and animal husbandry. We are committed
+                    to sharing the authentic desert experience with visitors from around the world.
+                  </p>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center">
+                      <Eye className="h-8 w-8 text-green-600" />
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Our Vision</h2>
+                  </div>
+                  <p className="text-lg text-gray-700 leading-relaxed">
+                    To become a global ambassador for Rajasthani desert culture, ensuring that traditional
+                    knowledge, customs, and lifestyle are preserved and celebrated across every corner of the world,
+                    while fostering sustainable community development.
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="aspect-square bg-gradient-to-br from-amber-100 via-orange-100 to-red-100 rounded-3xl overflow-hidden shadow-xl">
+                  <div className="w-full h-full flex items-center justify-center p-8">
+                    <div className="text-center">
+                      <Crown className="h-24 w-24 text-amber-600 mx-auto mb-6" />
+                      <h3 className="text-2xl font-bold text-gray-800 mb-4">Cultural Heritage</h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        Preserving the timeless traditions of the Thar Desert for future generations
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating Elements */}
+                <div className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center shadow-xl">
+                  <Music className="h-10 w-10 text-white" />
+                </div>
+                <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-xl">
+                  <Leaf className="h-8 w-8 text-white" />
+                </div>
+                <div className="absolute top-1/4 -left-4 w-16 h-16 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-full flex items-center justify-center shadow-lg">
+                  <Utensils className="h-6 w-6 text-white" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Website Launch Section */}
+      <section className="py-20 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
+        <div className="container mx-auto px-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <Badge className="mb-6 bg-purple-100 text-purple-800 border-purple-200 px-6 py-3 text-lg font-medium rounded-full">
+                <Globe className="h-5 w-5 mr-2" />
+                Website Launch
+              </Badge>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                Going
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600"> Digital </span>
+                with Our Heritage
+              </h2>
+              <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+                Witness the historic moment when IG Thar Village embraced the digital world to share
+                our authentic desert culture and experiences with visitors across the globe.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* First Launch Image */}
+              <div className="group">
+                <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden bg-white">
+                  <div className="relative h-80 overflow-hidden">
+                    <Image
+                      src="/images/launch/image1.jpg"
+                      alt="IG Thar Village Website Launch - Moment 1"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <Badge className="bg-white/90 text-purple-800 backdrop-blur-sm font-medium rounded-full mb-2">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        Historic Launch
+                      </Badge>
+                      <h3 className="text-white text-xl font-bold">Digital Journey Begins</h3>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
+              {/* Second Launch Image */}
+              <div className="group">
+                <Card className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden bg-white">
+                  <div className="relative h-80 overflow-hidden">
+                    <Image
+                      src="/images/launch/image2.jpg"
+                      alt="IG Thar Village Website Launch - Moment 2"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <Badge className="bg-white/90 text-blue-800 backdrop-blur-sm font-medium rounded-full mb-2">
+                        <Globe className="h-4 w-4 mr-2" />
+                        Global Reach
+                      </Badge>
+                      <h3 className="text-white text-xl font-bold">Connecting Cultures Worldwide</h3>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </div>
+
+            {/* Launch Details */}
+            <div className="mt-16">
+              <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+                <CardContent className="p-10">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div className="group">
+                      <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <Globe className="h-8 w-8 text-purple-600" />
+                      </div>
+                      <h4 className="text-xl font-bold text-gray-900 mb-2">Global Accessibility</h4>
+                      <p className="text-gray-600">Making authentic desert experiences accessible to travelers worldwide through our digital platform.</p>
+                    </div>
+
+                    <div className="group">
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <Heart className="h-8 w-8 text-blue-600" />
+                      </div>
+                      <h4 className="text-xl font-bold text-gray-900 mb-2">Cultural Preservation</h4>
+                      <p className="text-gray-600">Using technology to preserve and share traditional desert lifestyle with future generations.</p>
+                    </div>
+
+                    <div className="group">
+                      <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <Users className="h-8 w-8 text-indigo-600" />
+                      </div>
+                      <h4 className="text-xl font-bold text-gray-900 mb-2">Community Impact</h4>
+                      <p className="text-gray-600">Empowering local communities by showcasing their heritage and creating sustainable tourism opportunities.</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Traditional Experiences */}
       <section className="py-20 bg-gradient-to-br from-orange-50 via-red-50 to-amber-50">
         <div className="container mx-auto px-6">
@@ -233,12 +399,12 @@ export default function AboutPage() {
                 Authentic Desert Experiences
               </Badge>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                Live the 
+                Live the
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600"> Traditional </span>
                 Desert Life
               </h2>
               <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                Immerse yourself in the authentic desert lifestyle with traditional accommodations, 
+                Immerse yourself in the authentic desert lifestyle with traditional accommodations,
                 cuisine, attire, and cultural performances that have been preserved for generations.
               </p>
             </div>
@@ -260,69 +426,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Mission & Vision */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              <div className="space-y-12">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center">
-                      <Target className="h-8 w-8 text-amber-600" />
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Our Mission</h2>
-                  </div>
-                  <p className="text-lg text-gray-700 leading-relaxed">
-                    To promote and preserve the traditional desert lifestyle, culture, clothing, and cuisine 
-                    of Rajasthan, while advancing innovation in agriculture and animal husbandry. We are committed 
-                    to sharing the authentic desert experience with visitors from around the world.
-                  </p>
-                </div>
 
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center">
-                      <Eye className="h-8 w-8 text-green-600" />
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Our Vision</h2>
-                  </div>
-                  <p className="text-lg text-gray-700 leading-relaxed">
-                    To become a global ambassador for Rajasthani desert culture, ensuring that traditional 
-                    knowledge, customs, and lifestyle are preserved and celebrated across every corner of the world, 
-                    while fostering sustainable community development.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative">
-                <div className="aspect-square bg-gradient-to-br from-amber-100 via-orange-100 to-red-100 rounded-3xl overflow-hidden shadow-xl">
-                  <div className="w-full h-full flex items-center justify-center p-8">
-                    <div className="text-center">
-                      <Crown className="h-24 w-24 text-amber-600 mx-auto mb-6" />
-                      <h3 className="text-2xl font-bold text-gray-800 mb-4">Cultural Heritage</h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        Preserving the timeless traditions of the Thar Desert for future generations
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Floating Elements */}
-                <div className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center shadow-xl">
-                  <Music className="h-10 w-10 text-white" />
-                </div>
-                <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-xl">
-                  <Leaf className="h-8 w-8 text-white" />
-                </div>
-                <div className="absolute top-1/4 -left-4 w-16 h-16 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-full flex items-center justify-center shadow-lg">
-                  <Utensils className="h-6 w-6 text-white" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Statistics */}
       <section className="py-20 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50">
@@ -335,7 +439,7 @@ export default function AboutPage() {
               </Badge>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Desert Heritage in Numbers</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Since our establishment in 2023, we've been making a meaningful impact in preserving 
+                Since our establishment in 2023, we've been making a meaningful impact in preserving
                 desert culture and promoting authentic experiences.
               </p>
             </div>
@@ -344,12 +448,11 @@ export default function AboutPage() {
               {stats.map((stat, index) => (
                 <Card key={index} className="group text-center border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm hover:bg-white hover:-translate-y-2">
                   <CardContent className="p-8">
-                    <div className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 ${
-                      stat.color === 'text-amber-600' ? 'from-amber-100 to-amber-200' :
-                      stat.color === 'text-green-600' ? 'from-green-100 to-green-200' :
-                      stat.color === 'text-orange-600' ? 'from-orange-100 to-orange-200' :
-                      'from-red-100 to-red-200'
-                    }`}>
+                    <div className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 ${stat.color === 'text-amber-600' ? 'from-amber-100 to-amber-200' :
+                        stat.color === 'text-green-600' ? 'from-green-100 to-green-200' :
+                          stat.color === 'text-orange-600' ? 'from-orange-100 to-orange-200' :
+                            'from-red-100 to-red-200'
+                      }`}>
                       <stat.icon className={`h-10 w-10 ${stat.color}`} />
                     </div>
                     <div className={`text-4xl md:text-5xl font-bold mb-3 ${stat.color}`}>{stat.value}</div>
@@ -373,16 +476,15 @@ export default function AboutPage() {
               </Badge>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">From Vision to Reality</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                The inspiring story of how a passionate farmer couple transformed their vision 
+                The inspiring story of how a passionate farmer couple transformed their vision
                 into a beacon of desert culture preservation and authentic experiences.
               </p>
             </div>
 
             <div className="space-y-16">
               {milestones.map((milestone, index) => (
-                <div key={index} className={`flex flex-col lg:flex-row items-center gap-12 ${
-                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-                }`}>
+                <div key={index} className={`flex flex-col lg:flex-row items-center gap-12 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                  }`}>
                   <div className="lg:w-1/2">
                     <Card className="border-0 shadow-xl bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 hover:shadow-2xl transition-all duration-300">
                       <CardContent className="p-10">
@@ -422,7 +524,7 @@ export default function AboutPage() {
               </Badge>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">What Drives Us</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                The fundamental principles that guide our mission to preserve desert heritage 
+                The fundamental principles that guide our mission to preserve desert heritage
                 and create authentic experiences for travelers worldwide.
               </p>
             </div>
@@ -432,12 +534,11 @@ export default function AboutPage() {
                 <Card key={index} className="border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-white/80 backdrop-blur-sm group hover:bg-white hover:-translate-y-2">
                   <CardContent className="p-10">
                     <div className="flex items-start gap-6">
-                      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg ${
-                        value.color === 'text-red-500' ? 'from-red-100 to-red-200' :
-                        value.color === 'text-green-500' ? 'from-green-100 to-green-200' :
-                        value.color === 'text-amber-500' ? 'from-amber-100 to-amber-200' :
-                        'from-blue-100 to-blue-200'
-                      }`}>
+                      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg ${value.color === 'text-red-500' ? 'from-red-100 to-red-200' :
+                          value.color === 'text-green-500' ? 'from-green-100 to-green-200' :
+                            value.color === 'text-amber-500' ? 'from-amber-100 to-amber-200' :
+                              'from-blue-100 to-blue-200'
+                        }`}>
                         <value.icon className={`h-8 w-8 ${value.color}`} />
                       </div>
                       <div className="flex-1">
@@ -467,7 +568,7 @@ export default function AboutPage() {
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> Historic Sites</span>
               </h2>
               <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                Journey through time and spirituality as you visit ancient landmarks and sacred sites 
+                Journey through time and spirituality as you visit ancient landmarks and sacred sites
                 that tell the story of Rajasthan's rich heritage.
               </p>
             </div>
@@ -480,7 +581,7 @@ export default function AboutPage() {
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">Baba Ramdev Ji's Birthplace</h3>
                   <p className="text-gray-700 leading-relaxed text-center mb-6">
-                    Pay homage at the sacred birthplace of Baba Ramdev Ji, the revered folk deity of Rajasthan. 
+                    Pay homage at the sacred birthplace of Baba Ramdev Ji, the revered folk deity of Rajasthan.
                     Experience the spiritual energy and rich history of this holy site.
                   </p>
                   <div className="space-y-3">
@@ -507,7 +608,7 @@ export default function AboutPage() {
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">Historic Batadu Well</h3>
                   <p className="text-gray-700 leading-relaxed text-center mb-6">
-                    Marvel at the architectural wonder of Rajasthan's famous step-well, known as the "Jal Mahal" 
+                    Marvel at the architectural wonder of Rajasthan's famous step-well, known as the "Jal Mahal"
                     (Water Palace) - a testament to ancient engineering and water conservation.
                   </p>
                   <div className="space-y-3">
@@ -577,7 +678,7 @@ export default function AboutPage() {
               </Badge>
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Visionary Leaders</h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Meet the passionate farmer couple who transformed their vision of preserving 
+                Meet the passionate farmer couple who transformed their vision of preserving
                 desert heritage into a reality that inspires visitors from around the world.
               </p>
             </div>
@@ -591,8 +692,8 @@ export default function AboutPage() {
                   <h3 className="text-2xl font-bold text-gray-900 mb-3">Dr. Devaram Pawar</h3>
                   <p className="text-amber-600 font-semibold mb-6 text-lg">Co-Founder & Agricultural Innovator</p>
                   <p className="text-gray-700 leading-relaxed mb-6">
-                    A visionary farmer with deep expertise in agriculture and animal husbandry. 
-                    Dr. Pawar brings innovative organic farming practices to the arid landscapes 
+                    A visionary farmer with deep expertise in agriculture and animal husbandry.
+                    Dr. Pawar brings innovative natural farming practices to the arid landscapes
                     of the Thar Desert, combining traditional wisdom with modern techniques.
                   </p>
                   <div className="space-y-2">
@@ -602,7 +703,7 @@ export default function AboutPage() {
                     </div>
                     <div className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-amber-600" />
-                      <span className="text-sm text-gray-600">Organic Farming Pioneer</span>
+                      <span className="text-sm text-gray-600">Natural Farming Pioneer</span>
                     </div>
                     <div className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-amber-600" />
@@ -620,8 +721,8 @@ export default function AboutPage() {
                   <h3 className="text-2xl font-bold text-gray-900 mb-3">Dhapu</h3>
                   <p className="text-red-600 font-semibold mb-6 text-lg">Co-Founder & Cultural Heritage Keeper</p>
                   <p className="text-gray-700 leading-relaxed mb-6">
-                    The heart behind preserving and promoting traditional desert culture. 
-                    Dhapu is passionate about sharing authentic Rajasthani lifestyle, cuisine, 
+                    The heart behind preserving and promoting traditional desert culture.
+                    Dhapu is passionate about sharing authentic Rajasthani lifestyle, cuisine,
                     clothing, and customs with visitors from across the globe.
                   </p>
                   <div className="space-y-2">
@@ -653,9 +754,9 @@ export default function AboutPage() {
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">Shared Vision</h3>
                   <p className="text-lg text-gray-700 leading-relaxed italic">
-                    "Together, we are committed to preserving the authentic desert heritage of Rajasthan 
-                    and sharing its timeless beauty with visitors from every corner of the world. Our goal 
-                    is to ensure that traditional culture, organic practices, and genuine hospitality 
+                    "Together, we are committed to preserving the authentic desert heritage of Rajasthan
+                    and sharing its timeless beauty with visitors from every corner of the world. Our goal
+                    is to ensure that traditional culture, natural practices, and genuine hospitality
                     continue to thrive for generations to come."
                   </p>
                 </CardContent>
@@ -680,18 +781,18 @@ export default function AboutPage() {
               <Tent className="h-5 w-5 mr-2" />
               Experience Authentic Desert Life
             </Badge>
-            
+
             <h2 className="text-4xl md:text-6xl font-bold mb-8 leading-tight">
               Ready for Your
               <span className="block text-yellow-200"> Desert Adventure?</span>
             </h2>
-            
+
             <p className="text-xl md:text-2xl mb-12 opacity-90 leading-relaxed max-w-4xl mx-auto">
-              Join thousands of travelers who have discovered the magic of authentic Rajasthani culture. 
-              Experience traditional mud houses, savor organic cuisine, and witness the timeless beauty 
+              Join thousands of travelers who have discovered the magic of authentic Rajasthani culture.
+              Experience traditional mud houses, savor natural cuisine, and witness the timeless beauty
               of the Thar Desert with us.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
               <Link href="/services">
                 <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100 px-10 py-5 text-lg rounded-2xl shadow-2xl">
@@ -741,7 +842,7 @@ export default function AboutPage() {
                 </div>
                 <div className="flex flex-col items-center">
                   <Leaf className="h-6 w-6 mb-2 text-yellow-200" />
-                  <span className="text-sm font-medium">Organic Experience</span>
+                  <span className="text-sm font-medium">Natural Experience</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <Award className="h-6 w-6 mb-2 text-yellow-200" />
