@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Star, Search, Filter, Quote, User, MapPin, Award } from "lucide-react";
 import { getTestimonials, getTestimonialStats, type Testimonial } from '@/lib/testimonials';
-import TestimonialForm from '@/components/testimonials/testimonial-form';
+import { SimpleTestimonialForm } from '@/components/testimonials/simple-testimonial-form';
 
 export default function TestimonialsPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
@@ -48,8 +48,9 @@ export default function TestimonialsPage() {
     if (searchTerm) {
       filtered = filtered.filter(t => 
         t.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (t.title && t.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (t.experience && t.experience.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (t.message && t.message.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (t.userLocation && t.userLocation.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
@@ -161,7 +162,7 @@ export default function TestimonialsPage() {
         {/* Testimonial Form */}
         {showForm && (
           <div className="max-w-2xl mx-auto mb-12">
-            <TestimonialForm onSuccess={handleTestimonialSubmitted} />
+            <SimpleTestimonialForm onSuccess={handleTestimonialSubmitted} />
           </div>
         )}
 
@@ -269,9 +270,11 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         <Quote className="h-8 w-8 text-gray-400 mb-4" />
         
         <div className="flex-grow">
-          <h4 className="font-semibold text-gray-900 mb-2">{testimonial.title}</h4>
+          {testimonial.title && (
+            <h4 className="font-semibold text-gray-900 mb-2">{testimonial.title}</h4>
+          )}
           <p className="text-gray-700 mb-6 leading-relaxed italic">
-            "{testimonial.message}"
+            "{testimonial.experience || testimonial.message}"
           </p>
         </div>
         

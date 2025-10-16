@@ -144,7 +144,7 @@ export default function BookingsPage() {
           </div>
           <div className="flex items-center space-x-2">
             <span className="text-sm font-medium">
-              ₹{(booking.totalAmount || 0).toLocaleString()} ({booking.totalNights || 0} nights)
+              ₹{booking.total.toLocaleString()} ({booking.totalNights} nights)
             </span>
           </div>
         </div>
@@ -152,10 +152,10 @@ export default function BookingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-medium text-sm mb-1">Guest Details</h4>
-            <p className="text-sm text-gray-600">{booking.guestDetails?.name || 'N/A'}</p>
+            <p className="text-sm text-gray-600">{booking.guestInfo.fullName}</p>
             <div className="flex items-center space-x-4 text-sm text-gray-600">
-              <span className="flex items-center"><Phone className="h-3 w-3 mr-1" />{booking.guestDetails?.phone || 'N/A'}</span>
-              <span className="flex items-center"><Mail className="h-3 w-3 mr-1" />{booking.guestDetails?.email || 'N/A'}</span>
+              <span className="flex items-center"><Phone className="h-3 w-3 mr-1" />{booking.guestInfo.phone}</span>
+              <span className="flex items-center"><Mail className="h-3 w-3 mr-1" />{booking.guestInfo.email}</span>
             </div>
           </div>
           <div>
@@ -225,7 +225,7 @@ export default function BookingsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
           <div className="flex items-center space-x-2">
             <Users className="h-4 w-4 text-gray-500" />
-            <span className="text-sm">{booking.totalGuests || 0} guests</span>
+            <span className="text-sm">{booking.totalGuests} guests</span>
           </div>
           <div className="flex items-center space-x-2">
             <Calendar className="h-4 w-4 text-gray-500" />
@@ -233,22 +233,22 @@ export default function BookingsPage() {
           </div>
           <div className="flex items-center space-x-2">
             <Clock className="h-4 w-4 text-gray-500" />
-            <span className="text-sm">{booking.timeSlot || 'N/A'}</span>
+            <span className="text-sm">{booking.timeSlot}</span>
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <h4 className="font-medium text-sm mb-1">Guest Details</h4>
-            <p className="text-sm text-gray-600">{booking.guestDetails?.name || 'N/A'}</p>
+            <p className="text-sm text-gray-600">{booking.guestInfo.fullName}</p>
             <div className="flex items-center space-x-4 text-sm text-gray-600">
-              <span className="flex items-center"><Phone className="h-3 w-3 mr-1" />{booking.guestDetails?.phone || 'N/A'}</span>
-              <span className="flex items-center"><Mail className="h-3 w-3 mr-1" />{booking.guestDetails?.email || 'N/A'}</span>
+              <span className="flex items-center"><Phone className="h-3 w-3 mr-1" />{booking.guestInfo.phone}</span>
+              <span className="flex items-center"><Mail className="h-3 w-3 mr-1" />{booking.guestInfo.email}</span>
             </div>
           </div>
           <div>
             <h4 className="font-medium text-sm mb-1">Total Amount</h4>
-            <p className="text-lg font-semibold text-green-600">₹{(booking.totalAmount || 0).toLocaleString()}</p>
+            <p className="text-lg font-semibold text-green-600">₹{booking.total.toLocaleString()}</p>
           </div>
         </div>
 

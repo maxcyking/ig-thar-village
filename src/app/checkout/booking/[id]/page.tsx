@@ -55,7 +55,7 @@ function BookingCheckoutContent() {
   const [step, setStep] = useState(1); // 1: Payment Method, 2: Payment Processing, 3: Confirmation
 
   const [paymentData, setPaymentData] = useState<PaymentFormData>({
-    paymentMethod: 'qr_code',
+    paymentMethod: 'cash_on_arrival',
     transactionId: '',
   });
 
@@ -102,11 +102,8 @@ function BookingCheckoutContent() {
   const validatePayment = () => {
     const newErrors: Record<string, string> = {};
 
-    if (paymentData.paymentMethod !== 'cash_on_arrival') {
-      if (!paymentData.transactionId.trim()) {
-        newErrors.transactionId = "Transaction ID is required";
-      }
-    }
+    // No validation needed for cash on arrival
+    // All payments are cash on arrival now
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -272,45 +269,12 @@ function BookingCheckoutContent() {
                     className="space-y-4"
                   >
                     <div className="flex items-center space-x-3 p-4 border rounded-lg">
-                      <RadioGroupItem value="qr_code" id="qr_code" />
-                      <Label htmlFor="qr_code" className="flex items-center gap-3 cursor-pointer flex-1">
-                        <QrCode className="h-5 w-5 text-amber-600" />
-                        <div>
-                          <div className="font-medium">QR Code / UPI</div>
-                          <div className="text-sm text-gray-500">Pay using any UPI app</div>
-                        </div>
-                      </Label>
-                    </div>
-
-                    <div className="flex items-center space-x-3 p-4 border rounded-lg">
-                      <RadioGroupItem value="card" id="card" />
-                      <Label htmlFor="card" className="flex items-center gap-3 cursor-pointer flex-1">
-                        <CreditCard className="h-5 w-5 text-blue-600" />
-                        <div>
-                          <div className="font-medium">Card Payment</div>
-                          <div className="text-sm text-gray-500">Credit or Debit Card</div>
-                        </div>
-                      </Label>
-                    </div>
-
-                    <div className="flex items-center space-x-3 p-4 border rounded-lg">
-                      <RadioGroupItem value="upi" id="upi" />
-                      <Label htmlFor="upi" className="flex items-center gap-3 cursor-pointer flex-1">
-                        <Smartphone className="h-5 w-5 text-green-600" />
-                        <div>
-                          <div className="font-medium">UPI ID</div>
-                          <div className="text-sm text-gray-500">Pay using UPI ID</div>
-                        </div>
-                      </Label>
-                    </div>
-
-                    <div className="flex items-center space-x-3 p-4 border rounded-lg">
                       <RadioGroupItem value="cash_on_arrival" id="cash_on_arrival" />
                       <Label htmlFor="cash_on_arrival" className="flex items-center gap-3 cursor-pointer flex-1">
                         <Shield className="h-5 w-5 text-gray-600" />
                         <div>
                           <div className="font-medium">Cash on Arrival</div>
-                          <div className="text-sm text-gray-500">Pay when you arrive</div>
+                          <div className="text-sm text-gray-500">Pay when you arrive at the location</div>
                         </div>
                       </Label>
                     </div>
@@ -319,46 +283,6 @@ function BookingCheckoutContent() {
               </Card>
 
               {/* Payment Details */}
-              {paymentData.paymentMethod === 'qr_code' && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>QR Code Payment</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="bg-white p-6 rounded-lg border text-center">
-                      <div className="w-48 h-48 bg-gray-200 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                        <QrCode className="h-24 w-24 text-gray-400" />
-                      </div>
-                      <p className="text-sm text-gray-600 mb-4">Scan this QR code with any UPI app</p>
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-sm font-mono">UPI ID: igtharvillage@paytm</span>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => copyToClipboard('igtharvillage@paytm')}
-                        >
-                          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="transactionId">Transaction ID *</Label>
-                      <Input
-                        id="transactionId"
-                        value={paymentData.transactionId}
-                        onChange={(e) => handlePaymentChange('transactionId', e.target.value)}
-                        placeholder="Enter transaction ID after payment"
-                        className={errors.transactionId ? "border-red-500" : ""}
-                      />
-                      {errors.transactionId && (
-                        <p className="text-sm text-red-500">{errors.transactionId}</p>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
               {paymentData.paymentMethod === 'cash_on_arrival' && (
                 <Card>
                   <CardHeader>
@@ -366,9 +290,20 @@ function BookingCheckoutContent() {
                   </CardHeader>
                   <CardContent>
                     <div className="bg-amber-50 p-4 rounded-lg">
-                      <p className="text-amber-800">
-                        You can pay the full amount when you arrive. Please bring exact change if possible.
+                      <h4 className="font-medium text-amber-900 mb-2">Payment Instructions</h4>
+                      <p className="text-amber-800 mb-3">
+                        You can pay the full amount of ₹{booking.total} when you arrive at the location.
                       </p>
+                      <div className="bg-white p-3 rounded border border-amber-200">
+                        <h5 className="font-medium text-amber-900 mb-2">What to expect:</h5>
+                        <ul className="text-sm text-amber-700 space-y-1">
+                          <li>• Pay directly to our staff upon arrival</li>
+                          <li>• Please bring exact change if possible</li>
+                          <li>• We accept cash in Indian Rupees (₹)</li>
+                          <li>• Receipt will be provided after payment</li>
+                          <li>• Contact us if you need assistance: +91 8302676869</li>
+                        </ul>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

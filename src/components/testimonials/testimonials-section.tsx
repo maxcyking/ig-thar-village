@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, Quote, ChevronLeft, ChevronRight, User } from "lucide-react";
 import { getTestimonials, type Testimonial } from '@/lib/testimonials';
-import TestimonialForm from './testimonial-form';
+import SimpleTestimonialForm from './simple-testimonial-form';
 
 interface TestimonialsSectionProps {
   showForm?: boolean;
@@ -175,10 +175,10 @@ export default function TestimonialsSection({
           </div>
         )}
 
-        {/* Testimonial Form */}
+        {/* Simplified Testimonial Form */}
         {showForm && (
           <div className="max-w-2xl mx-auto">
-            <TestimonialForm onSuccess={handleTestimonialSubmitted} />
+            <SimpleTestimonialForm onSuccess={handleTestimonialSubmitted} />
           </div>
         )}
       </div>

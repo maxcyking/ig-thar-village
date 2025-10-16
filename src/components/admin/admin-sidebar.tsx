@@ -15,7 +15,8 @@ import {
   Home,
   MapPin,
   Award,
-  Mail
+  Mail,
+  ShoppingCart
 } from "lucide-react";
 
 const navigation = [
@@ -38,6 +39,11 @@ const navigation = [
     name: "Products",
     href: "/admin/products",
     icon: Package,
+  },
+  {
+    name: "Orders",
+    href: "/admin/orders",
+    icon: ShoppingCart,
   },
   {
     name: "Blogs",

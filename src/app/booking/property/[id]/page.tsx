@@ -196,7 +196,7 @@ export default function PropertyBookingPage() {
         total,
         status: 'pending' as const,
         paymentStatus: 'pending' as const,
-        paymentMethod: 'qr_code' as const,
+        paymentMethod: 'cash_on_arrival' as const,
         specialRequests: formData.specialRequests.trim() || undefined,
       };
 

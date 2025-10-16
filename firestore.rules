@@ -1,17 +1,107 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // DEVELOPMENT RULES - More permissive for testing
+    // TODO: Replace with production rules before going live
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Admin check based on users collection
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isActive == true;
+    }
+    
+    // Alternative admin check using custom claims (for IG Thar Village)
+    function isAdminClaim() {
+      return isAuthenticated() && request.auth.token.admin == true;
+    }
+    
+    // Combined admin check
+    function isAdminUser() {
+      return isAdmin() || isAdminClaim();
+    }
+    
+    // Validate application data structure
+    function isValidApplication(data) {
+      return data.keys().hasAll(['name', 'fatherHusbandName', 'phone', 'applicationType', 'status']) &&
+        data.name is string && data.name.size() > 0 &&
+        data.fatherHusbandName is string && data.fatherHusbandName.size() > 0 &&
+        data.phone is string && data.phone.size() > 0 &&
+        data.applicationType in ['library', 'member'] &&
+        data.status in ['pending', 'approved', 'rejected'];
+    }
+    
+    // Validate student data structure
+    function isValidStudent(data) {
+      return data.keys().hasAll(['name', 'fatherHusbandName', 'phone', 'status']) &&
+        data.name is string && data.name.size() > 0 &&
+        data.fatherHusbandName is string && data.fatherHusbandName.size() > 0 &&
+        data.phone is string && data.phone.size() > 0 &&
+        data.status in ['active', 'inactive', 'suspended'];
+    }
+    
+    // Validate inquiry data structure
+    function isValidInquiry(data) {
+      return data.keys().hasAll(['name', 'phone', 'subject', 'message']) &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+        data.phone is string && data.phone.size() > 0 && data.phone.size() <= 20 &&
+        data.subject is string && data.subject.size() > 0 && data.subject.size() <= 200 &&
+        data.message is string && data.message.size() > 0 && data.message.size() <= 1000 &&
+        (!data.keys().hasAny(['email']) || (data.email is string && data.email.matches('.*@.*\\..*')));
+    }
+    
+    // Validate certificate data structure
+    function isValidCertificate(data) {
+      return data.keys().hasAll(['title', 'imageUrl']) &&
+        data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+        data.imageUrl is string && data.imageUrl.size() > 0;
+    }
+    
+    // Validate audit log data structure
+    function isValidAuditLog(data) {
+      return data.keys().hasAll(['action', 'collection', 'timestamp', 'userId']) &&
+        data.action is string && data.action.size() > 0 &&
+        data.collection is string && data.collection.size() > 0 &&
+        data.timestamp is timestamp &&
+        data.userId is string && data.userId.size() > 0;
+    }
+    
+    // Validate settings log data structure
+    function isValidSettingsLog(data) {
+      return data.keys().hasAll(['action', 'settingKey', 'oldValue', 'newValue', 'timestamp', 'userId']) &&
+        data.action in ['create', 'update', 'delete'] &&
+        data.settingKey is string && data.settingKey.size() > 0 &&
+        data.timestamp is timestamp &&
+        data.userId is string && data.userId.size() > 0;
+    }
+    
+    // Website settings validation function
+    function isValidWebsiteSettings(data) {
+      return data.keys().hasAll(['siteName', 'siteTitle', 'phone', 'email']) &&
+        data.siteName is string && data.siteName.size() > 0 &&
+        data.siteTitle is string && data.siteTitle.size() > 0 &&
+        data.phone is string && data.phone.size() > 0 &&
+        data.email is string && data.email.size() > 0 &&
+        data.email.matches('.*@.*\\..*'); // Basic email validation
+    }
+    
+    // ===== IG THAR VILLAGE COLLECTIONS =====
+    
     // Users collection - users can read/write their own data, admins can read all
     match /users/{userId} {
       // Allow users to read and write their own profile
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
       // Allow authenticated users to read user profiles (for admin role checking)
-      allow read: if request.auth != null;
-      
+      allow read: if isAuthenticated();
       // Allow admins to read and write all user profiles
-      allow read, write: if request.auth != null && 
+      allow read, write: if isAuthenticated() && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
@@ -20,9 +110,8 @@ service cloud.firestore {
     match /products/{productId} {
       // Anyone can read products
       allow read: if true;
-      
       // Only admins can create, update, delete products
-      allow create, update, delete: if request.auth != null && 
+      allow create, update, delete: if isAuthenticated() && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
@@ -31,9 +120,8 @@ service cloud.firestore {
     match /blogs/{blogId} {
       // Anyone can read blogs
       allow read: if true;
-      
       // Only admins can create, update, delete blogs
-      allow create, update, delete: if request.auth != null && 
+      allow create, update, delete: if isAuthenticated() && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
@@ -42,20 +130,8 @@ service cloud.firestore {
     match /gallery/{galleryId} {
       // Anyone can read gallery items
       allow read: if true;
-      
       // Only admins can create, update, delete gallery items
-      allow create, update, delete: if request.auth != null && 
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-    
-    // Media collection - public read, admin write
-    match /media/{mediaId} {
-      // Anyone can read media items
-      allow read: if true;
-      
-      // Only admins can create, update, delete media items
-      allow create, update, delete: if request.auth != null && 
+      allow create, update, delete: if isAuthenticated() && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
@@ -64,9 +140,8 @@ service cloud.firestore {
     match /contacts/{contactId} {
       // Anyone can create contact messages
       allow create: if true;
-      
       // Only admins can read contact messages
-      allow read: if request.auth != null && 
+      allow read: if isAuthenticated() && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
@@ -75,9 +150,8 @@ service cloud.firestore {
     match /properties/{propertyId} {
       // Anyone can read properties
       allow read: if true;
-      
       // Only admins can create, update, delete properties
-      allow create, update, delete: if request.auth != null && 
+      allow create, update, delete: if isAuthenticated() && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
@@ -86,9 +160,8 @@ service cloud.firestore {
     match /services/{serviceId} {
       // Anyone can read services
       allow read: if true;
-      
       // Only admins can create, update, delete services
-      allow create, update, delete: if request.auth != null && 
+      allow create, update, delete: if isAuthenticated() && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
@@ -97,90 +170,268 @@ service cloud.firestore {
     match /awards/{awardId} {
       // Anyone can read awards
       allow read: if true;
-      
       // Only admins can create, update, delete awards
-      allow create, update, delete: if request.auth != null && 
+      allow create, update, delete: if isAuthenticated() && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     
-  // Orders collection - guest can create, users can read their own, admins can read/update all
-  match /orders/{orderId} {
-    // Anyone can create orders (guest checkout allowed)
-    allow create: if true;
+    // Orders collection - guest can create, users can read their own, admins can read/update all
+    match /orders/{orderId} {
+      // Anyone can create orders (guest checkout allowed)
+      allow create: if true;
+      // Users can read their own orders (if authenticated and userId matches)
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      // Allow reading orders by order number for tracking (public tracking)
+      allow read: if true;
+      // Only admins can read and update all orders
+      allow read, update: if isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
     
-    // Users can read their own orders (if authenticated and userId matches)
-    allow read: if request.auth != null && 
-      request.auth.uid == resource.data.userId;
+    // Property Bookings collection - guest can create, users can read their own, admins can read/update all
+    match /propertyBookings/{bookingId} {
+      // Anyone can create property bookings (guest booking allowed)
+      allow create: if true;
+      // Users can read their own bookings (if authenticated and userId matches)
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      // Allow reading bookings by booking number for tracking (public tracking)
+      allow read: if true;
+      // Only admins can read and update all property bookings
+      allow read, update: if isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
     
-    // Allow reading orders by order number for tracking (public tracking)
-    allow read: if true;
+    // Service Bookings collection - guest can create, users can read their own, admins can read/update all
+    match /serviceBookings/{bookingId} {
+      // Anyone can create service bookings (guest booking allowed)
+      allow create: if true;
+      // Users can read their own bookings (if authenticated and userId matches)
+      allow read: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      // Allow reading bookings by booking number for tracking (public tracking)
+      allow read: if true;
+      // Only admins can read and update all service bookings
+      allow read, update: if isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
     
-    // Only admins can read and update all orders
-    allow read, update: if request.auth != null && 
-      exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-  }
-
-  // Property Bookings collection - guest can create, users can read their own, admins can read/update all
-  match /propertyBookings/{bookingId} {
-    // Anyone can create property bookings (guest booking allowed)
-    allow create: if true;
+    // Testimonials - authenticated users can create, everyone can read
+    match /testimonials/{document} {
+      allow read: if true;
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+      allow update, delete: if isAuthenticated() && 
+        (request.auth.uid == resource.data.userId || isAdminUser());
+    }
     
-    // Users can read their own bookings (if authenticated and userId matches)
-    allow read: if request.auth != null && 
-      request.auth.uid == resource.data.userId;
-    
-    // Allow reading bookings by booking number for tracking (public tracking)
-    allow read: if true;
-    
-    // Only admins can read and update all property bookings
-    allow read, update: if request.auth != null && 
-      exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-  }
-
-  // Service Bookings collection - guest can create, users can read their own, admins can read/update all
-  match /serviceBookings/{bookingId} {
-    // Anyone can create service bookings (guest booking allowed)
-    allow create: if true;
-    
-    // Users can read their own bookings (if authenticated and userId matches)
-    allow read: if request.auth != null && 
-      request.auth.uid == resource.data.userId;
-    
-    // Allow reading bookings by booking number for tracking (public tracking)
-    allow read: if true;
-    
-    // Only admins can read and update all service bookings
-    allow read, update: if request.auth != null && 
-      exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-  }
+    // Contact forms (alternative naming)
+    match /contactForms/{document} {
+      allow create: if true;
+      allow read, update, delete: if isAdminUser();
+    }
     
     // Settings collection - public read, allow launch, admin full access
     match /settings/{settingId} {
       // Anyone can read settings (for site branding, contact info, etc.)
       allow read: if true;
-      
       // Allow website launch operations (create initial settings or mark as launched)
       allow create, update: if true;
-      
       // Only admins can delete settings
-      allow delete: if request.auth != null && 
+      allow delete: if isAuthenticated() && 
         exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     
-    // Media collection - public read, admin write
+    // ===== LIBRARY MANAGEMENT SYSTEM COLLECTIONS =====
+    
+    // Students collection - Main collection for student management
+    match /students/{studentId} {
+      allow read, list: if isAdminUser(); // Only admins can view student records
+      allow create: if isAdminUser() && isValidStudent(request.resource.data); // Only admins can create valid students
+      allow update: if isAdminUser() && isValidStudent(request.resource.data); // Only admins can update with valid data
+      allow delete: if isAdminUser(); // Only admins can delete students
+    }
+    
+    // Library applications collection - Public applications from website
+    match /library-applications/{applicationId} {
+      allow create: if isValidApplication(request.resource.data) && request.resource.data.status == 'pending'; // Anyone can submit valid applications with pending status
+      allow read, list: if isAdminUser(); // Only admins can view applications
+      allow update: if isAdminUser() && isValidApplication(request.resource.data); // Only admins can update with valid data
+      allow delete: if isAdminUser(); // Only admins can delete applications
+    }
+    
+    // Hero images for UI management
+    match /heroImages/{imageId} {
+      allow read: if true; // Public read access for website display
+      allow write, create, delete, list: if isAuthenticated();
+    }
+    
+    // UI content management
+    match /uiContent/{contentId} {
+      allow read: if true; // Public read access for website display
+      allow write, create, delete, list: if isAuthenticated();
+    }
+    
+    // Books collection
+    match /books/{bookId} {
+      allow read: if true; // Public read access for library browsing
+      allow write, create, delete, list: if isAuthenticated();
+    }
+    
+    // Book categories collection
+    match /book-categories/{categoryId} {
+      allow read: if true; // Public read access for library browsing
+      allow write, create, delete, list: if isAdminUser(); // Only admins can manage categories
+    }
+    
+    // Book transactions collection
+    match /bookTransactions/{transactionId} {
+      allow read, list: if isAdminUser(); // Only admins can view book transactions
+      allow write, create, delete: if isAdminUser(); // Only admins can manage book transactions
+    }
+    
+    // Events collection
+    match /events/{eventId} {
+      allow read: if true; // Public read access for event browsing
+      allow write, create, delete, list: if isAdminUser();
+    }
+    
+    // Event registrations collection
+    match /eventRegistrations/{registrationId} {
+      allow read, write, create, delete, list: if isAuthenticated();
+    }
+    
+    // Event registrations collection (alternative naming)
+    match /event-registrations/{registrationId} {
+      allow read, write, create, delete, list: if isAuthenticated();
+    }
+    
+    // Members collection
+    match /members/{memberId} {
+      allow read, list: if isAdminUser(); // Only admins can view member records
+      allow write, create, delete: if isAdminUser(); // Only admins can manage members
+    }
+    
+    // Library transactions
+    match /transactions/{transactionId} {
+      allow read, list: if isAdminUser(); // Only admins can view transactions
+      allow write, create, delete: if isAdminUser(); // Only admins can manage transactions
+    }
+    
+    // News articles collection
+    match /newsArticles/{articleId} {
+      allow read: if true; // Public read access for website display
+      allow write, create, delete, list: if isAdminUser(); // Only admins can manage news
+    }
+    
+    // News categories collection
+    match /newsCategories/{categoryId} {
+      allow read: if true; // Public read access
+      allow write, create, delete, list: if isAdminUser(); // Only admins can manage categories
+    }
+    
+    // News tags collection
+    match /newsTags/{tagId} {
+      allow read: if true; // Public read access
+      allow write, create, delete, list: if isAdminUser(); // Only admins can manage tags
+    }
+    
+    // Media/Gallery collection (shared between both systems)
     match /media/{mediaId} {
-      // Anyone can read media items (for gallery and media pages)
-      allow read: if true;
-      
-      // Only admins can create, update, or delete media items
-      allow create, update, delete: if request.auth != null && 
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      allow read: if true; // Public read access for website display
+      allow write, create, delete, list: if isAdminUser(); // Only admins can manage media
+    }
+    
+    // Contact forms and inquiries
+    match /inquiries/{inquiryId} {
+      allow create: if isValidInquiry(request.resource.data); // Anyone can submit valid inquiries
+      allow read, list: if isAdminUser(); // Only admins can view inquiries
+      allow update, delete: if isAdminUser(); // Only admins can manage inquiries
+    }
+    
+    // Contact form submissions from website
+    match /contact-submissions/{submissionId} {
+      allow create: if isValidInquiry(request.resource.data); // Anyone can submit contact forms
+      allow read, list: if isAdminUser(); // Only admins can view submissions
+      allow update: if isAdminUser(); // Only admins can update (mark as read, etc.)
+      allow delete: if isAdminUser(); // Only admins can delete submissions
+    }
+    
+    // Donations data
+    match /donations/{donationId} {
+      allow read: if true; // Public read for transparency
+      allow write, create, delete, list: if isAuthenticated();
+    }
+    
+    // Blood donors
+    match /bloodDonors/{donorId} {
+      allow read: if true; // Public read for emergency access
+      allow write, create, delete, list: if isAuthenticated();
+    }
+    
+    // Body donors
+    match /bodyDonors/{donorId} {
+      allow read, write, create, delete, list: if isAuthenticated();
+    }
+    
+    // Financial donors
+    match /financialDonors/{donorId} {
+      allow read: if true; // Public read for transparency
+      allow write, create, delete, list: if isAuthenticated();
+    }
+    
+    // Specific rule for website settings document
+    match /settings/website {
+      allow read: if true; // Public read access for website display
+      allow write, update: if isAdminUser() && isValidWebsiteSettings(request.resource.data);
+      allow create: if isAdminUser() && isValidWebsiteSettings(request.resource.data);
+      allow delete: if false; // Website settings should never be deleted
+    }
+    
+    // Specific rule for general settings document (includes email config)
+    match /settings/general {
+      allow read: if true; // Public read access for API and website functionality
+      allow write, update: if isAdminUser(); // Only admins can modify general settings
+      allow create: if isAdminUser(); // Only admins can create general settings
+      allow delete: if false; // General settings should never be deleted
+    }
+    
+    // Work areas collection
+    match /work-areas/{areaId} {
+      allow read: if true; // Public read access
+      allow write, create, delete, list: if isAdminUser(); // Only admins can manage work areas
+    }
+    
+    // Certificates collection
+    match /certificates/{certificateId} {
+      allow read, list: if true; // Public read access for displaying certificates
+      allow create: if isAuthenticated() && isValidCertificate(request.resource.data); // Authenticated users can create certificates (temporary for development)
+      allow update: if isAuthenticated() && isValidCertificate(request.resource.data); // Authenticated users can update certificates (temporary for development)
+      allow delete: if isAuthenticated(); // Authenticated users can delete certificates (temporary for development)
+      // TODO: Change back to isAdminUser() for production
+    }
+    
+    // Statistics collection
+    match /statistics/{statId} {
+      allow read: if true; // Public read access for displaying stats
+      allow write, create, delete, list: if isAdminUser(); // Only admins can manage statistics
+    }
+    
+    // Audit logs
+    match /auditLogs/{logId} {
+      allow read, list: if isAdminUser(); // Only admins can read audit logs
+      allow create: if isAuthenticated() && isValidAuditLog(request.resource.data); // Authenticated users can create valid logs
+      allow update, delete: if false; // Audit logs should not be modified or deleted
+    }
+    
+    // Settings change logs (specific audit trail for settings)
+    match /settingsLogs/{logId} {
+      allow read, list: if isAdminUser(); // Only admins can read settings logs
+      allow create: if isAdminUser() && isValidSettingsLog(request.resource.data); // Only admins can create settings logs
+      allow update, delete: if false; // Settings logs should not be modified or deleted
     }
     
     // Default deny all other documents

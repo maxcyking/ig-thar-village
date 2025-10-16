@@ -22,9 +22,9 @@ export interface Testimonial {
   userName: string;
   userLocation?: string;
   rating: number; // 1-5 stars
-  title: string;
-  message: string;
-  experience?: string; // e.g., "Farm Stay Experience", "Desert Safari"
+  title?: string; // Optional, can be auto-generated
+  message?: string; // Legacy field for backward compatibility
+  experience: string; // Main testimonial text
   images?: string[]; // Optional images uploaded by user
   status: 'pending' | 'approved' | 'rejected';
   featured: boolean;

@@ -398,7 +398,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <Clock className="h-4 w-4 text-orange-600" />
-                  <span>Delivered within 2-3 business days</span>
+                  <span>Delivered within 5-7 business days</span>
                 </div>
               </div>
             </div>
@@ -694,7 +694,7 @@ export default function ProductDetailPage() {
                       <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
                       <div>
                         <div className="font-medium">Delivery Time</div>
-                        <div className="text-sm text-gray-600">2-3 business days</div>
+                        <div className="text-sm text-gray-600">5-7 business days</div>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">

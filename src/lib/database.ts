@@ -737,11 +737,20 @@ export const getAllAwards = async (): Promise<Award[]> => {
 // Create Functions
 export const createProperty = async (propertyData: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
   try {
-    const docRef = await addDoc(collection(db, "properties"), {
+    const cleanPropertyData: any = {
       ...propertyData,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+    };
+
+    // Remove undefined fields to prevent Firebase errors
+    Object.keys(cleanPropertyData).forEach(key => {
+      if (cleanPropertyData[key] === undefined) {
+        delete cleanPropertyData[key];
+      }
     });
+
+    const docRef = await addDoc(collection(db, "properties"), cleanPropertyData);
     return docRef.id;
   } catch (error) {
     console.error("Error creating property:", error);
@@ -751,11 +760,20 @@ export const createProperty = async (propertyData: Omit<Property, 'id' | 'create
 
 export const createProduct = async (productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
   try {
-    const docRef = await addDoc(collection(db, "products"), {
+    const cleanProductData: any = {
       ...productData,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+    };
+
+    // Remove undefined fields to prevent Firebase errors
+    Object.keys(cleanProductData).forEach(key => {
+      if (cleanProductData[key] === undefined) {
+        delete cleanProductData[key];
+      }
     });
+
+    const docRef = await addDoc(collection(db, "products"), cleanProductData);
     return docRef.id;
   } catch (error) {
     console.error("Error creating product:", error);
@@ -765,11 +783,20 @@ export const createProduct = async (productData: Omit<Product, 'id' | 'createdAt
 
 export const createService = async (serviceData: Omit<Service, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
   try {
-    const docRef = await addDoc(collection(db, "services"), {
+    const cleanServiceData: any = {
       ...serviceData,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+    };
+
+    // Remove undefined fields to prevent Firebase errors
+    Object.keys(cleanServiceData).forEach(key => {
+      if (cleanServiceData[key] === undefined) {
+        delete cleanServiceData[key];
+      }
     });
+
+    const docRef = await addDoc(collection(db, "services"), cleanServiceData);
     return docRef.id;
   } catch (error) {
     console.error("Error creating service:", error);
@@ -779,11 +806,20 @@ export const createService = async (serviceData: Omit<Service, 'id' | 'createdAt
 
 export const createGalleryImage = async (galleryData: Omit<GalleryImage, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
   try {
-    const docRef = await addDoc(collection(db, "gallery"), {
+    const cleanGalleryData: any = {
       ...galleryData,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+    };
+
+    // Remove undefined fields to prevent Firebase errors
+    Object.keys(cleanGalleryData).forEach(key => {
+      if (cleanGalleryData[key] === undefined) {
+        delete cleanGalleryData[key];
+      }
     });
+
+    const docRef = await addDoc(collection(db, "gallery"), cleanGalleryData);
     return docRef.id;
   } catch (error) {
     console.error("Error creating gallery image:", error);
@@ -793,12 +829,21 @@ export const createGalleryImage = async (galleryData: Omit<GalleryImage, 'id' | 
 
 export const createAward = async (awardData: Omit<Award, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> => {
   try {
-    const docRef = await addDoc(collection(db, "awards"), {
+    const cleanAwardData: any = {
       ...awardData,
       awardDate: awardData.awardDate ? Timestamp.fromDate(awardData.awardDate) : null,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+    };
+
+    // Remove undefined fields to prevent Firebase errors
+    Object.keys(cleanAwardData).forEach(key => {
+      if (cleanAwardData[key] === undefined) {
+        delete cleanAwardData[key];
+      }
     });
+
+    const docRef = await addDoc(collection(db, "awards"), cleanAwardData);
     return docRef.id;
   } catch (error) {
     console.error("Error creating award:", error);
@@ -810,10 +855,21 @@ export const createAward = async (awardData: Omit<Award, 'id' | 'createdAt' | 'u
 export const updateProperty = async (id: string, propertyData: Partial<Property>): Promise<void> => {
   try {
     const docRef = doc(db, "properties", id);
-    await updateDoc(docRef, {
-      ...propertyData,
+    
+    // Filter out undefined values to prevent Firebase errors
+    const cleanPropertyData: any = {
       updatedAt: Timestamp.now(),
+    };
+    
+    // Only add fields that are not undefined
+    Object.keys(propertyData).forEach(key => {
+      const value = (propertyData as any)[key];
+      if (value !== undefined) {
+        cleanPropertyData[key] = value;
+      }
     });
+    
+    await updateDoc(docRef, cleanPropertyData);
   } catch (error) {
     console.error("Error updating property:", error);
     throw error;
@@ -823,10 +879,21 @@ export const updateProperty = async (id: string, propertyData: Partial<Property>
 export const updateProduct = async (id: string, productData: Partial<Product>): Promise<void> => {
   try {
     const docRef = doc(db, "products", id);
-    await updateDoc(docRef, {
-      ...productData,
+    
+    // Filter out undefined values to prevent Firebase errors
+    const cleanProductData: any = {
       updatedAt: Timestamp.now(),
+    };
+    
+    // Only add fields that are not undefined
+    Object.keys(productData).forEach(key => {
+      const value = (productData as any)[key];
+      if (value !== undefined) {
+        cleanProductData[key] = value;
+      }
     });
+    
+    await updateDoc(docRef, cleanProductData);
   } catch (error) {
     console.error("Error updating product:", error);
     throw error;
@@ -836,10 +903,21 @@ export const updateProduct = async (id: string, productData: Partial<Product>): 
 export const updateService = async (id: string, serviceData: Partial<Service>): Promise<void> => {
   try {
     const docRef = doc(db, "services", id);
-    await updateDoc(docRef, {
-      ...serviceData,
+    
+    // Filter out undefined values to prevent Firebase errors
+    const cleanServiceData: any = {
       updatedAt: Timestamp.now(),
+    };
+    
+    // Only add fields that are not undefined
+    Object.keys(serviceData).forEach(key => {
+      const value = (serviceData as any)[key];
+      if (value !== undefined) {
+        cleanServiceData[key] = value;
+      }
     });
+    
+    await updateDoc(docRef, cleanServiceData);
   } catch (error) {
     console.error("Error updating service:", error);
     throw error;
@@ -849,10 +927,21 @@ export const updateService = async (id: string, serviceData: Partial<Service>): 
 export const updateGalleryImage = async (id: string, galleryData: Partial<GalleryImage>): Promise<void> => {
   try {
     const docRef = doc(db, "gallery", id);
-    await updateDoc(docRef, {
-      ...galleryData,
+    
+    // Filter out undefined values to prevent Firebase errors
+    const cleanGalleryData: any = {
       updatedAt: Timestamp.now(),
+    };
+    
+    // Only add fields that are not undefined
+    Object.keys(galleryData).forEach(key => {
+      const value = (galleryData as any)[key];
+      if (value !== undefined) {
+        cleanGalleryData[key] = value;
+      }
     });
+    
+    await updateDoc(docRef, cleanGalleryData);
   } catch (error) {
     console.error("Error updating gallery image:", error);
     throw error;
@@ -862,17 +951,26 @@ export const updateGalleryImage = async (id: string, galleryData: Partial<Galler
 export const updateAward = async (id: string, awardData: Partial<Award>): Promise<void> => {
   try {
     const docRef = doc(db, "awards", id);
-    const updateData: any = {
-      ...awardData,
+    
+    // Filter out undefined values to prevent Firebase errors
+    const cleanAwardData: any = {
       updatedAt: Timestamp.now(),
     };
     
-    // Handle awardDate conversion
-    if (awardData.awardDate !== undefined) {
-      updateData.awardDate = awardData.awardDate ? Timestamp.fromDate(awardData.awardDate) : null;
-    }
+    // Only add fields that are not undefined
+    Object.keys(awardData).forEach(key => {
+      const value = (awardData as any)[key];
+      if (value !== undefined) {
+        if (key === 'awardDate') {
+          // Handle awardDate conversion
+          cleanAwardData.awardDate = value ? Timestamp.fromDate(value) : null;
+        } else {
+          cleanAwardData[key] = value;
+        }
+      }
+    });
     
-    await updateDoc(docRef, updateData);
+    await updateDoc(docRef, cleanAwardData);
   } catch (error) {
     console.error("Error updating award:", error);
     throw error;
@@ -985,6 +1083,130 @@ export const deleteContactForm = async (id: string): Promise<void> => {
   } catch (error) {
     console.error("Error deleting contact form:", error);
     throw error;
+  }
+};
+
+// User-specific functions
+export const getUserOrders = async (userId: string): Promise<Order[]> => {
+  try {
+    const q = query(
+      collection(db, "orders"),
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        estimatedDelivery: data.estimatedDelivery?.toDate() || null,
+        deliveredAt: data.deliveredAt?.toDate() || null,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as Order;
+    });
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+    return [];
+  }
+};
+
+export const getUserPropertyBookings = async (userId: string): Promise<PropertyBooking[]> => {
+  try {
+    const q = query(
+      collection(db, "propertyBookings"),
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        checkIn: data.checkIn?.toDate() || new Date(),
+        checkOut: data.checkOut?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as PropertyBooking;
+    });
+  } catch (error) {
+    console.error("Error fetching user property bookings:", error);
+    return [];
+  }
+};
+
+export const getUserServiceBookings = async (userId: string): Promise<ServiceBooking[]> => {
+  try {
+    const q = query(
+      collection(db, "serviceBookings"),
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
+
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        bookingDate: data.bookingDate?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as ServiceBooking;
+    });
+  } catch (error) {
+    console.error("Error fetching user service bookings:", error);
+    return [];
+  }
+};
+
+// Get single booking functions
+export const getPropertyBooking = async (id: string): Promise<PropertyBooking | null> => {
+  try {
+    const docRef = doc(db, "propertyBookings", id);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        checkIn: data.checkIn?.toDate() || new Date(),
+        checkOut: data.checkOut?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as PropertyBooking;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching property booking:", error);
+    return null;
+  }
+};
+
+export const getServiceBooking = async (id: string): Promise<ServiceBooking | null> => {
+  try {
+    const docRef = doc(db, "serviceBookings", id);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        bookingDate: data.bookingDate?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      } as ServiceBooking;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching service booking:", error);
+    return null;
   }
 };
 
@@ -1116,32 +1338,6 @@ export const updateOrder = async (id: string, orderData: Partial<Order>): Promis
   }
 };
 
-export const getUserOrders = async (userId: string): Promise<Order[]> => {
-  try {
-    const q = query(
-      collection(db, "orders"),
-      where("userId", "==", userId),
-      orderBy("createdAt", "desc")
-    );
-    
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        ...data,
-        estimatedDelivery: data.estimatedDelivery?.toDate() || null,
-        deliveredAt: data.deliveredAt?.toDate() || null,
-        createdAt: data.createdAt?.toDate() || new Date(),
-        updatedAt: data.updatedAt?.toDate() || new Date(),
-      };
-    }) as Order[];
-  } catch (error) {
-    console.error("Error fetching user orders:", error);
-    return [];
-  }
-};
-
 export const getAllOrders = async (): Promise<Order[]> => {
   try {
     const q = query(
@@ -1203,30 +1399,6 @@ export const createPropertyBooking = async (bookingData: Omit<PropertyBooking, '
   }
 };
 
-export const getPropertyBooking = async (id: string): Promise<PropertyBooking | null> => {
-  try {
-    const docRef = doc(db, "propertyBookings", id);
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      return {
-        id: docSnap.id,
-        ...data,
-        checkIn: data.checkIn?.toDate() || new Date(),
-        checkOut: data.checkOut?.toDate() || new Date(),
-        createdAt: data.createdAt?.toDate() || new Date(),
-        updatedAt: data.updatedAt?.toDate() || new Date(),
-      } as PropertyBooking;
-    }
-    
-    return null;
-  } catch (error) {
-    console.error("Error getting property booking:", error);
-    throw error;
-  }
-};
-
 // Service Booking Functions
 export const createServiceBooking = async (bookingData: Omit<ServiceBooking, 'id' | 'bookingNumber' | 'createdAt' | 'updatedAt'>): Promise<string> => {
   try {
@@ -1251,29 +1423,6 @@ export const createServiceBooking = async (bookingData: Omit<ServiceBooking, 'id
     return docRef.id;
   } catch (error) {
     console.error("Error creating service booking:", error);
-    throw error;
-  }
-};
-
-export const getServiceBooking = async (id: string): Promise<ServiceBooking | null> => {
-  try {
-    const docRef = doc(db, "serviceBookings", id);
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      return {
-        id: docSnap.id,
-        ...data,
-        bookingDate: data.bookingDate?.toDate() || new Date(),
-        createdAt: data.createdAt?.toDate() || new Date(),
-        updatedAt: data.updatedAt?.toDate() || new Date(),
-      } as ServiceBooking;
-    }
-    
-    return null;
-  } catch (error) {
-    console.error("Error getting service booking:", error);
     throw error;
   }
 };

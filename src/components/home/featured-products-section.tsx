@@ -187,7 +187,7 @@ export function FeaturedProductsSection() {
                                         {/* Delivery Time - Default since not in database */}
                                         <div className="flex items-center text-xs text-green-600 mb-1">
                                             <Clock className="h-3 w-3 mr-1" />
-                                            2-3 days
+                                            5-7 days
                                         </div>
 
                                         {/* Price */}

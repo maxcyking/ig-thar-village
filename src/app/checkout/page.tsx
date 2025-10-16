@@ -66,7 +66,7 @@ function CheckoutContent() {
     pincode: "",
     landmark: "",
     notes: "",
-    paymentMethod: "qr_code",
+    paymentMethod: "cash_on_delivery",
     transactionId: "",
   });
 
@@ -122,11 +122,8 @@ function CheckoutContent() {
   const validatePaymentForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (formData.paymentMethod === 'qr_code' || formData.paymentMethod === 'upi') {
-      if (!formData.transactionId.trim()) {
-        newErrors.transactionId = "Transaction ID is required";
-      }
-    }
+    // No validation needed for cash on delivery
+    // All payments are cash on delivery now
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -490,22 +487,6 @@ function CheckoutContent() {
                       onValueChange={(value) => handleInputChange("paymentMethod", value)}
                     >
                       <div className="flex items-center space-x-2 p-4 border rounded-lg">
-                        <RadioGroupItem value="qr_code" id="qr_code" />
-                        <QrCode className="h-5 w-5 text-blue-600" />
-                        <Label htmlFor="qr_code" className="flex-1 cursor-pointer">
-                          QR Code Payment (Recommended)
-                        </Label>
-                      </div>
-
-                      <div className="flex items-center space-x-2 p-4 border rounded-lg">
-                        <RadioGroupItem value="upi" id="upi" />
-                        <Smartphone className="h-5 w-5 text-green-600" />
-                        <Label htmlFor="upi" className="flex-1 cursor-pointer">
-                          UPI Payment
-                        </Label>
-                      </div>
-
-                      <div className="flex items-center space-x-2 p-4 border rounded-lg">
                         <RadioGroupItem value="cash_on_delivery" id="cod" />
                         <Truck className="h-5 w-5 text-orange-600" />
                         <Label htmlFor="cod" className="flex-1 cursor-pointer">
@@ -514,87 +495,23 @@ function CheckoutContent() {
                       </div>
                     </RadioGroup>
 
-                    {/* QR Code Payment */}
-                    {formData.paymentMethod === 'qr_code' && (
-                      <div className="bg-blue-50 p-6 rounded-lg space-y-4">
-                        <h3 className="font-semibold text-blue-900">Scan QR Code to Pay</h3>
-                        <div className="flex justify-center">
-                          <div className="bg-white p-4 rounded-lg shadow">
-                            <div className="w-48 h-48 bg-gray-200 rounded flex items-center justify-center">
-                              <QrCode className="h-16 w-16 text-gray-400" />
-                              <span className="ml-2 text-sm text-gray-600">QR Code</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-sm text-blue-700">
-                            Scan this QR code with any UPI app to pay ₹{total}
-                          </p>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="transactionId">Transaction ID *</Label>
-                          <Input
-                            id="transactionId"
-                            value={formData.transactionId}
-                            onChange={(e) => handleInputChange("transactionId", e.target.value)}
-                            placeholder="Enter transaction ID after payment"
-                            className={errors.transactionId ? "border-red-500" : ""}
-                          />
-                          {errors.transactionId && <p className="text-sm text-red-500">{errors.transactionId}</p>}
-                          <p className="text-xs text-gray-600">
-                            Enter the transaction ID you receive after completing the payment
-                          </p>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* UPI Payment */}
-                    {formData.paymentMethod === 'upi' && (
-                      <div className="bg-green-50 p-6 rounded-lg space-y-4">
-                        <h3 className="font-semibold text-green-900">UPI Payment</h3>
-                        <div className="bg-white p-4 rounded border">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-medium">UPI ID:</p>
-                              <p className="text-lg font-mono">igtharvillage@paytm</p>
-                            </div>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={copyUpiId}
-                            >
-                              {upiCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                            </Button>
-                          </div>
-                        </div>
-                        <p className="text-sm text-green-700">
-                          Send ₹{total} to the above UPI ID and enter transaction ID below
-                        </p>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="transactionId">Transaction ID *</Label>
-                          <Input
-                            id="transactionId"
-                            value={formData.transactionId}
-                            onChange={(e) => handleInputChange("transactionId", e.target.value)}
-                            placeholder="Enter transaction ID after payment"
-                            className={errors.transactionId ? "border-red-500" : ""}
-                          />
-                          {errors.transactionId && <p className="text-sm text-red-500">{errors.transactionId}</p>}
-                        </div>
-                      </div>
-                    )}
-
                     {/* Cash on Delivery */}
                     {formData.paymentMethod === 'cash_on_delivery' && (
                       <div className="bg-orange-50 p-6 rounded-lg">
                         <h3 className="font-semibold text-orange-900 mb-2">Cash on Delivery</h3>
                         <p className="text-sm text-orange-700">
                           Pay ₹{total} in cash when your order is delivered. 
-                          Additional charges of ₹25 may apply for COD orders.
+                          Our delivery partner will collect the payment at your doorstep.
                         </p>
+                        <div className="mt-4 p-3 bg-white rounded border border-orange-200">
+                          <h4 className="font-medium text-orange-900 mb-2">What to expect:</h4>
+                          <ul className="text-sm text-orange-700 space-y-1">
+                            <li>• Delivery within 5-7 business days</li>
+                            <li>• SMS/Call notification before delivery</li>
+                            <li>• Please keep exact change ready</li>
+                            <li>• All products will be checked before payment</li>
+                          </ul>
+                        </div>
                       </div>
                     )}
 

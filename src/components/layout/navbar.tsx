@@ -6,10 +6,11 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
-import { Menu, Mountain, Phone, ShoppingCart, Heart, User } from "lucide-react";
+import { Menu, Mountain, Phone, ShoppingCart, Heart, User, LogIn, LogOut } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
 import { useWishlist } from "@/contexts/wishlist-context";
 import { useSettings } from "@/contexts/settings-context";
+import { useAuth } from "@/contexts/auth-context";
 import { Badge } from "@/components/ui/badge";
 
 const navigation = [
@@ -29,6 +30,15 @@ export function Navbar() {
   const { state: cartState } = useCart();
   const { state: wishlistState } = useWishlist();
   const { settings } = useSettings();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
@@ -106,10 +116,27 @@ export function Navbar() {
                 )}
               </Link>
 
-              {/* Profile */}
-              <Link href="/profile" className="p-2 text-gray-700 hover:text-green-600 transition-colors">
-                <User className="h-6 w-6" />
-              </Link>
+              {/* Profile/Login */}
+              {user ? (
+                <div className="flex items-center space-x-2">
+                  <Link href="/profile" className="p-2 text-gray-700 hover:text-green-600 transition-colors" title="Profile">
+                    <User className="h-6 w-6" />
+                  </Link>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handleLogout}
+                    className="text-gray-700 hover:text-red-600"
+                    title="Logout"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Link href="/login" className="p-2 text-gray-700 hover:text-green-600 transition-colors" title="Login">
+                  <LogIn className="h-6 w-6" />
+                </Link>
+              )}
             </div>
 
           </div>
@@ -140,7 +167,7 @@ export function Navbar() {
                   </Link>
                 ))}
                 
-                {/* Mobile Cart and Wishlist */}
+                {/* Mobile Cart, Wishlist, and Profile */}
                 <div className="pt-6 border-t border-gray-200 space-y-3">
                   <div className="flex space-x-4">
                     <Link href="/wishlist" className="flex-1 flex items-center justify-center p-3 border border-red-200 text-red-600 hover:bg-red-50 rounded-lg transition-colors" onClick={() => setIsOpen(false)}>
@@ -151,6 +178,34 @@ export function Navbar() {
                       <ShoppingCart className="h-5 w-5 mr-2" />
                       Cart ({cartState.itemCount})
                     </Link>
+                  </div>
+                  
+                  {/* Mobile Profile/Login */}
+                  <div className="pt-3 border-t border-gray-200">
+                    {user ? (
+                      <div className="space-y-3">
+                        <Link href="/profile" className="flex items-center p-3 border border-amber-200 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" onClick={() => setIsOpen(false)}>
+                          <User className="h-5 w-5 mr-2" />
+                          My Profile
+                        </Link>
+                        <Button 
+                          variant="outline" 
+                          className="w-full text-red-600 border-red-200 hover:bg-red-50"
+                          onClick={() => {
+                            handleLogout();
+                            setIsOpen(false);
+                          }}
+                        >
+                          <LogOut className="h-5 w-5 mr-2" />
+                          Logout
+                        </Button>
+                      </div>
+                    ) : (
+                      <Link href="/login" className="flex items-center justify-center p-3 border border-green-200 text-green-600 hover:bg-green-50 rounded-lg transition-colors" onClick={() => setIsOpen(false)}>
+                        <LogIn className="h-5 w-5 mr-2" />
+                        Login / Sign Up
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
