@@ -311,10 +311,8 @@ export default function ProductsPage() {
                       </div>
 
                       <div className="absolute top-2 right-2">
-                        <Badge
-                          className={`text-xs ${product.inStock ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}
-                        >
-                          {product.inStock ? 'In Stock' : 'Out of Stock'}
+                        <Badge className="text-xs bg-green-600 text-white">
+                          Available
                         </Badge>
                       </div>
 
@@ -372,15 +370,24 @@ export default function ProductsPage() {
                     <div className="flex gap-2">
                       <Button
                         className="flex-1 rounded-lg bg-green-600 hover:bg-green-700"
-                        disabled={!product.inStock || addingToCart === product.id}
+                        disabled={addingToCart === product.id}
                         onClick={(e) => {
                           e.preventDefault();
                           handleAddToCart(product);
                         }}
                       >
                         <ShoppingCart className="h-4 w-4 mr-2" />
-                        {addingToCart === product.id ? 'Adding...' :
-                          product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                        {addingToCart === product.id ? 'Adding...' : 'Add to Cart'}
+                      </Button>
+                      
+                      <Button
+                        asChild
+                        className="flex-1 rounded-lg bg-blue-600 hover:bg-blue-700"
+                      >
+                        <Link href={`/checkout?buyNow=true&productId=${product.id}&quantity=1`}>
+                          <ShoppingCart className="h-4 w-4 mr-2" />
+                          Next for Buy
+                        </Link>
                       </Button>
 
                       <Link href={`/products/${product.id}`}>

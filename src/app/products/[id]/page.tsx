@@ -314,8 +314,8 @@ export default function ProductDetailPage() {
                 </div>
 
                 <div className="flex items-center gap-3 mb-4">
-                  <Badge className={`${product.inStock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {product.inStock ? 'In Stock' : 'Out of Stock'}
+                  <Badge className="bg-green-100 text-green-800">
+                    Available for Order
                   </Badge>
                   <Badge variant="outline" className="capitalize">
                     <CategoryIcon className="h-3 w-3 mr-1" />
@@ -472,12 +472,11 @@ export default function ProductDetailPage() {
                     <Button
                       asChild
                       size="lg"
-                      className="w-full bg-orange-600 hover:bg-orange-700 text-white"
-                      disabled={!product.inStock}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                     >
-                      <Link href={`/contact?product=${product.id}&quantity=${cartQuantity || 1}&type=order`}>
+                      <Link href={`/checkout?buyNow=true&productId=${product.id}&quantity=${cartQuantity || 1}`}>
                         <ShoppingCart className="mr-2 h-5 w-5" />
-                        {product.inStock ? 'Order Now' : 'Out of Stock'}
+                        Next for Buy
                       </Link>
                     </Button>
 

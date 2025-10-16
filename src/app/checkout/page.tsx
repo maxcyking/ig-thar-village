@@ -9,25 +9,21 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 import { Badge } from "@/components/ui/badge";
 import { 
   ArrowLeft, 
-  CreditCard, 
-  Smartphone, 
-  QrCode,
+  CreditCard,
   Truck,
   Shield,
   Clock,
   CheckCircle,
   MapPin,
   Phone,
-  Mail,
-  Copy,
-  Check
+  Mail
 } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
-import { createOrder, type ShippingAddress, type OrderItem } from "@/lib/database";
+import { createOrder, getProductById, type ShippingAddress, type OrderItem } from "@/lib/database";
 
 interface CheckoutFormData {
   fullName: string;
@@ -49,11 +45,11 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const { state: cartState, clearCart } = useCart();
   
-  const [step, setStep] = useState(1); // 1: Address, 2: Payment, 3: Confirmation
+  const [step, setStep] = useState(1); // 1: Address, 2: Confirmation
   const [loading, setLoading] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [upiCopied, setUpiCopied] = useState(false);
+  const [buyNowProduct, setBuyNowProduct] = useState<any>(null);
   
   const [formData, setFormData] = useState<CheckoutFormData>({
     fullName: "",
@@ -80,7 +76,21 @@ function CheckoutContent() {
     if (!isBuyNow && cartState.items.length === 0) {
       router.push('/products');
     }
-  }, [cartState.items, isBuyNow, router]);
+
+    // If buy now, fetch the product
+    if (isBuyNow && buyNowProductId) {
+      const fetchProduct = async () => {
+        try {
+          const product = await getProductById(buyNowProductId);
+          setBuyNowProduct(product);
+        } catch (error) {
+          console.error("Error fetching product:", error);
+          router.push('/products');
+        }
+      };
+      fetchProduct();
+    }
+  }, [cartState.items, isBuyNow, buyNowProductId, router]);
 
   const handleInputChange = (field: keyof CheckoutFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -119,38 +129,11 @@ function CheckoutContent() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const validatePaymentForm = () => {
-    const newErrors: Record<string, string> = {};
 
-    // No validation needed for cash on delivery
-    // All payments are cash on delivery now
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleAddressSubmit = (e: React.FormEvent) => {
+  const handleAddressSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateAddressForm()) {
-      setStep(2);
-    }
-  };
-
-  const calculateTotals = () => {
-    const subtotal = cartState.total;
-    const shipping = subtotal > 500 ? 0 : 50; // Free shipping above ₹500
-    const tax = Math.round(subtotal * 0.05); // 5% tax
-    const total = subtotal + shipping + tax;
-
-    return { subtotal, shipping, tax, total };
-  };
-
-  const { subtotal, shipping, tax, total } = calculateTotals();
-
-  const handlePaymentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validatePaymentForm()) return;
+    if (!validateAddressForm()) return;
 
     setLoading(true);
 
@@ -169,42 +152,46 @@ function CheckoutContent() {
       };
 
       // Prepare order items
-      const orderItems: OrderItem[] = cartState.items.map(item => ({
-        productId: item.product.id,
-        productName: item.product.name,
-        productImage: item.product.images?.[0] || '',
-        price: item.product.price,
-        quantity: item.quantity,
-        total: item.product.price * item.quantity,
-      }));
+      let orderItems: OrderItem[] = [];
+      let orderSubtotal = 0;
 
-      // Calculate estimated delivery (7 days from now)
-      const estimatedDelivery = new Date();
-      estimatedDelivery.setDate(estimatedDelivery.getDate() + 7);
+      if (isBuyNow && buyNowProduct) {
+        // Single product purchase
+        orderItems = [{
+          productId: buyNowProduct.id,
+          productName: buyNowProduct.name,
+          productImage: buyNowProduct.images?.[0] || '',
+          price: buyNowProduct.price,
+          quantity: buyNowQuantity,
+          total: buyNowProduct.price * buyNowQuantity,
+        }];
+        orderSubtotal = buyNowProduct.price * buyNowQuantity;
+      } else {
+        // Cart items
+        orderItems = cartState.items.map(item => ({
+          productId: item.product.id,
+          productName: item.product.name,
+          productImage: item.product.images?.[0] || '',
+          price: item.product.price,
+          quantity: item.quantity,
+          total: item.product.price * item.quantity,
+        }));
+        orderSubtotal = cartState.total;
+      }
 
-      // Create order data (only include fields with actual values)
+      // Create order data - all orders are now pre-orders
       const orderData: any = {
         items: orderItems,
-        subtotal,
-        shipping,
-        tax,
-        total,
+        subtotal: orderSubtotal,
+        shipping: 0, // No shipping for pre-orders
+        tax: 0, // No tax for pre-orders
+        total: orderSubtotal,
         status: 'pending' as const,
-        paymentStatus: formData.paymentMethod === 'cash_on_delivery' ? 'pending' as const : 'completed' as const,
-        paymentMethod: formData.paymentMethod,
+        paymentStatus: 'pending' as const,
+        paymentMethod: 'cash_on_delivery' as const,
         shippingAddress,
-        estimatedDelivery,
-        trackingUrl: `${window.location.origin}/track`,
+        notes: `ORDER REQUEST: Customer wants to order these products. Contact customer at ${formData.phone} to confirm order and arrange delivery. Customer notes: ${formData.notes || 'None'}`,
       };
-
-      // Only add optional fields if they have values
-      if (formData.transactionId && formData.transactionId.trim()) {
-        orderData.transactionId = formData.transactionId.trim();
-      }
-      
-      if (formData.notes && formData.notes.trim()) {
-        orderData.notes = formData.notes.trim();
-      }
 
       const newOrderId = await createOrder(orderData);
       setOrderId(newOrderId);
@@ -212,74 +199,142 @@ function CheckoutContent() {
       // Clear cart
       clearCart();
       
-      setStep(3);
+      setStep(2);
     } catch (error) {
       console.error("Error creating order:", error);
-      setErrors({ submit: "Failed to create order. Please try again." });
+      setErrors({ submit: "Failed to submit order request. Please try again." });
     } finally {
       setLoading(false);
     }
   };
 
-  const copyUpiId = async () => {
-    try {
-      await navigator.clipboard.writeText('igtharvillage@paytm');
-      setUpiCopied(true);
-      setTimeout(() => setUpiCopied(false), 2000);
-    } catch (error) {
-      console.error('Failed to copy UPI ID:', error);
+  const calculateTotals = () => {
+    let subtotal = 0;
+    
+    if (isBuyNow && buyNowProduct) {
+      subtotal = buyNowProduct.price * buyNowQuantity;
+    } else {
+      subtotal = cartState.total;
     }
+
+    return { subtotal };
   };
 
-  if (step === 3 && orderId) {
+  const { subtotal } = calculateTotals();
+
+
+
+
+
+  if (step === 2 && orderId) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-2xl mx-auto text-center">
             <div className="mb-8">
-              <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Confirmed!</h1>
-              <p className="text-gray-600">Thank you for your order. We'll process it shortly.</p>
+              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Phone className="h-10 w-10 text-blue-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">Thank You for Your Interest!</h1>
+              <p className="text-lg text-gray-600 mb-6">
+                We've received your order request and will reach out to you within some time to confirm your order and arrange delivery.
+              </p>
             </div>
+
+            <Card className="mb-8 text-left">
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Clock className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900">What happens next?</h3>
+                      <p className="text-sm text-gray-600">Our team will contact you to confirm your order details</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-5 w-5 text-green-600" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Personal Contact</h3>
+                      <p className="text-sm text-gray-600">We'll call you at {formData.phone}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-3">
+                    <Truck className="h-5 w-5 text-orange-600" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Delivery Arrangement</h3>
+                      <p className="text-sm text-gray-600">We'll arrange delivery to your address after confirmation</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <CreditCard className="h-5 w-5 text-purple-600" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Payment</h3>
+                      <p className="text-sm text-gray-600">Pay when you receive your order (Cash on Delivery)</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             <Card className="mb-6">
               <CardContent className="p-6">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="font-medium">Order ID:</span>
+                    <span className="font-medium">Request ID:</span>
                     <Badge variant="secondary" className="text-lg px-3 py-1">
                       {orderId}
                     </Badge>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium">Total Amount:</span>
-                    <span className="text-xl font-bold text-green-600">₹{total}</span>
+                    <span className="font-medium">Estimated Total:</span>
+                    <span className="text-xl font-bold text-blue-600">₹{subtotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="font-medium">Estimated Delivery:</span>
-                    <span>{new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}</span>
+                    <span className="font-medium">Contact Number:</span>
+                    <span>{formData.phone}</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             <div className="space-y-4">
-              <Button 
-                onClick={() => router.push(`/track?order=${orderId}`)}
-                className="w-full bg-green-600 hover:bg-green-700"
-                size="lg"
-              >
-                Track Your Order
-              </Button>
+              <p className="text-gray-600">
+                <strong>Expected timeframe:</strong> We typically contact customers within 2-4 hours during business hours. 
+                We'll confirm your order and arrange delivery at your convenience!
+              </p>
               
-              <Button 
-                variant="outline"
-                onClick={() => router.push('/products')}
-                className="w-full"
-                size="lg"
-              >
-                Continue Shopping
-              </Button>
+              <div className="flex gap-4 justify-center">
+                <Button 
+                  onClick={() => router.push('/products')}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  Browse More Products
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => router.push('/')}
+                >
+                  Back to Home
+                </Button>
+              </div>
+            </div>
+
+            {/* Contact Info */}
+            <div className="mt-8 bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-medium text-gray-900 mb-2">Need Help?</h4>
+              <div className="space-y-2 text-sm text-gray-600">
+                <div className="flex items-center justify-center gap-2">
+                  <Phone className="h-3 w-3" />
+                  <span>+91 8302676869</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <Mail className="h-3 w-3" />
+                  <span>info@igtharvillage.com</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -299,37 +354,7 @@ function CheckoutContent() {
           <h1 className="text-2xl font-bold text-gray-900">Checkout</h1>
         </div>
 
-        {/* Progress Steps */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center space-x-4">
-            <div className={`flex items-center ${step >= 1 ? 'text-green-600' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                step >= 1 ? 'border-green-600 bg-green-600 text-white' : 'border-gray-300'
-              }`}>
-                {step > 1 ? <CheckCircle className="h-5 w-5" /> : '1'}
-              </div>
-              <span className="ml-2 font-medium">Address</span>
-            </div>
-            <div className={`w-12 h-px ${step > 1 ? 'bg-green-600' : 'bg-gray-300'}`} />
-            <div className={`flex items-center ${step >= 2 ? 'text-green-600' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                step >= 2 ? 'border-green-600 bg-green-600 text-white' : 'border-gray-300'
-              }`}>
-                {step > 2 ? <CheckCircle className="h-5 w-5" /> : '2'}
-              </div>
-              <span className="ml-2 font-medium">Payment</span>
-            </div>
-            <div className={`w-12 h-px ${step > 2 ? 'bg-green-600' : 'bg-gray-300'}`} />
-            <div className={`flex items-center ${step >= 3 ? 'text-green-600' : 'text-gray-400'}`}>
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                step >= 3 ? 'border-green-600 bg-green-600 text-white' : 'border-gray-300'
-              }`}>
-                3
-              </div>
-              <span className="ml-2 font-medium">Confirmation</span>
-            </div>
-          </div>
-        </div>
+
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -464,84 +489,26 @@ function CheckoutContent() {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full bg-green-600 hover:bg-green-700" size="lg">
-                      Continue to Payment
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            )}
-
-            {step === 2 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5" />
-                    Payment Method
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handlePaymentSubmit} className="space-y-6">
-                    <RadioGroup
-                      value={formData.paymentMethod}
-                      onValueChange={(value) => handleInputChange("paymentMethod", value)}
-                    >
-                      <div className="flex items-center space-x-2 p-4 border rounded-lg">
-                        <RadioGroupItem value="cash_on_delivery" id="cod" />
-                        <Truck className="h-5 w-5 text-orange-600" />
-                        <Label htmlFor="cod" className="flex-1 cursor-pointer">
-                          Cash on Delivery
-                        </Label>
-                      </div>
-                    </RadioGroup>
-
-                    {/* Cash on Delivery */}
-                    {formData.paymentMethod === 'cash_on_delivery' && (
-                      <div className="bg-orange-50 p-6 rounded-lg">
-                        <h3 className="font-semibold text-orange-900 mb-2">Cash on Delivery</h3>
-                        <p className="text-sm text-orange-700">
-                          Pay ₹{total} in cash when your order is delivered. 
-                          Our delivery partner will collect the payment at your doorstep.
-                        </p>
-                        <div className="mt-4 p-3 bg-white rounded border border-orange-200">
-                          <h4 className="font-medium text-orange-900 mb-2">What to expect:</h4>
-                          <ul className="text-sm text-orange-700 space-y-1">
-                            <li>• Delivery within 5-7 business days</li>
-                            <li>• SMS/Call notification before delivery</li>
-                            <li>• Please keep exact change ready</li>
-                            <li>• All products will be checked before payment</li>
-                          </ul>
-                        </div>
-                      </div>
-                    )}
-
                     {errors.submit && (
                       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                         <p className="text-sm text-red-600">{errors.submit}</p>
                       </div>
                     )}
 
-                    <div className="flex gap-4">
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        onClick={() => setStep(1)}
-                        className="flex-1"
-                      >
-                        Back to Address
-                      </Button>
-                      <Button 
-                        type="submit" 
-                        disabled={loading}
-                        className="flex-1 bg-green-600 hover:bg-green-700"
-                      >
-                        {loading ? "Processing..." : "Place Order"}
-                      </Button>
-                    </div>
+                    <Button 
+                      type="submit" 
+                      disabled={loading}
+                      className="w-full bg-blue-600 hover:bg-blue-700" 
+                      size="lg"
+                    >
+                      {loading ? "Submitting..." : "Submit Order Request"}
+                    </Button>
                   </form>
                 </CardContent>
               </Card>
             )}
+
+
           </div>
 
           {/* Order Summary */}
@@ -551,15 +518,16 @@ function CheckoutContent() {
                 <CardTitle>Order Summary</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Cart Items */}
+                {/* Order Items */}
                 <div className="space-y-3">
-                  {cartState.items.map((item) => (
-                    <div key={item.id} className="flex items-center gap-3">
+                  {isBuyNow && buyNowProduct ? (
+                    // Single product for buy now
+                    <div className="flex items-center gap-3">
                       <div className="relative w-12 h-12">
-                        {item.product.images?.[0] ? (
+                        {buyNowProduct.images?.[0] ? (
                           <Image
-                            src={item.product.images[0]}
-                            alt={item.product.name}
+                            src={buyNowProduct.images[0]}
+                            alt={buyNowProduct.name}
                             fill
                             className="object-cover rounded"
                           />
@@ -570,47 +538,64 @@ function CheckoutContent() {
                         )}
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-medium text-sm line-clamp-1">{item.product.name}</h4>
+                        <h4 className="font-medium text-sm line-clamp-1">{buyNowProduct.name}</h4>
                         <p className="text-xs text-gray-500">
-                          ₹{item.product.price} × {item.quantity}
+                          ₹{buyNowProduct.price} × {buyNowQuantity}
                         </p>
                       </div>
-                      <span className="font-medium">₹{item.product.price * item.quantity}</span>
+                      <span className="font-medium">₹{buyNowProduct.price * buyNowQuantity}</span>
                     </div>
-                  ))}
+                  ) : (
+                    // Cart items
+                    cartState.items.map((item) => (
+                      <div key={item.id} className="flex items-center gap-3">
+                        <div className="relative w-12 h-12">
+                          {item.product.images?.[0] ? (
+                            <Image
+                              src={item.product.images[0]}
+                              alt={item.product.name}
+                              fill
+                              className="object-cover rounded"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gray-200 rounded flex items-center justify-center">
+                              <span className="text-xs text-gray-500">No Image</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-medium text-sm line-clamp-1">{item.product.name}</h4>
+                          <p className="text-xs text-gray-500">
+                            ₹{item.product.price} × {item.quantity}
+                          </p>
+                        </div>
+                        <span className="font-medium">₹{item.product.price * item.quantity}</span>
+                      </div>
+                    ))
+                  )}
                 </div>
 
                 <Separator />
 
                 {/* Totals */}
                 <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>Subtotal</span>
-                    <span>₹{subtotal}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Shipping</span>
-                    <span>{shipping === 0 ? 'Free' : `₹${shipping}`}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Tax (5%)</span>
-                    <span>₹{tax}</span>
-                  </div>
-                  <Separator />
                   <div className="flex justify-between font-semibold text-lg">
-                    <span>Total</span>
-                    <span className="text-green-600">₹{total}</span>
+                    <span>Estimated Total</span>
+                    <span className="text-blue-600">₹{subtotal.toLocaleString()}</span>
                   </div>
+                  <p className="text-xs text-gray-500">
+                    Final amount will be confirmed when we contact you
+                  </p>
                 </div>
 
                 {/* Delivery Info */}
-                <div className="bg-green-50 p-3 rounded-lg">
-                  <div className="flex items-center gap-2 text-green-700">
-                    <Truck className="h-4 w-4" />
-                    <span className="text-sm font-medium">Estimated Delivery</span>
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <div className="flex items-center gap-2 text-blue-700">
+                    <Phone className="h-4 w-4" />
+                    <span className="text-sm font-medium">We'll Contact You</span>
                   </div>
-                  <p className="text-sm text-green-600">
-                    {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                  <p className="text-sm text-blue-600">
+                    Within 2-4 hours to confirm your order
                   </p>
                 </div>
 

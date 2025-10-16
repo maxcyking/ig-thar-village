@@ -42,7 +42,8 @@ import {
   TrendingUp,
   Users,
   ShoppingBag,
-  Download
+  Download,
+  Bell
 } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -97,7 +98,11 @@ export default function AdminOrdersPage() {
 
     // Filter by status
     if (statusFilter !== "all") {
-      filtered = filtered.filter(order => order.status === statusFilter);
+      if (statusFilter === "preorder") {
+        filtered = filtered.filter(order => order.notes?.includes('PRE-ORDER:') || order.notes?.includes('ORDER REQUEST:'));
+      } else {
+        filtered = filtered.filter(order => order.status === statusFilter);
+      }
     }
 
     setFilteredOrders(filtered);
@@ -225,6 +230,7 @@ export default function AdminOrdersPage() {
     processing: orders.filter(o => o.status === "processing").length,
     shipped: orders.filter(o => o.status === "shipped").length,
     delivered: orders.filter(o => o.status === "delivered").length,
+    preOrders: orders.filter(o => o.notes?.includes('PRE-ORDER:') || o.notes?.includes('ORDER REQUEST:')).length,
     totalRevenue: orders.reduce((sum, order) => sum + order.total, 0),
   };
 
@@ -253,7 +259,7 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
@@ -317,6 +323,18 @@ export default function AdminOrdersPage() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
+              <Bell className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="text-sm text-gray-600">Order Requests</p>
+                <p className="text-2xl font-bold">{stats.preOrders}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
               <DollarSign className="h-5 w-5 text-green-600" />
               <div>
                 <p className="text-sm text-gray-600">Revenue</p>
@@ -354,6 +372,7 @@ export default function AdminOrdersPage() {
                 <SelectItem value="shipped">Shipped</SelectItem>
                 <SelectItem value="delivered">Delivered</SelectItem>
                 <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="preorder">Order Requests</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -406,10 +425,17 @@ export default function AdminOrdersPage() {
                       <p className="font-medium">₹{order.total.toLocaleString()}</p>
                     </td>
                     <td className="p-4">
-                      <Badge className={getStatusColor(order.status)}>
-                        {getStatusIcon(order.status)}
-                        <span className="ml-1 capitalize">{order.status}</span>
-                      </Badge>
+                      <div className="flex flex-col gap-1">
+                        <Badge className={getStatusColor(order.status)}>
+                          {getStatusIcon(order.status)}
+                          <span className="ml-1 capitalize">{order.status}</span>
+                        </Badge>
+                        {(order.notes?.includes('PRE-ORDER:') || order.notes?.includes('ORDER REQUEST:')) && (
+                          <Badge className="bg-blue-100 text-blue-800 text-xs">
+                            {order.notes?.includes('PRE-ORDER:') ? 'Pre-Order' : 'Order Request'}
+                          </Badge>
+                        )}
+                      </div>
                     </td>
                     <td className="p-4">
                       <Badge className={getPaymentStatusColor(order.paymentStatus)}>
@@ -640,9 +666,23 @@ export default function AdminOrdersPage() {
               {selectedOrder.notes && (
                 <div>
                   <h3 className="font-semibold mb-2">Order Notes</h3>
-                  <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded">
-                    {selectedOrder.notes}
-                  </p>
+                  <div className={`text-sm p-3 rounded ${
+                    (selectedOrder.notes.includes('PRE-ORDER:') || selectedOrder.notes.includes('ORDER REQUEST:'))
+                      ? 'bg-blue-50 border border-blue-200' 
+                      : 'bg-gray-50'
+                  }`}>
+                    {(selectedOrder.notes.includes('PRE-ORDER:') || selectedOrder.notes.includes('ORDER REQUEST:')) && (
+                      <div className="flex items-center gap-2 mb-2">
+                        <Bell className="h-4 w-4 text-blue-600" />
+                        <span className="font-medium text-blue-900">
+                          {selectedOrder.notes.includes('PRE-ORDER:') ? 'Pre-Order Request' : 'Order Request'}
+                        </span>
+                      </div>
+                    )}
+                    <p className={(selectedOrder.notes.includes('PRE-ORDER:') || selectedOrder.notes.includes('ORDER REQUEST:')) ? 'text-blue-700' : 'text-gray-600'}>
+                      {selectedOrder.notes}
+                    </p>
+                  </div>
                 </div>
               )}
 
